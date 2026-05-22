@@ -17,10 +17,6 @@ export const useScroll = (messages) => {
 
         const atBottom = position < threshold;
 
-        if (atBottom) {
-            console.log(position);
-        }
-
         setIsNearBottom(atBottom);
     };
 

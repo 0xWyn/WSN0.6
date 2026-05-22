@@ -20,8 +20,8 @@ const PostPage = lazy(
     () => import("../features/post/main/components/PostPage.jsx")
 );
 const Chats = lazy(() => import("../features/chat/components/ChatList.jsx"));
-const ChatPage = lazy(
-    () => import("../features/chat/components/Interface.jsx")
+const ChatInterface = lazy(
+    () => import("../features/chat/components/messages/Interface.jsx")
 );
 const ChatManager = lazy(
     () => import("../features/chat/components/ChatResolver.jsx")
@@ -45,7 +45,7 @@ export default function Paths() {
                         </Route>
                         <Route path="chats">
                             <Route index element={<Chats />} />
-                            <Route path=":id" element={<ChatPage />} />
+                            <Route path=":id" element={<ChatInterface />} />
                             <Route path="user/:id" element={<ChatManager />} />
                         </Route>
                         <Route path="user/:id" element={<UserPage />} />

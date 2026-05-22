@@ -1,4 +1,4 @@
-import Avatar from "../../user/components/Avatar";
+import Avatar from "../../../user/components/Avatar";
 
 export const Identity = ({ receiver }) => {
     return (

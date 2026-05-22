@@ -1,4 +1,4 @@
-import Avatar from "../../user/components/Avatar";
+import Avatar from "../../../user/components/Avatar";
 
 export const MIntroCard = ({ receiver }) => {
     return (
@@ -11,7 +11,7 @@ export const MIntroCard = ({ receiver }) => {
                 <Avatar user={receiver ?? null} size={20} />
                 <div className="flex flex-col w-full items-center gap-2">
                     <p className="text-sm md:text-base font-semibold text-slate-700">
-                        @username
+                        @{receiver.username}
                     </p>
 
                     <div className="flex gap-3 md:gap-6">
@@ -21,7 +21,9 @@ export const MIntroCard = ({ receiver }) => {
                 </div>
 
                 <div className=" text-center flex flex-col items-center gap-2 text-xs md:text-sm text-slate-400 ">
-                    <p className="">You are now chatting with @username</p>
+                    <p className="">
+                        You are now chatting with @{receiver.username}
+                    </p>
                     <p className="">Chat started: dd/mm/yy</p>
                 </div>
             </div>
