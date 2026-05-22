@@ -18,7 +18,7 @@ export const RightBubble = ({ content, media, alignRight, position }) => {
             <p className="whitespace-pre-wrap text-[15px] leading-7 font-[450]">
                 {content}
             </p>
-            {media.lenght && (
+            {media.length > 0 && (
                 <div className="mt-3 overflow-hidden rounded-2xl border border-black/5">
                     {media.type === "image" ? (
                         <img
