@@ -13,11 +13,13 @@ export const useChatting = (id) => {
         const activateChat = async () => {
             try {
                 setLoading(true);
-                const chatRes = await getChatById(id);
-                console.log(chatRes.data);
-                setChat(chatRes.data);
-                const messagesRes = await getConversation(id);
-                setMessages(messagesRes.data);
+
+                const [chatData, conversationData] = await Promise.all([
+                    getChatById(id),
+                    getConversation(id),
+                ]);
+                setChat(chatData.data);
+                setMessages(conversationData.data);
             } catch (error) {
                 console.error(error);
             } finally {

@@ -11,8 +11,26 @@ const messageSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        receiver: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
         text: String,
-        media: String,
+        media: [
+            {
+                url: {
+                    type: String,
+                    required: true,
+                },
+
+                type: {
+                    type: String,
+                    enum: ["image", "video"],
+                    required: true,
+                },
+            },
+        ],
     },
     { timestamps: true }
 );

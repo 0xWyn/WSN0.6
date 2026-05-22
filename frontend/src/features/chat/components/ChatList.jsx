@@ -7,23 +7,17 @@ export default function ChatList() {
     const { chatIds, chatsById, loadingChats } = useChats();
 
     return (
-        <div className="relative w-full h-full overflow-hidden bg-[#f8fafc] rounded-3xl">
+        <div className="relative w-full h-full min-h-0 border overflow-hidden bg-[#f8fafc] rounded-3xl">
             <div className="pointer-events-none absolute inset-0">
-                <div className="absolute left-1/4 top-0 size-[32rem] rounded-full bg-amber-100/40 blur-3xl" />
+                <div className="absolute left-1/4 top-0 size-[32rem] rounded-full bg-amber-100/20 blur-3xl" />
 
-                <div className="absolute bottom-0 right-0 size-[26rem] rounded-full bg-sky-100/40 blur-3xl" />
+                <div className="absolute bottom-0 right-0 size-[26rem] rounded-full bg-sky-200/20 blur-3xl" />
             </div>
             <LocNav current="Chats" />
 
-            <div className="w-full p-4 mx-auto flex max-w-6xl flex-col gap-4">
-                <section className="relative overflow-hidden rounded-[32px] border border-white/60 bg-white/40 p-5 backdrop-blur-2xl shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
-                    <div
-                        className="
-        pointer-events-none
-        absolute inset-0
-        bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.5),transparent_55%)]
-    "
-                    />
+            <div className="w-full p-4 mx-auto flex max-w-6xl flex-col gap-4 h-full">
+                <section className="relative overflow-hidden rounded-[32px] border border-white/60 bg-white/40 p-5 backdrop-blur-2xl shadow-[0_10px_20px_rgba(15,23,42,0.08)] flex flex-col">
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.5),transparent_55%)]" />
                     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                         <div>
                             <h1 className="text-3xl tracking-[-0.03em] font-semibold text-slate-800">

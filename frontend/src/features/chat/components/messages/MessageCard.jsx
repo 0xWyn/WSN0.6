@@ -1,9 +1,10 @@
-import { useAuth } from "../../auth/context/AuthProvider";
+import { useAuth } from "../../../auth/context/AuthProvider";
 import { RightBubble } from "./ChatBubbles";
+
 export default function MessageCard({ message, position }) {
     const { user } = useAuth();
-    const alignRight = message.sender._id === user._id;
-
+    const alignRight = message.sender === user._id.toString();
+    console.log(message);
     return (
         <div
             className={`relative flex ${alignRight ? "justify-end" : "justify-start"}`}
