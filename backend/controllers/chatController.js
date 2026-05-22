@@ -43,7 +43,6 @@ export const fetchChats = async (req, res) => {
             .populate("participants", "username avatar")
             .populate("lastMessage");
         // -1 newest first
-        console.log(chats);
         res.json(chats);
     } catch (error) {
         res.status(500).json({ error: error });

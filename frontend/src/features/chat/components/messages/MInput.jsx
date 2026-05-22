@@ -5,7 +5,7 @@ import { useMessaging } from "../../hooks/useMessaging";
 import { Preview } from "./Previews";
 import { useEffect, useRef, useState } from "react";
 
-export default function MInput() {
+export default function MInput({ messaging }) {
     const [inputError, setInputError] = useState("");
     const {
         textInputRef,
@@ -17,7 +17,9 @@ export default function MInput() {
         handleChange,
         handleMediaSelect,
         handleSendMessage,
-    } = useMessaging(useParams().id);
+        editingMessage,
+        cancelEditing,
+    } = messaging;
 
     const timeoutRef = useRef(null);
     const showError = (error) => {
@@ -36,6 +38,21 @@ export default function MInput() {
 
     return (
         <div className="flex flex-col items-center w-full justify-center absolute bottom-0 px-8 lg:px-4 max-w-4xl my-2 ">
+            {editingMessage && (
+                <div className="flex items-center justify-between rounded-xl bg-blue-500/10 px-3 py-2">
+                    <div>
+                        <p className="text-xs text-slate-500">
+                            Editing message
+                        </p>
+
+                        <p className="truncate text-sm">
+                            {editingMessage.text}
+                        </p>
+                    </div>
+
+                    <button onClick={cancelEditing}>Cancel</button>
+                </div>
+            )}
             {sending && <div>Sending...</div>}
             <div className="w-full rounded-3xl border border-slate-200/70 bg-white/75 px-[8px] py-[1px] backdrop-blur-xl shadow-2xl shadow-[0_8px_40px_rgba(15,23,42,0.08)]">
                 {media.length > 0 && (

@@ -4,10 +4,12 @@ import MInput from "./MInput";
 import { useChatting } from "../../hooks/useChatting";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useMessaging } from "../../hooks/useMessaging";
 
 export default function MInterface() {
     const { chat, messages, loading } = useChatting(useParams().id);
 
+    const messaging = useMessaging(useParams().id);
     return (
         // Screen
         <div className="relative h-full w-full flex flex-col min-h-0 rounded-b-[28px] overflow-hidden bg-[#f8fafc]">
@@ -24,9 +26,13 @@ export default function MInterface() {
                     <div>Loading...</div>
                 ) : (
                     <>
-                        <MContainer messages={messages} chat={chat} />
+                        <MContainer
+                            messages={messages}
+                            chat={chat}
+                            startEditing={messaging.startEditing}
+                        />
 
-                        <MInput />
+                        <MInput messaging={messaging} />
                     </>
                 )}
             </div>

@@ -39,11 +39,13 @@ export default function ChatCard({ chat }) {
                         {receiver?.username || "Unknown"}
                     </p>
                     <div className="flex items-center gap-2">
-                        <p className="text-sm">
-                            {sender._id === user._id.toString()
-                                ? "You: "
-                                : `${sender.username ?? "Them"}`}
-                        </p>
+                        {sender && (
+                            <p className="text-sm">
+                                {sender._id === user._id.toString()
+                                    ? "You: "
+                                    : `${sender.username ?? "Them"}`}
+                            </p>
+                        )}
                         <p className="mt-1 truncate text-sm leading-5 text-slate-400 italic">
                             {lastMessage}
                         </p>

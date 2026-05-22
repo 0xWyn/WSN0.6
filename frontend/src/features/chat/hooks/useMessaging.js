@@ -6,6 +6,7 @@ export const useMessaging = (id) => {
     const [text, setText] = useState("");
     const [media, setMedia] = useState([]);
     const [sending, setSending] = useState(false);
+    const [editingMessage, setEditingMessage] = useState(null);
 
     const textInputRef = useRef(null);
 
@@ -48,6 +49,14 @@ export const useMessaging = (id) => {
 
         try {
             setSending(true);
+
+            if (editingMessage) {
+                await editMessage({ id: editMessage._id, text, media });
+
+                cancelEditing();
+
+                return;
+            }
             const files = media.map((item) => item.file);
             const data = {
                 chat: id,
@@ -64,6 +73,19 @@ export const useMessaging = (id) => {
         }
     };
 
+    const startEditing = (message) => {
+        setEditingMessage(message);
+        setText(message.text || []);
+        setMedia(
+            (message.media || []).map((item) => ({ ...item, existing: true }))
+        );
+        textInputRef.current?.focus();
+    };
+
+    const cancelEditing = () => {
+        setEditingMessage(null);
+        resetMessage();
+    };
     return {
         textInputRef,
         fileInputRef,
@@ -80,5 +102,9 @@ export const useMessaging = (id) => {
         handleChange,
         handleMediaSelect,
         handleSendMessage,
+
+        editingMessage,
+        startEditing,
+        cancelEditing,
     };
 };

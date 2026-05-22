@@ -1,13 +1,10 @@
+import { BarsArrowDown } from "../../../../components/icons/bars-arrow-down";
+import { formatDate } from "../../../../utils/formatDate";
+import { useScroll } from "../../hooks/useScroll";
 import MessageCard from "./MessageCard";
 import { MIntroCard } from "./MIntroCard";
-import { useScroll } from "../../hooks/useScroll";
-import { NoiseTexture } from "../../../../components/icons/noise";
-import { BarsArrowDown } from "../../../../components/icons/bars-arrow-down";
-import { useMessaging } from "../../hooks/useMessaging";
-import { useParams } from "react-router-dom";
-import { formatDate } from "../../../../utils/formatDate";
 
-export default function MContainer({ messages, chat }) {
+export default function MContainer({ messages, chat, startEditing }) {
     const { containerRef, handleScroll, scrollToBottom, isNearBottom } =
         useScroll(messages);
 
@@ -53,6 +50,7 @@ export default function MContainer({ messages, chat }) {
                                 <MessageCard
                                     message={message}
                                     position={position}
+                                    startEditing={startEditing}
                                 />
 
                                 {lastMessage && (
