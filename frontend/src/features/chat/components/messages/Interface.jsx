@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 export default function MInterface() {
-    const { chat, messages } = useChatting(useParams().id);
+    const { chat, messages, loading } = useChatting(useParams().id);
 
     return (
         // Screen
@@ -20,9 +20,15 @@ export default function MInterface() {
             {/* Main */}
             <div className="relative flex w-full h-full min-h-0 flex-col items-center gap-2 overflow-hidden rounded-b-[28px] border border-slate-200/40 border-t-transparent px-4">
                 {/* Container */}
-                <MContainer messages={messages} receiver={chat?.receiver} />
+                {loading ? (
+                    <div>Loading...</div>
+                ) : (
+                    <>
+                        <MContainer messages={messages} chat={chat} />
 
-                <MInput />
+                        <MInput />
+                    </>
+                )}
             </div>
         </div>
     );

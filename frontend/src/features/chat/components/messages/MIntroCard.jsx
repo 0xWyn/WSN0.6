@@ -1,6 +1,13 @@
+import { formatDate } from "../../../../utils/formatDate";
 import Avatar from "../../../user/components/Avatar";
+import { useFeed } from "../../../feed/context/FeedProvider";
 
-export const MIntroCard = ({ receiver }) => {
+export const MIntroCard = ({ chat }) => {
+    const { receiver, createdAt } = chat;
+    const { entities } = useFeed();
+    const timeLabel = formatDate(createdAt);
+    const user = entities.users[receiver._id] || {};
+    const { following, followers } = user;
     return (
         <div className="flex w-full justify-center px-8 py-4 md:mb-10 md:px-20">
             <div
@@ -15,16 +22,17 @@ export const MIntroCard = ({ receiver }) => {
                     </p>
 
                     <div className="flex gap-3 md:gap-6">
-                        <div className="size-15 border bg-slate-200 border-slate-300 rounded-md shadow-xs" />
-                        <div className="size-15 border bg-slate-200 border-slate-300 rounded-md shadow-xs" />
+                        <div className="flex flex-col items-center justify-center my-6">
+                            <p className="text-5xl text-slate-300">
+                                {followers?.length ?? "?"}
+                            </p>
+                            <p className="text-xs text-slate-500">followers</p>
+                        </div>
                     </div>
                 </div>
 
                 <div className=" text-center flex flex-col items-center gap-2 text-xs md:text-sm text-slate-400 ">
-                    <p className="">
-                        You are now chatting with @{receiver.username}
-                    </p>
-                    <p className="">Chat started: dd/mm/yy</p>
+                    <p className="">Chat started: {timeLabel}</p>
                 </div>
             </div>
         </div>

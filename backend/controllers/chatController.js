@@ -22,7 +22,7 @@ export const createChat = async (req, res) => {
 
         let newChat = await Chat.create({
             participants: [user._id, targetId],
-            lastMessageId: null,
+            lastMessage: null,
         });
 
         newChat = await newChat.populate("participants", "username avatar");
@@ -41,7 +41,7 @@ export const fetchChats = async (req, res) => {
         const userId = req.user._id;
         const chats = await Chat.find({ participants: userId })
             .populate("participants", "username avatar")
-            .populate("lastMessage", "text sender createdAt");
+            .populate("lastMessage");
         // -1 newest first
         console.log(chats);
         res.json(chats);

@@ -11,11 +11,11 @@ export const formatDate = (date) => {
     if (secondsSince < 0) return oldDate.toLocaleDateString();
 
     if (secondsSince < 60) {
-        return secondsSince === 1 ? "1 second ago" : `${secondsSince}s ago`;
+        return secondsSince === 1 ? "1 second ago" : `${secondsSince} s ago`;
     }
 
     if (minutesSince < 60) {
-        return `${minutesSince}m ago`;
+        return minutesSince === 1 ? "1 min ago" : `${minutesSince} min ago`;
     }
 
     if (hoursSince < 24) {
@@ -28,3 +28,5 @@ export const formatDate = (date) => {
 
     return oldDate.toDateString();
 };
+
+// Improve better format for chat dates i.e > 30 min ? Time stamp > 24 hr ? date stamp.

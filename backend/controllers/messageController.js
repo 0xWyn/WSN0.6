@@ -17,6 +17,8 @@ export const createMessage = async (req, res) => {
             text,
             media,
         });
+        sourceChat.lastMessage = newMessage._id;
+        await sourceChat.save();
         return res.status(200).json(newMessage);
     } catch (error) {
         res.status(500).json({ error: error });
