@@ -51,4 +51,5 @@ return res.status(200).json({msg: "Message deleted successfully"})
     }
 };
 
-export const editMessage = () => {};
+export const editMessage = () => {
+};
