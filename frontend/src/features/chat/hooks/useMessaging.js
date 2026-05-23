@@ -12,7 +12,7 @@ export const useMessaging = (id) => {
 
     const fileInputRef = useRef(null);
 
-    const { sendMessage } = useMessageActions();
+    const { sendMessage, editMessage } = useMessageActions();
 
     const handleMediaSelect = (files) => {
         const formatted = files.map((file) => ({
@@ -51,7 +51,7 @@ export const useMessaging = (id) => {
             setSending(true);
 
             if (editingMessage) {
-                await editMessage({ id: editMessage._id, text, media });
+                await editMessage({ id: editingMessage._id, text, media });
 
                 cancelEditing();
 

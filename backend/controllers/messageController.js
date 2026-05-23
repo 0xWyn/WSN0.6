@@ -31,7 +31,7 @@ export const deleteMessage = async (req, res) => {
         const message = await Message.findById(req.params.messageId);
         if (!message)
             return res.status(404).json({ error: "Message not found" });
-        if (!message.sender === req.user._id.toString())
+        if (message.sender.toString() !== req.user._id.toString())
             return res.status(403).json({ error: "Forbidden" });
         const chatId = message.chat;
         const chat = await Chat.findById(chatId);
@@ -50,4 +50,31 @@ export const deleteMessage = async (req, res) => {
     }
 };
 
-export const editMessage = () => {};
+export const editMessage = async (req, res) => {
+    try {
+        const message = await Message.findById(req.params.messageId);
+        if (!message)
+            return res.status(404).json({
+                msg: "Message not found",
+            });
+        if (message.sender.toString() !== req.user._id.toString())
+            return res.status(403).json({
+                msg: "Unauthorised",
+            });
+        const updatedMessage = await Message.findByIdAndUpdate(
+            req.params.messageId,
+            {
+                $set: {
+                    text: req.body.text,
+                    media: req.body.media,
+                    edited: true,
+                },
+            },
+            { new: true }
+        );
+
+        return res.status(200).json(updatedMessage);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+};
