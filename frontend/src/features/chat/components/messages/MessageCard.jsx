@@ -14,6 +14,8 @@ export default function MessageCard({ message, position, startEditing }) {
 
     const timeLabel = formatDate(message.createdAt);
 
+    console.log(message);
+
     return (
         <div
             ref={wrapperRef}
@@ -41,11 +43,9 @@ export default function MessageCard({ message, position, startEditing }) {
                 media={message.media}
                 alignRight={alignRight}
                 position={position}
+                edited={message.edited}
+                timeLabel={timeLabel}
             />
-
-            <div className="absolute top-full mt-1.5 tracking-wide px-2 text-[11px] text-slate-400">
-                {timeLabel}
-            </div>
         </div>
     );
 }
