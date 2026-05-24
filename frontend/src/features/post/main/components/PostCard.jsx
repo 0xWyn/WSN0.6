@@ -25,16 +25,10 @@ export default function PostCard({ post }) {
 
                 <div className="absolute bottom-0 right-0 size-40 rounded-full bg-sky-100/20 blur-xl" />
             </div>
-            <button
-                type="button"
-                className="absolute inset-0 z-0 cursor-pointer bg-transparent"
-                onClick={handleOpenPost}
-                aria-label="Open post"
-            />
             <div className="relative z-10 flex flex-col gap-6 p-6 md:p-7">
                 {/* Header */}
                 <div className="flex items-start  gap-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 z-30 pointer-events-auto">
                         <Avatar size={12} user={author} />
                         <div className="min-w-0">
                             <Author post={post} />

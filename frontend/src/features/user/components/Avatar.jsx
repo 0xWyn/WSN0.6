@@ -20,7 +20,7 @@ export default function Avatar({ size = 12, user = { username: "G" } }) {
     const avatarUrl = user?.avatar;
 
     return (
-        <Link to={`/user/${user?._id}`}>
+        <Link to={`/user/${user?._id}`} onClick={(e) => e.stopPropagation()}>
             <div
                 className={`${sizes[size]} overflow-hidden rounded-full flex items-center justify-center shrink-0 pointer-events-auto bg-gradient-to-b from-sky-400 to-blue-500 text-white`}
             >

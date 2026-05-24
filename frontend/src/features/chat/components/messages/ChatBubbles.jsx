@@ -20,7 +20,7 @@ export const RightBubble = ({
 
     return (
         <div
-            className={`w-full relative flex ${alignRight ? "flex-row-reverse" : ""} items-center gap-2`}
+            className={`w-full flex items-center gap-2 ${alignRight ? "flex-row-reverse" : "flex-row"}`}
         >
             <div
                 className={`relative max-w-[min(75%,38rem)] ${radii[position]} ${alignRight ? colors["blue"] : colors["white"]} px-4 py-4`}

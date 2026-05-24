@@ -14,8 +14,6 @@ export default function MessageCard({ message, position, startEditing }) {
 
     const timeLabel = formatDate(message.createdAt);
 
-    console.log(message);
-
     return (
         <div
             ref={wrapperRef}
@@ -45,6 +43,7 @@ export default function MessageCard({ message, position, startEditing }) {
                 position={position}
                 edited={message.edited}
                 timeLabel={timeLabel}
+                toggleMenu={toggleMenu}
             />
         </div>
     );

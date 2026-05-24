@@ -37,7 +37,7 @@ export default function MInput({ messaging }) {
     }, []);
 
     return (
-        <div className="flex flex-col items-center w-full justify-center absolute bottom-0 px-8 lg:px-4 max-w-4xl my-2 ">
+        <div className="flex flex-col items-center w-full justify-center absolute bottom-0 px-14 lg:px-16 max-w-4xl my-2">
             {editingMessage && (
                 <div className="flex items-center justify-between rounded-xl bg-blue-500/10 px-3 py-2">
                     <div>

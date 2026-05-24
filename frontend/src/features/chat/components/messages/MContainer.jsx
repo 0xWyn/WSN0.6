@@ -54,7 +54,7 @@ export default function MContainer({ messages, chat, startEditing }) {
                                 />
 
                                 {lastMessage && (
-                                    <p className="my-8 mb-10 w-full text-center text-xs text-slate-500">
+                                    <p className="my-20 mb-10 w-full text-center text-xs text-slate-500">
                                         -{timeLabel} -
                                     </p>
                                 )}
@@ -65,7 +65,7 @@ export default function MContainer({ messages, chat, startEditing }) {
                 {!isNearBottom && (
                     <button
                         onClick={scrollToBottom}
-                        className="absolute right-6 bottom-8 z-30 size-12 flex items-center justify-center !rounded-full !px-4 !py-2 !text-sm border border-white/60 bg-white/80 text-slate-700 backdrop-blur-xl shadow-[0_8px_30px_rgba(15,23,42,0.12)] transition-all duration-200 hover:!bg-white"
+                        className="absolute right-12 lg:right-18 bottom-12 z-30 size-12 flex items-center justify-center !rounded-full !px-4 !py-2 !text-sm border border-white/60 bg-white/80 text-slate-700 backdrop-blur-xl shadow-[0_8px_30px_rgba(15,23,42,0.12)] transition-all duration-200 hover:!bg-white"
                     >
                         <BarsArrowDown />
                     </button>
