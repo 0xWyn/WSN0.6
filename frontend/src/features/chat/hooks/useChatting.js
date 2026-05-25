@@ -1,25 +1,39 @@
 import { useEffect, useState } from "react";
 import { getChatById, getConversation } from "../api/chatApis";
+import { useMessageSocket } from "../socket/useMessageSocket";
 
 export const useChatting = (id) => {
     const [chat, setChat] = useState(null);
-    const [messages, setMessages] = useState([]);
+    const [messageIds, setMessageIds] = useState([]);
+    const [messagesById, setMessagesById] = useState({});
     const [loading, setLoading] = useState(true);
 
-    // Fetching chat is important for UI design
-    // Handling messages is a separate concern.
-    // This will also deal with messages (via sockets)
+    useMessageSocket(id, setMessageIds, setMessagesById);
+
+    const messages = messageIds.map((id) => messagesById[id]);
+
     useEffect(() => {
         const activateChat = async () => {
             try {
                 setLoading(true);
 
-                const [chatData, conversationData] = await Promise.all([
+                const [chat, thread] = await Promise.all([
                     getChatById(id),
                     getConversation(id),
                 ]);
-                setChat(chatData.data);
-                setMessages(conversationData.data);
+                setChat(chat.data);
+
+                setMessageIds(thread.data.map((message) => message._id));
+
+                setMessagesById((prev) => {
+                    const map = { ...prev };
+
+                    thread.data.forEach((m) => {
+                        map[m._id] = m;
+                    });
+
+                    return map;
+                });
             } catch (error) {
                 console.error(error);
             } finally {

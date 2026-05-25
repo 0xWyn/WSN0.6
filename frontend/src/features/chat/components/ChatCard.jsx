@@ -7,6 +7,7 @@ import { formatDate } from "../../../utils/formatDate";
 export default function ChatCard({ chat }) {
     const { user } = useAuth();
     const navigate = useNavigate();
+    console.log(chat);
     const receiver =
         chat?.receiver ||
         chat?.participants?.find(
@@ -17,7 +18,6 @@ export default function ChatCard({ chat }) {
     const sender = chat.participants.find(
         (participant) => participant._id.toString() === chat.lastMessage?.sender
     );
-    console.log(sender);
     const lastMessage =
         chat?.lastMessage?.text ||
         chat?.latestMessage?.text ||

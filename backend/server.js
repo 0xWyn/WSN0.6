@@ -1,16 +1,16 @@
-import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import { Server } from "socket.io";
+import express from "express";
 import http from "http";
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import accessRoutes from "./routes/accessRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import postRoutes from "./routes/postRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
-import cookieParser from "cookie-parser";
+import postRoutes from "./routes/postRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import { useIO } from "./useIO.js";
 
 dotenv.config();
 
@@ -33,34 +33,10 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/messages", messageRoutes);
+
 const server = http.createServer(app);
 
-export const io = new Server(server, {
-    cors: { origin: "*" },
-});
-
-io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
-
-    socket.on("join", (userId) => {
-        socket.join(userId);
-        console.log(`Socket joined room: ${userId}`);
-    });
-
-    socket.on("join_chat", (chatId) => {
-        socket.join(chatId);
-        console.log(`Socket joined chat: ${chatId}`);
-    });
-
-    socket.on("leave_chat", (chatId) => {
-        socket.leave(chatId);
-        console.log(`Socket left chat: ${chatId}`);
-    });
-
-    socket.on("disconnect", () => {
-        console.log(`Socket disconnected: ${socket.id}`);
-    });
-});
+export const { io } = useIO(server);
 
 mongoose
     .connect(mongoURI)

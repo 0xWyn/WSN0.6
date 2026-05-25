@@ -1,10 +1,10 @@
+import { useParams } from "react-router-dom";
+import { useChatting } from "../../hooks/useChatting";
+import { useMessaging } from "../../hooks/useMessaging";
 import { Header } from "./Header";
 import MContainer from "./MContainer";
 import MInput from "./MInput";
-import { useChatting } from "../../hooks/useChatting";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useMessaging } from "../../hooks/useMessaging";
+import { useMessageSocket } from "../../socket/useMessageSocket";
 
 export default function MInterface() {
     const { chat, messages, loading } = useChatting(useParams().id);

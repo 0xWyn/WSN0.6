@@ -1,5 +1,6 @@
 import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js";
+import { io } from "../server.js";
 
 export const createMessage = async (req, res) => {
     try {
@@ -18,6 +19,7 @@ export const createMessage = async (req, res) => {
             media,
         });
         sourceChat.lastMessage = newMessage._id;
+        io.to(chat).emit("new_message", newMessage);
         await sourceChat.save();
         return res.status(200).json(newMessage);
     } catch (error) {
@@ -35,15 +37,19 @@ export const deleteMessage = async (req, res) => {
             return res.status(403).json({ error: "Forbidden" });
         const chatId = message.chat;
         const chat = await Chat.findById(chatId);
+
         await message.deleteOne();
+
         const latestMessage = await Message.findOne({ chat: chatId }).sort({
             createdAt: -1,
         });
-        console.log(latestMessage._id);
+
         chat.lastMessage = latestMessage?._id || null;
+
+        io.to(chatId.toString()).emit("deleted_message", message);
+
         await chat.save();
-        console.log(chat.lastMessage);
-        console.log("Here");
+
         return res.status(200).json({ msg: "Message deleted successfully" });
     } catch (error) {
         res.status(500).json({ error: error });
@@ -70,10 +76,11 @@ export const editMessage = async (req, res) => {
                     edited: true,
                 },
             },
-            { new: true }
+            { returnDocument: after }
         );
 
-        return res.status(200).json(updatedMessage);
+        io.to(message.chat.toString()).emit("edited_message", updatedMessage);
+        return res.status(200).json("Message updated");
     } catch (error) {
         return res.status(500).json({ error });
     }

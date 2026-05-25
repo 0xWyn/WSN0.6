@@ -13,12 +13,10 @@ export const useMessageActions = () => {
         });
         const payload = { ...data, media };
         const res = await createMessage(payload);
-        console.log(res.data);
     };
 
     const removeMessage = async (id) => {
         const { data } = await deleteMessage(id);
-        console.log(data);
     };
 
     const editMessage = async ({ id, text, media }) => {
