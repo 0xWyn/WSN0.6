@@ -1,29 +1,49 @@
 import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js";
+import { createNotification } from "../services/notificationService.js";
 import { io } from "../server.js";
 
 export const createMessage = async (req, res) => {
     try {
-        const user = req.user._id;
-        const { chat, text, media } = req.body;
-        const sourceChat = await Chat.findById(chat);
-        if (!sourceChat) return res.status(404).json("Chat not found");
-        const receiver = sourceChat.participants.find(
-            (participant) => participant.toString() !== user.toString()
+        const sender = req.user._id;
+
+        const { chat: chatId, text, media } = req.body;
+
+        const chat = await Chat.findById(chatId);
+
+        if (!chat) {
+            return res.status(404).json({ msg: "Chat not found" });
+        }
+
+        const receiver = chat.participants.find(
+            (participant) => participant.toString() !== sender.toString()
         );
+
         const newMessage = await Message.create({
-            sender: user,
+            sender,
             receiver,
-            chat,
+            chat: chatId,
             text,
             media,
         });
-        sourceChat.lastMessage = newMessage._id;
-        io.to(chat).emit("new_message", newMessage);
-        await sourceChat.save();
-        return res.status(200).json(newMessage);
+
+        chat.lastMessage = newMessage._id;
+
+        chat.unreadCounts[userId] = (chat.unreadCounts[userId] || 0) + 1;
+
+        await chat.save();
+
+        console.log(chat);
+        io.to(chatId.toString()).emit("new_message", newMessage);
+
+        io.to(receiver.toString()).emit("chat_updated", {
+            chatId,
+            unreadCount: currentUnread + 1,
+        });
+
+        return res.status(201).json(newMessage);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ message: "Failed to create message" });
     }
 };
 export const getMessage = () => {};

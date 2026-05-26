@@ -1,7 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../features/auth/context/AuthProvider";
+import { useChatNotifications } from "../features/notification/hooks/useChatNotifications";
 
 export default function NavigationBar() {
+    console.log(useChatNotifications());
+
     const location = useLocation();
     const { user, logout } = useAuth();
 

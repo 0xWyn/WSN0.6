@@ -3,20 +3,28 @@ const notificationSchema = new mongoose.Schema(
     {
         type: {
             type: String,
-            enum: ["message", "like", "comment", "follow"],
+            enum: ["message", "like", "comment", "reply", "follow"],
+            required: true,
         },
         sender: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+            required: true,
         },
         receiver: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+            required: true,
         },
-        chat: {
+        sourceModel: {
+            type: String,
+            enum: ["Chat", "Post", "Comment"],
+            required: true,
+        },
+        source: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Chat",
-            default: null,
+            required: true,
+            refPath: "sourceModel",
         },
         read: {
             type: Boolean,

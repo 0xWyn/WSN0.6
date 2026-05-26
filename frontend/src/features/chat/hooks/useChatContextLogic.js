@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createChat, getAllChats } from "../api/chatApis.js";
 
-export const useChats = () => {
+export const useChatContextLogic = () => {
     const [chatsById, setChatsById] = useState({});
     const [chatIds, setChatIds] = useState([]);
     const [loadingChats, setLoadingChats] = useState(true);

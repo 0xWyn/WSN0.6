@@ -1,10 +1,10 @@
 import LocNav from "../../../components/ui/LocNav";
-import { useChats } from "../hooks/useChats";
+import { useChat } from "../context/ChatProvider";
 import ChatCard from "./ChatCard";
 import { useAuth } from "../../auth/context/AuthProvider";
 export default function ChatList() {
     const { user } = useAuth();
-    const { chatIds, chatsById, loadingChats } = useChats();
+    const { chatIds, chatsById, loadingChats } = useChat();
 
     return (
         <div className="relative w-full h-full min-h-0 border overflow-hidden bg-[#f8fafc] rounded-3xl">

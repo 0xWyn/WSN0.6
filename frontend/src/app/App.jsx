@@ -1,15 +1,18 @@
 import { AuthProvider } from "../features/auth/context/AuthProvider.jsx";
 import { FeedProvider } from "../features/feed/context/FeedProvider.jsx";
 import { SocketProvider } from "../features/socket/SocketProvider.jsx";
+import { ChatProvider } from "../features/chat/context/ChatProvider.jsx";
 import Paths from "./Paths.jsx";
 
 export default function App() {
     return (
         <AuthProvider>
             <SocketProvider>
-                <FeedProvider>
-                    <Paths />
-                </FeedProvider>
+                <ChatProvider>
+                    <FeedProvider>
+                        <Paths />
+                    </FeedProvider>
+                </ChatProvider>
             </SocketProvider>
         </AuthProvider>
     );
