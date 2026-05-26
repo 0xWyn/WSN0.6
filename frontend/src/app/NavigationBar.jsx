@@ -3,8 +3,13 @@ import { useAuth } from "../features/auth/context/AuthProvider";
 import { useChatNotifications } from "../features/notification/hooks/useChatNotifications";
 
 export default function NavigationBar() {
-    console.log(useChatNotifications());
+    const map = useChatNotifications();
+    let totalMessages = Object.values(map).reduce(
+        (total, unread) => total + unread,
+        0
+    );
 
+    console.log(totalMessages);
     const location = useLocation();
     const { user, logout } = useAuth();
 

@@ -14,7 +14,7 @@ export const useChatNotifications = () => {
         const map = {};
 
         chatIds.forEach((id) => {
-            map[id] = chatsById[id]?.unreadCounts?.[user._id] ?? 0;
+            map[id] = chatsById[id]?.unreadCounts[user._id] ?? 0;
         });
 
         return map;
