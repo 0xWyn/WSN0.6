@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getChatById, getConversation } from "../api/chatApis";
+import { getChatById, getConversation, markChatRead } from "../api/chatApis";
 import { useMessageSocket } from "../socket/useMessageSocket";
 
-export const useChatting = (id) => {
+export const useInterface = (id) => {
     const [chat, setChat] = useState(null);
     const [messageIds, setMessageIds] = useState([]);
     const [messagesById, setMessagesById] = useState({});
@@ -43,6 +43,11 @@ export const useChatting = (id) => {
 
         activateChat();
     }, [id]);
+
+    useEffect(() => {
+        if (!chat) return;
+        markChatRead(chat._id);
+    }, [messages, chat]);
 
     return { chat, messages, loading };
 };

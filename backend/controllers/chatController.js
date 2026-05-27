@@ -1,5 +1,6 @@
 import Chat from "../models/chatModel.js";
 import Message from "../models/messageModel.js";
+import { io } from "../server.js";
 
 export const createChat = async (req, res) => {
     try {
@@ -90,6 +91,30 @@ export const useConversation = async (req, res) => {
         const messages = await Message.find({ chat: chatId });
         res.status(200).json(messages);
     } catch (error) {
+        res.status(500).json({ error: error });
+    }
+};
+
+export const markChatRead = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { chatId } = req.params;
+
+        const chat = await Chat.findById(chatId);
+        if (!chat) return res.status(404).json({ msg: "Chat not found" });
+        chat.unreadCounts.set(userId.toString(), 0);
+
+        await chat.save();
+
+        io.to(userId.toString()).emit("chat_unread_update", {
+            chatId,
+            userId,
+            unreadCount: 0,
+        });
+
+        res.sendStatus(204);
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error });
     }
 };

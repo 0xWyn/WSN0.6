@@ -1,15 +1,15 @@
 import { useParams } from "react-router-dom";
-import { useChatting } from "../../hooks/useChatting";
-import { useMessaging } from "../../hooks/useMessaging";
+import { useInterface } from "../../hooks/useInterface";
+import { useMessageInput } from "../../hooks/useMessageInput";
 import { Header } from "./Header";
 import MContainer from "./MContainer";
 import MInput from "./MInput";
 import { useMessageSocket } from "../../socket/useMessageSocket";
 
 export default function MInterface() {
-    const { chat, messages, loading } = useChatting(useParams().id);
-
-    const messaging = useMessaging(useParams().id);
+    const { id } = useParams();
+    const { chat, messages, loading } = useInterface(id);
+    const messaging = useMessageInput(id);
     return (
         // Screen
         <div className="relative h-full w-full flex flex-col min-h-0 rounded-b-[28px] overflow-hidden bg-[#f8fafc]">

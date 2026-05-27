@@ -1,5 +1,4 @@
 import { useMessageActions } from "../../hooks/useMessageActions";
-import { useMessaging } from "../../hooks/useMessaging";
 
 export default function MessageMenu({ message, startEditing }) {
     const { removeMessage } = useMessageActions();

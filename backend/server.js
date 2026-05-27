@@ -4,14 +4,13 @@ import dotenv from "dotenv";
 import express from "express";
 import http from "http";
 import mongoose from "mongoose";
+import { Server } from "socket.io";
 import accessRoutes from "./routes/accessRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import { useIO } from "./useIO.js";
-import { Server } from "socket.io";
 
 dotenv.config();
 

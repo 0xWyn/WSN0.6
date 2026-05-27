@@ -15,3 +15,7 @@ export const getChatById = (chatId) => {
 export const getConversation = (chatId) => {
     return API.get(`/chats/use/${chatId}`);
 };
+
+export const markChatRead = (chatId) => {
+    return API.patch(`/chats/${chatId}/read`);
+};

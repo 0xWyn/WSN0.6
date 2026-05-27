@@ -2,7 +2,7 @@
 import { useMessageActions } from "./useMessageActions";
 import { useEffect, useRef, useState } from "react";
 
-export const useMessaging = (id) => {
+export const useMessageInput = (id) => {
     const [text, setText] = useState("");
     const [media, setMedia] = useState([]);
     const [sending, setSending] = useState(false);
