@@ -19,7 +19,7 @@ export const createMessage = async (req, res) => {
             (participant) => participant.toString() !== sender.toString()
         );
 
-        const newMessage = await Message.create({
+        const newMessage = new Message({
             sender,
             receiver,
             chat: chatId,
@@ -29,20 +29,27 @@ export const createMessage = async (req, res) => {
 
         chat.lastMessage = newMessage._id;
 
-        chat.unreadCounts[userId] = (chat.unreadCounts[userId] || 0) + 1;
+        const receiverId = receiver.toString();
+
+        chat.unreadCounts.set(
+            receiverId,
+            (chat.unreadCounts.get(receiverId) || 0) + 1
+        );
 
         await chat.save();
+        await newMessage.save();
 
-        console.log(chat);
-        io.to(chatId.toString()).emit("new_message", newMessage);
-
-        io.to(receiver.toString()).emit("chat_updated", {
+        io.to(chatId).emit("new_message", newMessage);
+        io.to(receiverId).emit("chat_unread_update", {
             chatId,
-            unreadCount: currentUnread + 1,
+            userId: receiverId,
+            unreadCount: chat.unreadCounts.get(receiverId),
         });
 
         return res.status(201).json(newMessage);
     } catch (error) {
+        console.error(error);
+
         res.status(500).json({ message: "Failed to create message" });
     }
 };

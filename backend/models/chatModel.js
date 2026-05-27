@@ -10,7 +10,8 @@ const chatSchema = new mongoose.Schema(
         },
 
         unreadCounts: {
-            type: Object,
+            type: Map,
+            of: Number,
             default: {},
         },
     },

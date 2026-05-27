@@ -29,5 +29,5 @@ export const useChatContextLogic = () => {
         fetchChats();
     }, []);
 
-    return { chatIds, chatsById, loadingChats };
+    return { chatIds, chatsById, setChatIds, setChatsById, loadingChats };
 };

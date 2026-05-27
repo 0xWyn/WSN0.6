@@ -17,6 +17,11 @@ export const useChatNotifications = () => {
             map[id] = chatsById[id]?.unreadCounts[user._id] ?? 0;
         });
 
-        return map;
+        const totalMessages = Object.values(map).reduce(
+            (total, unread) => total + unread,
+            0
+        );
+
+        return { map, totalMessages };
     }, [chatIds, chatsById, user]);
 };

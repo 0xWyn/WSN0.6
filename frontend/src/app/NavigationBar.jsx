@@ -3,13 +3,8 @@ import { useAuth } from "../features/auth/context/AuthProvider";
 import { useChatNotifications } from "../features/notification/hooks/useChatNotifications";
 
 export default function NavigationBar() {
-    const map = useChatNotifications();
-    let totalMessages = Object.values(map).reduce(
-        (total, unread) => total + unread,
-        0
-    );
+    const { totalMessages } = useChatNotifications();
 
-    console.log(totalMessages);
     const location = useLocation();
     const { user, logout } = useAuth();
 
@@ -37,7 +32,7 @@ export default function NavigationBar() {
             active: pathname.startsWith("/search"),
         },
         {
-            name: "Profile",
+            name: "profile",
             path: `/user/${user._id}`,
             active: pathname === `/user/${user._id}`,
         },
@@ -62,6 +57,14 @@ export default function NavigationBar() {
                             `}
                         >
                             {section.name}
+                            {section.name === "messages" &&
+                                totalMessages > 0 && (
+                                    <div className="absolute size-4 bg-rose-500 rounded-full flex items-center justify-center bottom-6 left-18">
+                                        <p className="text-white text-xs font-medium">
+                                            {totalMessages}
+                                        </p>
+                                    </div>
+                                )}
                         </div>
                     </Link>
                 ))}
