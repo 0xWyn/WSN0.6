@@ -11,7 +11,9 @@ export const RealtimeProvider = ({ children }) => {
     useEffect(() => {
         if (!socket) return;
 
+        console.log("Hit");
         const handlePresence = ({ userId, isOnline }) => {
+            console.log("handling presence");
             setPresenceById((prev) => ({ ...prev, [userId]: isOnline }));
         };
 
@@ -22,6 +24,9 @@ export const RealtimeProvider = ({ children }) => {
         };
     }, [socket]);
 
+    useEffect(() => {
+        console.log(presenceById);
+    }, [presenceById]);
     return (
         <RealtimeContext.Provider value={{ presenceById }}>
             {children}

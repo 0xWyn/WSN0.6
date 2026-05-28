@@ -19,7 +19,6 @@ export const useChatNotifications = () => {
             map[id] = entities.chats[id]?.unreadCounts[user._id] ?? 0;
         });
 
-        console.log(map);
         const totalMessages = Object.values(map).reduce(
             (total, unread) => total + unread,
             0

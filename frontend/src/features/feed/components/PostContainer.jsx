@@ -13,8 +13,6 @@ export default function PostContainer({ target, onDelete }) {
             </div>
         );
 
-    console.log(queries);
-    console.log(entities);
     const posts =
         target.type === "home"
             ? queries.homeFeedIds.map((id) => entities.posts[id])

@@ -7,6 +7,12 @@ export default function ProtectedRoute() {
 
     const { user, loading } = useAuth();
 
+    useEffect(() => {
+        window.addEventListener("auth:logout", () => {
+            return <Navigate to="/login" state={{ from: location }} />;
+        });
+    });
+
     if (loading) {
         return (
             <div className="w-full h-full rounded-2xl border border-dashed border slate 300 p-10 text-center text-slate 500">
@@ -14,12 +20,6 @@ export default function ProtectedRoute() {
             </div>
         );
     }
-
-    useEffect(() => {
-        window.addEventListener("auth:logout", () => {
-            return <Navigate to="/login" state={{ from: location }} />;
-        });
-    });
 
     if (!loading && !user) {
         console.log("Redirecting from ProtectedRoute");

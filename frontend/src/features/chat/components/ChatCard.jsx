@@ -29,15 +29,14 @@ export default function ChatCard({ chat }) {
     const unreadCount = chat?.unreadCounts?.[user._id] || 0;
 
     const isOnline = presenceById[receiver._id];
-    console.log(isOnline);
 
     return (
         <div
             onClick={() => navigate(`/chats/${chat?._id}`)}
-            className="group relative block overflow-hidden rounded-[28px] border border-white/80 bg-white/50 p-4 backdrop-blur-xl transition-all duration-300 hover:bg-white/60 hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(15,23,42,0.08)]"
+            className="flex flex-col w-full md:justify-between group relative block overflow-hidden rounded-[28px] border border-white/80 bg-white/50 p-4 backdrop-blur-xl transition-all duration-300 hover:bg-white/60 hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(15,23,42,0.08)] md:flex-row gap-4"
         >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.9),transparent_20%)]" />
-            <div className="flex items-star gap-4">
+            <div className="flex items-start gap-4">
                 <Avatar user={receiver} size={14} />
                 <div className="min-w-0 flex-1">
                     <p className="truncate text-[15px] font-semibold tracking-[0.02em] text-slate-800">
@@ -69,7 +68,7 @@ export default function ChatCard({ chat }) {
             </div>
             <div className="flex items-center gap-2 text-xs text-slate-400">
                 <div
-                    className={`size-2 rounded-full ${receiver?.isOnline ? "bg-emerald-400" : "bg-slate-300"} `}
+                    className={`shrink-0 size-2 rounded-full ${isOnline ? "bg-emerald-400" : "bg-slate-300"} `}
                 />
                 <span>{timeLabel}</span>
             </div>
