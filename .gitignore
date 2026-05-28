@@ -3,3 +3,4 @@
 node_modules
 *.log
 .vite
+ARCHITECTURE_RECOMMENDATIONS.md

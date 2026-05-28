@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSocket } from "../socket/SocketProvider";
-import { useEntities } from "./EntityProvider";
 
 const RealtimeContext = createContext(null);
 
@@ -11,22 +10,33 @@ export const RealtimeProvider = ({ children }) => {
     useEffect(() => {
         if (!socket) return;
 
-        console.log("Hit");
         const handlePresence = ({ userId, isOnline }) => {
-            console.log("handling presence");
             setPresenceById((prev) => ({ ...prev, [userId]: isOnline }));
         };
 
+        // Listen for presence updates
         socket.on("presence_update", handlePresence);
+
+        // Request initial presence data
+        socket.emit("get_online_users");
+
+        // Handle initial online users list
+        const handleOnlineUsers = (onlineUserIds) => {
+            const presence = {};
+            onlineUserIds.forEach((userId) => {
+                presence[userId] = true;
+            });
+            setPresenceById(presence);
+        };
+
+        socket.on("online_users_list", handleOnlineUsers);
 
         return () => {
             socket.off("presence_update", handlePresence);
+            socket.off("online_users_list", handleOnlineUsers);
         };
     }, [socket]);
 
-    useEffect(() => {
-        console.log(presenceById);
-    }, [presenceById]);
     return (
         <RealtimeContext.Provider value={{ presenceById }}>
             {children}

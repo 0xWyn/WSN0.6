@@ -7,7 +7,7 @@ export const MIntroCard = ({ chat }) => {
     const { receiver, createdAt } = chat;
     const { entities } = useEntities();
     const timeLabel = formatDate(createdAt);
-    const user = entities.users[receiver._id] || {};
+    const user = entities.users[receiver?._id] || {};
 
     return (
         <div className="flex w-full justify-center px-8 py-4 md:mb-10 md:px-20">
@@ -19,7 +19,7 @@ export const MIntroCard = ({ chat }) => {
                 <Avatar user={receiver ?? null} size={16} />
                 <div className="flex flex-col w-full items-center gap-2">
                     <p className="text-sm font-semibold text-slate-700">
-                        @{receiver.username}
+                        @{receiver?.username}
                     </p>
 
                     <p className="text-xs md:text-sm text-slate-400 ">

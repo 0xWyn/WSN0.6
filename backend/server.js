@@ -38,10 +38,18 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
     cors: { origin: "*" },
+    pingInterval: 25000,
+    pingTimeout: 60000,
 });
 
 const onlineUsers = new Map();
 const activeChats = new Map();
+
+// Middleware for logging
+io.use((socket, next) => {
+    socket.connectedAt = Date.now();
+    next();
+});
 
 io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
@@ -62,7 +70,14 @@ io.on("connection", (socket) => {
             isOnline: true,
         });
 
+        console.log("ONLINE USERS", [...onlineUsers.entries()]);
         console.log(`Socket joined room: ${userId}`);
+    });
+
+    // New event: send list of currently online users
+    socket.on("get_online_users", () => {
+        const onlineUserIds = Array.from(onlineUsers.keys());
+        socket.emit("online_users_list", onlineUserIds);
     });
 
     socket.on("join_chat", (chatId) => {
@@ -105,6 +120,11 @@ io.on("connection", (socket) => {
             }
         }
         console.log(`Socket disconnected: ${socket.id}`);
+    });
+
+    // Error handling
+    socket.on("error", (error) => {
+        console.error("Socket error:", error);
     });
 });
 

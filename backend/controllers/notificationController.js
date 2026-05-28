@@ -1,23 +1,18 @@
-import Notification from "../models/notificationModel";
+import Notification from "../models/notificationModel.js";
 
 export const getNotifications = async (req, res) => {
     try {
         const user = req.user;
         const notifications = await Notification.find({
             receiver: user._id,
-        }).sort({ createdAt: -1 });
+        })
+            .sort({ createdAt: -1 })
+            .populate("sender", "username avatar")
+            .populate("source");
 
-        const messageNotifications = notifications.map(
-            (n) => n.type === "message"
-        );
-
-        const generalNotifications = notifications.map(
-            (n) => !messageNotifications.includes(n)
-        );
-
-        res.status(200).json(messageNotifications, generalNotifications);
+        res.status(200).json(notifications);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -32,10 +27,46 @@ export const readChatNotifications = async (req, res) => {
         });
         res.status(200).json({ msg: "Notifications cleared successfully" });
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 };
 
-export const readNotifications = async();
-//read chat notifications = take notifications.type === chat, .source === chatId, .read = true;
-// like notification = notification = Notification.findByIdAndUpdate(_id)
+export const readNotification = async (req, res) => {
+    try {
+        const { notificationId } = req.params;
+        const notification = await Notification.findByIdAndUpdate(
+            notificationId,
+            { read: true },
+            { new: true }
+        );
+
+        if (!notification) {
+            return res.status(404).json({ msg: "Notification not found" });
+        }
+
+        res.status(200).json(notification);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export const deleteNotification = async (req, res) => {
+    try {
+        const { notificationId } = req.params;
+        const user = req.user;
+
+        const notification = await Notification.findById(notificationId);
+        if (!notification) {
+            return res.status(404).json({ msg: "Notification not found" });
+        }
+
+        if (notification.receiver.toString() !== user._id.toString()) {
+            return res.status(403).json({ msg: "Forbidden" });
+        }
+
+        await Notification.findByIdAndDelete(notificationId);
+        res.status(200).json({ msg: "Notification deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

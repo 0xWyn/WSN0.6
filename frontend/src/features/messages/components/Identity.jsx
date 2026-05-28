@@ -1,6 +1,12 @@
 import Avatar from "../../user/components/Avatar";
+import { useRealtime } from "../../global/RealtimeProvider";
+import { useEffect, useState } from "react";
 
 export const Identity = ({ receiver }) => {
+    const { presenceById } = useRealtime();
+
+    const isOnline = presenceById?.[receiver?._id];
+
     return (
         <div name="Identity " className="rounded-t-3xl">
             <div className="flex gap-3 items-center">
@@ -9,8 +15,8 @@ export const Identity = ({ receiver }) => {
                     <h1 className="font-semibold truncate text-slate-900">
                         @{receiver?.username ?? "username"}
                     </h1>
-                    <p className=" text-[12px] text-slate-500">
-                        Last seen online
+                    <p className=" text-slate-500">
+                        {isOnline ? "online" : "offline"}
                     </p>
                 </div>
             </div>

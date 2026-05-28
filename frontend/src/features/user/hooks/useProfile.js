@@ -16,7 +16,6 @@ export const useProfile = (userId) => {
             try {
                 const { data } = await getUser(userId);
                 setUser(data);
-                console.log(data);
                 mergeUsers([data]);
             } catch (error) {
                 setError(error);

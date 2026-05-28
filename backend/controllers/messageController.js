@@ -118,7 +118,7 @@ export const editMessage = async (req, res) => {
                     edited: true,
                 },
             },
-            { returnDocument: after }
+            { new: true }
         );
 
         io.to(message.chat.toString()).emit("edited_message", updatedMessage);

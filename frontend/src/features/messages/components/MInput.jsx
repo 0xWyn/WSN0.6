@@ -103,6 +103,7 @@ export default function MInput({ messaging }) {
                     <textarea
                         ref={textInputRef}
                         value={text}
+                        id="text-input"
                         rows={1}
                         placeholder="Message..."
                         className="max-h-[10.5rem] min-h-[2.75rem] resize-none flex-1 bg-transparent text-sm text-black leading-6 placeholder:text-slate-400 placeholder:transition-opacity focus:placeholder:opacity-60 outline-none overflow-y-auto p-3 [scrollbar-width:none]"
