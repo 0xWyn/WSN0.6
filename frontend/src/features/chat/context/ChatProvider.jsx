@@ -6,13 +6,12 @@ import { useEffect } from "react";
 const ChatContext = createContext(null);
 
 export const ChatProvider = ({ children }) => {
-    const { chatIds, chatsById, setChatIds, setChatsById, loadingChats } =
-        useChatContextLogic();
+    const { chatIds, setChatIds, loadingChats } = useChatContextLogic();
 
-    useChatSocket(chatIds, chatsById, setChatsById);
+    useChatSocket(chatIds, setChatIds);
 
     return (
-        <ChatContext.Provider value={{ chatIds, chatsById, loadingChats }}>
+        <ChatContext.Provider value={{ chatIds, loadingChats }}>
             {children}
         </ChatContext.Provider>
     );

@@ -9,23 +9,25 @@ export function SocketProvider({ children }) {
     const { user } = useAuth();
     const socket = socketRef.current;
 
-    const initSocket = () => {
-        if (!user) return;
-        if (socketRef.current) return;
+    useEffect(() => {
+        const initSocket = () => {
+            if (!user) return;
+            if (socketRef.current) return;
 
-        socketRef.current = io("http://localhost:5000");
+            socketRef.current = io("http://localhost:5000");
 
-        socketRef.current.on("connect", () => {
-            socketRef.current.emit("join", user._id);
-        });
+            socketRef.current.on("connect", () => {
+                socketRef.current.emit("join", user._id);
+            });
 
-        return () => {
-            socketRef.current.disconnect();
-            socketRef.current = null;
+            return () => {
+                socketRef.current.disconnect();
+                socketRef.current = null;
+            };
         };
-    };
 
-    initSocket();
+        initSocket();
+    }, [user]);
 
     return (
         <SocketContext.Provider value={{ socket: socketRef.current }}>

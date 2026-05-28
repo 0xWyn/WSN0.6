@@ -1,14 +1,18 @@
 import { useEffect } from "react";
+import { useAuth } from "../../auth/context/AuthProvider";
 import { useSocket } from "../../socket/SocketProvider";
-import { useState } from "react";
+import { useEntities } from "../../global/EntityProvider";
 
-export const useMessageSocket = (id, setMessageIds, setMessagesById) => {
+export const useActiveChatSocket = (id, setMessageIds) => {
     const { socket } = useSocket();
+    const { user } = useAuth();
+    const { entities, setEntities } = useEntities();
 
     useEffect(() => {
         if (!socket) return;
 
         socket.emit("join_chat", id);
+        socket.emit("chat_opened", { userId: user._id, chatId: id });
 
         const handleNewMessage = (message) => {
             if (message.chat !== id) return;
@@ -19,7 +23,13 @@ export const useMessageSocket = (id, setMessageIds, setMessagesById) => {
                 return newIds;
             });
 
-            setMessagesById((prev) => ({ ...prev, [message._id]: message }));
+            setEntities((prev) => ({
+                ...prev,
+                messages: {
+                    ...prev.messages,
+                    [message._id]: message,
+                },
+            }));
         };
 
         const handleDeletedMessage = (message) => {
@@ -31,9 +41,9 @@ export const useMessageSocket = (id, setMessageIds, setMessagesById) => {
                 return newIds;
             });
 
-            setMessagesById((prev) => {
+            setEntities((prev) => {
                 const map = { ...prev };
-                delete map[message._id];
+                delete map.messages[message._id];
                 return map;
             });
 
@@ -43,9 +53,9 @@ export const useMessageSocket = (id, setMessageIds, setMessagesById) => {
         const handleEditedMessage = (message) => {
             if (message.chat.toString() !== id) return;
 
-            setMessagesById((prev) => {
+            setEntities((prev) => {
                 const map = { ...prev };
-                map[message._id] = message;
+                map.messages[message._id] = message;
 
                 return map;
             });
@@ -60,6 +70,8 @@ export const useMessageSocket = (id, setMessageIds, setMessagesById) => {
             socket.off("new_message", handleNewMessage);
             socket.off("deleted_message", handleDeletedMessage);
             socket.off("edited_message", handleEditedMessage);
+            socket.emit("leave_chat", id);
+            socket.emit("chat_closed", user._id);
         };
     }, [socket]);
 };

@@ -40,11 +40,28 @@ export const io = new Server(server, {
     cors: { origin: "*" },
 });
 
+const onlineUsers = new Map();
+const activeChats = new Map();
+
 io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
 
     socket.on("join", (userId) => {
+        socket.userId = userId;
+
         socket.join(userId);
+
+        if (!onlineUsers.has(userId)) {
+            onlineUsers.set(userId, new Set());
+        }
+
+        onlineUsers.get(userId).add(socket.id);
+
+        io.emit("presence_update", {
+            userId,
+            isOnline: true,
+        });
+
         console.log(`Socket joined room: ${userId}`);
     });
 
@@ -58,10 +75,46 @@ io.on("connection", (socket) => {
         console.log(`Socket left chat: ${chatId}`);
     });
 
+    socket.on("chat_opened", ({ userId, chatId }) => {
+        activeChats.set(userId, chatId);
+    });
+
+    socket.on("chat_closed", ({ userId }) => {
+        activeChats.delete(userId);
+    });
+
     socket.on("disconnect", () => {
+        const userId = socket.userId;
+
+        if (!userId) return;
+
+        const userSockets = onlineUsers.get(userId);
+
+        if (userSockets) {
+            userSockets.delete(socket.id);
+
+            if (userSockets.size === 0) {
+                onlineUsers.delete(userId);
+
+                activeChats.delete(userId);
+
+                io.emit("presence_update", {
+                    userId,
+                    isOnline: false,
+                });
+            }
+        }
         console.log(`Socket disconnected: ${socket.id}`);
     });
 });
+
+export const isUserOnline = (userId) => {
+    return onlineUsers.has(userId);
+};
+
+export const isUserViewingChat = (userId, chatId) => {
+    return activeChats.get(userId)?.toString() === chatId.toString();
+};
 
 mongoose
     .connect(mongoURI)

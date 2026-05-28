@@ -1,6 +1,6 @@
-import { BarsArrowDown } from "../../../../components/icons/bars-arrow-down";
-import { formatDate } from "../../../../utils/formatDate";
-import { useScroll } from "../../hooks/useScroll";
+import { BarsArrowDown } from "../../../components/icons/bars-arrow-down";
+import { formatDate } from "../../../utils/formatDate";
+import { useScroll } from "../hooks/useScroll";
 import MessageCard from "./MessageCard";
 import { MIntroCard } from "./MIntroCard";
 

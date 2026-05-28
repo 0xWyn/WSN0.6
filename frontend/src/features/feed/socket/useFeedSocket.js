@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useEntityActions } from "../hooks/useEntityActions";
+import { useEntityActions } from "../../global/useEntityActions";
 import { useSocket } from "../../socket/SocketProvider";
 
 export const useFeedSocket = () => {

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import ArrowLeft from "../../../../components/icons/arrow-left";
-import { ChatActions } from "../ChatActions";
+import ArrowLeft from "../../../components/icons/arrow-left";
+import { ChatActions } from "./ChatActions";
 import { Identity } from "./Identity";
 
 export const Header = ({ receiver }) => {

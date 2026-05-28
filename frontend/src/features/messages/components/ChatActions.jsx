@@ -1,5 +1,4 @@
 import { Bell } from "../../../components/icons/bell";
-
 export const ChatActions = () => {
     const BellName = (
         <div>

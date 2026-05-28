@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import XMark from "../../../../components/icons/x-mark";
-import { ChevronDown } from "../../../../components/icons/chevron-down";
-import { ChevronDoubleLeft } from "../../../../components/icons/chevron-double-left";
-import { ChevronDoubleRight } from "../../../../components/icons/chevron-double-right";
+import XMark from "../../../components/icons/x-mark";
+import { ChevronDown } from "../../../components/icons/chevron-down";
+import { ChevronDoubleLeft } from "../../../components/icons/chevron-double-left";
+import { ChevronDoubleRight } from "../../../components/icons/chevron-double-right";
 
 export const Preview = ({ files, handleRemove }) => {
     return (

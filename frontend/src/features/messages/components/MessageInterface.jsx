@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
-import { useInterface } from "../../hooks/useInterface";
-import { useMessageInput } from "../../hooks/useMessageInput";
+import { useMessageInterface } from "../hooks/useMessageInterface";
+import { useMessageInput } from "../hooks/useMessageInput";
 import { Header } from "./Header";
 import MContainer from "./MContainer";
 import MInput from "./MInput";
-import { useMessageSocket } from "../../socket/useMessageSocket";
 
 export default function MInterface() {
     const { id } = useParams();
-    const { chat, messages, loading } = useInterface(id);
+    const { chat, messages, loading } = useMessageInterface(id);
     const messaging = useMessageInput(id);
     return (
         // Screen

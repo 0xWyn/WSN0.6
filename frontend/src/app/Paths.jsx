@@ -21,7 +21,7 @@ const PostPage = lazy(
 );
 const Chats = lazy(() => import("../features/chat/components/ChatList.jsx"));
 const ChatInterface = lazy(
-    () => import("../features/chat/components/messages/Interface.jsx")
+    () => import("../features/messages/components/MessageInterface.jsx")
 );
 const ChatManager = lazy(
     () => import("../features/chat/components/ChatResolver.jsx")

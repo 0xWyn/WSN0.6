@@ -15,6 +15,12 @@ export default function ProtectedRoute() {
         );
     }
 
+    useEffect(() => {
+        window.addEventListener("auth:logout", () => {
+            return <Navigate to="/login" state={{ from: location }} />;
+        });
+    });
+
     if (!loading && !user) {
         console.log("Redirecting from ProtectedRoute");
         return <Navigate to="/login" state={{ from: location }} />;

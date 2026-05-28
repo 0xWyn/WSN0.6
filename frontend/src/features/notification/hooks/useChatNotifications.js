@@ -2,11 +2,13 @@ import { useMemo } from "react";
 
 import { useChat } from "../../chat/context/ChatProvider";
 import { useAuth } from "../../auth/context/AuthProvider";
+import { useEntities } from "../../global/EntityProvider";
 
 export const useChatNotifications = () => {
     const { user } = useAuth();
 
-    const { chatIds, chatsById } = useChat();
+    const { chatIds } = useChat();
+    const { entities } = useEntities();
 
     return useMemo(() => {
         if (!user) return {};
@@ -14,14 +16,15 @@ export const useChatNotifications = () => {
         const map = {};
 
         chatIds.forEach((id) => {
-            map[id] = chatsById[id]?.unreadCounts[user._id] ?? 0;
+            map[id] = entities.chats[id]?.unreadCounts[user._id] ?? 0;
         });
 
+        console.log(map);
         const totalMessages = Object.values(map).reduce(
             (total, unread) => total + unread,
             0
         );
 
         return { map, totalMessages };
-    }, [chatIds, chatsById, user]);
+    }, [chatIds, entities.chats, user]);
 };

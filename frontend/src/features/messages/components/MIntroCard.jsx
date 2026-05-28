@@ -1,13 +1,14 @@
-import { formatDate } from "../../../../utils/formatDate";
-import Avatar from "../../../user/components/Avatar";
-import { useFeed } from "../../../feed/context/FeedProvider";
+import { formatDate } from "../../../utils/formatDate";
+import Avatar from "../../user/components/Avatar";
+import { useFeed } from "../../feed/context/FeedProvider";
+import { useEntities } from "../../global/EntityProvider";
 
 export const MIntroCard = ({ chat }) => {
     const { receiver, createdAt } = chat;
-    const { entities } = useFeed();
+    const { entities } = useEntities();
     const timeLabel = formatDate(createdAt);
     const user = entities.users[receiver._id] || {};
-    const { following, followers } = user;
+
     return (
         <div className="flex w-full justify-center px-8 py-4 md:mb-10 md:px-20">
             <div

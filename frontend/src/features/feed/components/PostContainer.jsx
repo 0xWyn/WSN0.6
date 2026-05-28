@@ -1,8 +1,10 @@
+import { useEntities } from "../../global/EntityProvider";
 import PostCard from "../../post/main/components/PostCard";
 import { useFeed } from "../context/FeedProvider";
 
 export default function PostContainer({ target, onDelete }) {
-    const { loading, entities, queries } = useFeed();
+    const { loading, queries } = useFeed();
+    const { entities } = useEntities();
 
     if (loading)
         return (
@@ -11,10 +13,14 @@ export default function PostContainer({ target, onDelete }) {
             </div>
         );
 
+    console.log(queries);
+    console.log(entities);
     const posts =
         target.type === "home"
-            ? queries.homeFeed.map((id) => entities.posts[id])
-            : queries.usersPosts[target.userId].map((id) => entities.posts[id]);
+            ? queries.homeFeedIds.map((id) => entities.posts[id])
+            : queries.usersPostsIds[target.userId].map(
+                  (id) => entities.posts[id]
+              );
 
     const mappedPosts = posts.map((post) => {
         const author = entities.users[post.author];

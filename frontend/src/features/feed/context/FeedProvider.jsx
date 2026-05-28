@@ -1,18 +1,12 @@
 import { createContext, useContext, useState } from "react";
 import { useFeedSocket } from "../socket/useFeedSocket";
-
+import { useEntities } from "../../global/EntityProvider";
 const FeedContext = createContext();
 
 export const FeedProvider = ({ children }) => {
-    const [entities, setEntities] = useState({
-        posts: {},
-        users: {},
-        comments: {},
-    });
-
     const [queries, setQueries] = useState({
-        homeFeed: [],
-        usersPosts: {},
+        homeFeedIds: [],
+        usersPostsIds: {},
         commentsByPost: {},
     });
 
@@ -21,9 +15,6 @@ export const FeedProvider = ({ children }) => {
     return (
         <FeedContext.Provider
             value={{
-                entities,
-                setEntities,
-
                 queries,
                 setQueries,
 

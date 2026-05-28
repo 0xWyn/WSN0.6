@@ -2,7 +2,7 @@ import {
     createMessage,
     deleteMessage,
     patchMessage,
-} from "../api/messageApis.js";
+} from "../apis/messageApis.js";
 import { uploadToCloudinary } from "../../../utils/uploadToCloud.js";
 import { uploadAllFiles } from "../../../utils/uploadToCloud.js";
 

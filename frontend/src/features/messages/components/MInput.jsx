@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { PaperPlane } from "../../../../components/icons/paper-airplane";
-import Plus from "../../../../components/icons/plus";
+import { PaperPlane } from "../../../components/icons/paper-airplane";
+import Plus from "../../../components/icons/plus";
 import { Preview } from "./Previews";
 
 export default function MInput({ messaging }) {

@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import { createChat, getAllChats } from "../api/chatApis.js";
+import { useEntities } from "../../global/EntityProvider.jsx";
 
 export const useChatContextLogic = () => {
-    const [chatsById, setChatsById] = useState({});
     const [chatIds, setChatIds] = useState([]);
     const [loadingChats, setLoadingChats] = useState(true);
-
+    const { setEntities } = useEntities();
     useEffect(() => {
         const fetchChats = async () => {
             try {
                 const { data } = await getAllChats();
                 setChatIds(data.map((c) => c._id));
-                setChatsById(() => {
-                    const map = {};
-                    data.forEach((c) => {
-                        map[c._id] = c;
+
+                setEntities((prev) => {
+                    const map = { ...prev };
+                    data.forEach((chat) => {
+                        map.chats[chat._id] = chat;
+
+                        chat.participants.forEach(
+                            (participant) =>
+                                (map.users[participant._id] = participant)
+                        );
                     });
 
                     return map;
@@ -29,5 +35,5 @@ export const useChatContextLogic = () => {
         fetchChats();
     }, []);
 
-    return { chatIds, chatsById, setChatIds, setChatsById, loadingChats };
+    return { chatIds, setChatIds, loadingChats };
 };

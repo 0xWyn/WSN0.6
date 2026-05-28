@@ -3,7 +3,7 @@ import PostContainer from "../../feed/components/PostContainer";
 
 export default function Posts({ user }) {
     const { queries } = useFeed();
-    const posts = queries.usersPosts[user._id];
+    const posts = queries.usersPostsIds[user._id];
 
     if (!posts) return <div>Loading...</div>;
 

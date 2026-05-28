@@ -2,6 +2,7 @@ import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js";
 import { createNotification } from "../services/notificationService.js";
 import { io } from "../server.js";
+import { isUserViewingChat } from "../server.js";
 
 export const createMessage = async (req, res) => {
     try {
@@ -31,19 +32,33 @@ export const createMessage = async (req, res) => {
 
         const receiverId = receiver.toString();
 
-        chat.unreadCounts.set(
-            receiverId,
-            (chat.unreadCounts.get(receiverId) || 0) + 1
-        );
+        const isChatting = isUserViewingChat(receiverId, chatId);
+
+        if (!isChatting) {
+            chat.unreadCounts.set(
+                receiverId,
+                (chat.unreadCounts.get(receiverId) || 0) + 1
+            );
+        }
 
         await chat.save();
         await newMessage.save();
 
+        if (!isChatting) {
+            io.to(receiverId).emit("chat_unread_update", {
+                chatId,
+                userId: receiverId,
+                unreadCount: chat.unreadCounts.get(receiverId),
+            });
+        }
+
         io.to(chatId).emit("new_message", newMessage);
-        io.to(receiverId).emit("chat_unread_update", {
+
+        const updatedChat = await Chat.findById(chatId).populate("lastMessage");
+        io.emit("chat_lastMessage_update", {
             chatId,
-            userId: receiverId,
-            unreadCount: chat.unreadCounts.get(receiverId),
+            lastMessage: updatedChat.lastMessage,
+            updatedAt: updatedChat.updatedAt,
         });
 
         return res.status(201).json(newMessage);

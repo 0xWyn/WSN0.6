@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { getUser } from "../apis/userApis";
-import { useEntityActions } from "../../feed/hooks/useEntityActions";
+import { useEntityActions } from "../../global/useEntityActions";
+import { useEntities } from "../../global/EntityProvider";
 
 export const useProfile = (userId) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { updateUser } = useEntityActions();
+    const { mergeUsers } = useEntityActions();
 
     useEffect(() => {
         if (!userId) return;
@@ -15,7 +16,8 @@ export const useProfile = (userId) => {
             try {
                 const { data } = await getUser(userId);
                 setUser(data);
-                updateUser(user);
+                console.log(data);
+                mergeUsers([data]);
             } catch (error) {
                 setError(error);
                 console.error(error);

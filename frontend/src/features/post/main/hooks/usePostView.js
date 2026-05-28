@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { useEntities } from "../../../global/EntityProvider";
 import { getPostById } from "../apis/postApis";
-import { useFeed } from "../../../feed/context/FeedProvider";
 
 export const usePostView = (postId) => {
     const [post, setPost] = useState(null);
-    const { entities } = useFeed();
+    const { entities } = useEntities();
     const [loadingPost, setLoadingPost] = useState(true);
 
     useEffect(() => {
@@ -23,6 +23,7 @@ export const usePostView = (postId) => {
                     return;
                 }
 
+                console.log("Exists, but still hitting this");
                 const { data } = await getPostById(postId);
 
                 setPost(data);

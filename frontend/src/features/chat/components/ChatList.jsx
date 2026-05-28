@@ -2,9 +2,12 @@ import LocNav from "../../../components/ui/LocNav";
 import { useChat } from "../context/ChatProvider";
 import ChatCard from "./ChatCard";
 import { useAuth } from "../../auth/context/AuthProvider";
+import { useEntities } from "../../global/EntityProvider";
+
 export default function ChatList() {
     const { user } = useAuth();
-    const { chatIds, chatsById, loadingChats } = useChat();
+    const { chatIds, loadingChats } = useChat();
+    const { entities } = useEntities();
 
     return (
         <div className="relative w-full h-full min-h-0 border overflow-hidden bg-[#f8fafc] rounded-3xl">
@@ -41,7 +44,7 @@ export default function ChatList() {
                             </div>
                         ) : chatIds.length > 0 ? (
                             chatIds.map((id) => (
-                                <ChatCard key={id} chat={chatsById[id]} />
+                                <ChatCard key={id} chat={entities.chats[id]} />
                             ))
                         ) : (
                             <div className="rounded-3xl bg-slate-100 p-8 text-center text-slate-500">

@@ -1,5 +1,5 @@
 // hook for handling message state and input
-import { useMessageActions } from "./useMessageActions";
+import { useMessageActions } from "../../messages/hooks/useMessageActions";
 import { useEffect, useRef, useState } from "react";
 
 export const useMessageInput = (id) => {

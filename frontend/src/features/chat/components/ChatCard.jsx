@@ -3,28 +3,33 @@ import Avatar from "../../user/components/Avatar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/context/AuthProvider";
 import { formatDate } from "../../../utils/formatDate";
+import { useRealtime } from "../../global/RealtimeProvider";
 
 export default function ChatCard({ chat }) {
+    const { presenceById } = useRealtime();
     const { user } = useAuth();
+
     const navigate = useNavigate();
-    console.log(chat);
+
     const receiver =
         chat?.receiver ||
         chat?.participants?.find(
-            (participant) => !participant?.isCurrentUser
-        ) ||
-        chat?.members?.find((member) => member?._id) ||
-        {};
+            (participant) => participant._id.toString() !== user._id.toString()
+        );
+
     const sender = chat.participants.find(
         (participant) => participant._id.toString() === chat.lastMessage?.sender
     );
+
     const lastMessage =
-        chat?.lastMessage?.text ||
-        chat?.latestMessage?.text ||
-        chat?.messages?.[0]?.text ||
-        "Say hello to start a new conversation";
+        chat?.lastMessage?.text || "Say hello to start a new conversation";
 
     const timeLabel = formatDate(chat.updatedAt || chat.createdAt);
+
+    const unreadCount = chat?.unreadCounts?.[user._id] || 0;
+
+    const isOnline = presenceById[receiver._id];
+    console.log(isOnline);
 
     return (
         <div
@@ -38,12 +43,12 @@ export default function ChatCard({ chat }) {
                     <p className="truncate text-[15px] font-semibold tracking-[0.02em] text-slate-800">
                         {receiver?.username || "Unknown"}
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-end gap-2">
                         {sender && (
                             <p className="text-sm">
                                 {sender._id === user._id.toString()
                                     ? "You: "
-                                    : `${sender.username ?? "Them"}`}
+                                    : `${sender.username ?? "Them"}:`}
                             </p>
                         )}
                         <p className="mt-1 truncate text-sm leading-5 text-slate-400 italic">
@@ -51,9 +56,14 @@ export default function ChatCard({ chat }) {
                         </p>
                     </div>
                 </div>
-                {chat?.unreadCount > 0 && (
-                    <div className="rounded-full bg-blue-600 px-2.5 py-1 text-[11px] font-semibold text-white">
-                        {chat.unreadCount}
+                {unreadCount > 0 && (
+                    <div className="flex gap-2">
+                        <div className="rounded-full size-6 bg-rose-600 px-2.5 py-1 text-[11px] font-semibold text-white flex items-center justify-center">
+                            {unreadCount}
+                        </div>
+                        <p className="text-sm text-slate-500">
+                            unread messages
+                        </p>
                     </div>
                 )}
             </div>

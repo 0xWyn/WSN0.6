@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+const baseURL = "http://localhost:5000/api";
+
 const API = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL,
     withCredentials: true,
 });
 
 let isRefreshing = false;
 let refreshQueue = [];
-
 API.interceptors.response.use(
     (res) => res,
     async (err) => {
@@ -34,7 +36,6 @@ API.interceptors.response.use(
         isRefreshing = true;
 
         try {
-            console.log("Hitting refresh");
             const me = await API.post("/auth/refresh");
 
             console.log(me);
@@ -43,14 +44,12 @@ API.interceptors.response.use(
 
             return API(originalRequest);
         } catch (error) {
-            console.log("Hit error");
             refreshQueue.forEach((p) => p.reject(error));
             refreshQueue = [];
 
-            console.log("Dispatching event");
-            navigate(`${baseURL}/login`);
             window.dispatchEvent(new Event("auth:logout"));
 
+            window.location.href = "/login";
             return Promise.reject(error);
         } finally {
             isRefreshing = false;

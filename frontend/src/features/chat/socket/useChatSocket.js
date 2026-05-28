@@ -1,43 +1,54 @@
 import { useEffect } from "react";
 import { useSocket } from "../../socket/SocketProvider";
+import { useEntities } from "../../global/EntityProvider";
 
-export const useChatSocket = (chatIds, chatsById, setChatsById) => {
+export const useChatSocket = (chatIds, setChatIds) => {
     const { socket } = useSocket();
-
+    const { entities, setEntities } = useEntities();
     useEffect(() => {
         if (!socket) return;
 
-        console.log("triggered");
-
-        const handleUpdatedChat = (data) => {
+        const handleUnreadMessage = (data) => {
             const { chatId, userId, unreadCount } = data;
-            console.log(data);
-            const valid = chatIds.some((id) => id === chatId);
-            if (!valid) {
-                console.log("Returning, invalid");
-                return;
-            }
 
-            setChatsById((prev) => {
+            if (!chatIds.includes(chatId)) return;
+
+            setEntities((prev) => {
                 const map = { ...prev };
-                map[chatId] = {
-                    ...prev[chatId],
+                map.chats[chatId] = {
+                    ...prev.chats[chatId],
                     unreadCounts: {
-                        ...prev[chatId]?.unreadCounts,
+                        ...prev.chats[chatId]?.unreadCounts,
                         [userId]: unreadCount,
                     },
                 };
 
                 return map;
             });
-
-            console.log("Done");
         };
 
-        socket.on("chat_unread_update", handleUpdatedChat);
+        const handleUpdatedChat = ({ chatId, lastMessage, updatedAt }) => {
+            if (!chatIds.includes(chatId)) return;
+
+            setChatIds((prev) => [
+                chatId,
+                ...prev.filter((id) => id !== chatId),
+            ]);
+            setEntities((prev) => ({
+                ...prev,
+                chats: {
+                    ...prev.chats,
+                    [chatId]: { ...prev.chats[chatId], lastMessage, updatedAt },
+                },
+            }));
+        };
+
+        socket.on("chat_unread_update", handleUnreadMessage);
+        socket.on("chat_lastMessage_update", handleUpdatedChat);
 
         return () => {
-            socket.off("chat_unread_update", handleUpdatedChat);
+            socket.off("chat_unread_update", handleUnreadMessage);
+            socket.off("chat_lastMessage_update", handleUpdatedChat);
         };
     }, [socket, chatIds]);
 };
