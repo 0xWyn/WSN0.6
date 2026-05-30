@@ -5,7 +5,7 @@ import express from "express";
 import http from "http";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
-import accessRoutes from "./routes/accessRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
@@ -27,7 +27,7 @@ app.use(
     })
 );
 app.use(cookieParser());
-app.use("/api/auth", accessRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
