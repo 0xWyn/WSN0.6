@@ -1,4 +1,5 @@
 import { toggleFollow } from "../apis/userApis";
+
 export const useUserActions = (userId) => {
     const followUser = async () => {
         try {

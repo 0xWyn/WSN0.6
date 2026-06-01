@@ -34,9 +34,7 @@ export const useAuthLogic = (setUser, setLoading, navigate, location) => {
             setUser(res.data.user);
             console.log(res.data.user);
         } catch (error) {
-            console.error(error);
             setUser(null);
-            navigate("/login");
         } finally {
             setLoading(false);
         }

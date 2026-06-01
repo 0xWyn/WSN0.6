@@ -51,7 +51,6 @@ export const followUser = async (req, res) => {
         const isFollowing = targetUser.followers.some(
             (id) => id.toString() === userId.toString()
         );
-        console.log(isFollowing);
         if (isFollowing) {
             targetUser.followers = targetUser.followers.filter(
                 (id) => id.toString() !== userId.toString()

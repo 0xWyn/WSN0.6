@@ -1,8 +1,10 @@
 import { useAuth } from "../../auth/context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useUserActions } from "../hooks/useUserActions";
-const variants = {
-    primary: `
+
+const ActionButton = ({ text, onClick, variant = "primary" }) => {
+    const variants = {
+        primary: `
         bg-slate-900
         text-white
         shadow-[0_8px_20px_rgba(15,23,42,0.14)]
@@ -10,15 +12,15 @@ const variants = {
         hover:bg-slate-800
     `,
 
-    secondary: `
+        secondary: `
         !border !border-white/70
         !bg-white/60
         text-slate-700
         backdrop-blur-xl
         hover:bg-white/80
     `,
-};
-const ActionButton = ({ text, onClick, variant = "primary" }) => {
+    };
+
     return (
         <button
             onClick={onClick}

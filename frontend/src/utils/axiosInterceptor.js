@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const baseURL = "http://localhost:5000/api";
 
@@ -8,12 +7,23 @@ const API = axios.create({
     withCredentials: true,
 });
 
+const refreshAPI = axios.create({
+    baseURL,
+    withCredentials: true,
+});
+
 let isRefreshing = false;
 let refreshQueue = [];
+
 API.interceptors.response.use(
     (res) => res,
     async (err) => {
+        console.log("Interceptor:", err.config.url);
         const originalRequest = err.config;
+
+        if (originalRequest.url?.includes("/auth/refresh")) {
+            return Promise.reject(err);
+        }
 
         if (err.response?.status !== 401) {
             return Promise.reject(err);
@@ -36,7 +46,7 @@ API.interceptors.response.use(
         isRefreshing = true;
 
         try {
-            const me = await API.post("/auth/refresh");
+            const me = await refreshAPI.post("/auth/refresh");
 
             console.log(me);
             refreshQueue.forEach((p) => p.resolve());
@@ -47,9 +57,8 @@ API.interceptors.response.use(
             refreshQueue.forEach((p) => p.reject(error));
             refreshQueue = [];
 
+            console.log("Doing this: 51");
             window.dispatchEvent(new Event("auth:logout"));
-
-            window.location.href = "/login";
             return Promise.reject(error);
         } finally {
             isRefreshing = false;

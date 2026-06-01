@@ -21,6 +21,16 @@ export const AuthProvider = ({ children }) => {
         fetchUser();
     }, []);
 
+    useEffect(() => {
+        const handleLogout = () => {
+            setUser(null);
+        };
+
+        window.addEventListener("auth:logout", handleLogout);
+
+        return () => window.removeEventListener("auth:logout", handleLogout);
+    }, []);
+
     return (
         <AuthContext.Provider
             value={{ user, register, login, logout, loading }}
