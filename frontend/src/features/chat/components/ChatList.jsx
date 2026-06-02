@@ -1,12 +1,12 @@
 import LocNav from "../../../components/ui/LocNav";
-import { useChat } from "../context/ChatProvider";
-import ChatCard from "./ChatCard";
 import { useAuth } from "../../auth/context/AuthProvider";
 import { useEntities } from "../../global/EntityProvider";
+import { useChatContextLogic } from "../hooks/useChatContextLogic";
+import ChatCard from "./ChatCard";
 
 export default function ChatList() {
     const { user } = useAuth();
-    const { chatIds, loadingChats } = useChat();
+    const { chatIds, loadingChats } = useChatContextLogic();
     const { entities } = useEntities();
 
     return (

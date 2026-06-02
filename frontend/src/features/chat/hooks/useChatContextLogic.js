@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { createChat, getAllChats } from "../api/chatApis.js";
 import { useEntities } from "../../global/EntityProvider.jsx";
+import { useChatSocket } from "../socket/useChatSocket.js";
 
 export const useChatContextLogic = () => {
     const [chatIds, setChatIds] = useState([]);
     const [loadingChats, setLoadingChats] = useState(true);
     const { setEntities } = useEntities();
+
+    useChatSocket(chatIds, setChatIds);
+
     useEffect(() => {
         const fetchChats = async () => {
             try {
