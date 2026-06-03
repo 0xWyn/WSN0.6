@@ -5,37 +5,21 @@ import { useEntities } from "../../global/EntityProvider";
 import { useFeedPosts } from "../../feed/hooks/useFeedPosts";
 
 export const useProfile = (userId) => {
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
     const { mergeUsers } = useEntityActions();
     const { fetchUserPosts } = useFeedPosts();
+    const { entities } = useEntities();
 
-    const fetchUser = async () => {
-        try {
-            const { data } = await getUser(userId);
-            mergeUsers([data]);
-            setUser(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    const user = entities.users[userId];
 
     useEffect(() => {
         if (!userId) return;
 
-        const getData = async () => {
-            try {
-                await fetchUser();
-                await fetchUserPosts(userId);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (!user?.__isFull) {
+            getUser(userId)
+                .then(({ data }) => mergeUsers([data]))
+                .catch(console.error);
+        }
+    }, [userId, user?.__isFull]);
 
-        getData();
-    }, [userId]);
-
-    return { loading, user };
+    return { loading: !user?.__isFull, user };
 };

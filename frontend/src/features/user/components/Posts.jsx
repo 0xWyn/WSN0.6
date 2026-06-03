@@ -1,9 +1,8 @@
 import PostContainer from "../../feed/components/PostContainer";
-import { useFeedSelector } from "../../feed/hooks/useFeedSelector";
+import { useUserPosts } from "../hooks/useUserPosts";
 
-export default function Posts({ user }) {
-    const { useUserPosts } = useFeedSelector();
-    const posts = useUserPosts(user?._id);
+export default function Posts({ userId }) {
+    const posts = useUserPosts(userId);
 
     return (
         posts && (

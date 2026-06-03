@@ -4,17 +4,10 @@ import { usePostActions } from "../hooks/usePostActions.js";
 import { useFeedSocket } from "../socket/useFeedSocket.js";
 import CreatePost from "./CreatePost.jsx";
 import PostContainer from "./PostContainer.jsx";
-import { useFeedSelector } from "../hooks/useFeedSelector.js";
+import { useGlobalPosts } from "../hooks/useGlobalPosts.js";
 
 export default function Feed() {
     useFeedSocket();
-
-    const { fetchGlobalPosts } = useFeedPosts();
-    const { useGlobalPosts } = useFeedSelector();
-
-    useEffect(() => {
-        fetchGlobalPosts(1);
-    }, []);
 
     const { handleNewPost, handleDeletePost } = usePostActions();
 

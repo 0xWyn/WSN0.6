@@ -19,7 +19,8 @@ export const getUserById = async (req, res) => {
         const isFollowing = user.followers.some(
             (id) => id.toString() === req.user.id
         );
-        const result = { ...user.toObject(), isFollowing };
+        const __isFull = true;
+        const result = { ...user.toObject(), isFollowing, __isFull };
         res.status(200).json(result);
     } catch (error) {
         // console.error(error);
