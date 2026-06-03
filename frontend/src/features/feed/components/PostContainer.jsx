@@ -2,31 +2,15 @@ import { useEntities } from "../../global/EntityProvider";
 import PostCard from "../../post/main/components/PostCard";
 import { useFeed } from "../context/FeedProvider";
 
-export default function PostContainer({ target, onDelete }) {
-    const { loading, queries } = useFeed();
+export default function PostContainer({ posts }) {
     const { entities } = useEntities();
-
-    if (loading)
-        return (
-            <div className="w-full rounded-3xl border border-dashed border-slate-300 bg-white/80 p-10 text-center text-slate-500">
-                Loading...
-            </div>
-        );
-
-    const posts =
-        target.type === "home"
-            ? queries.homeFeedIds.map((id) => entities.posts[id])
-            : queries.usersPostsIds[target.userId].map(
-                  (id) => entities.posts[id]
-              );
 
     const mappedPosts = posts.map((post) => {
         const author = entities.users[post.author];
         const hydratedPost = { ...post, author: author };
-        return (
-            <PostCard key={post._id} post={hydratedPost} onDelete={onDelete} />
-        );
+        return <PostCard key={post._id} post={hydratedPost} />;
     });
+
     return (
         <section className="flex w-full flex-col gap-5">
             {mappedPosts.length ? (

@@ -1,12 +1,12 @@
-import { useFeed } from "../context/FeedProvider";
-import { getPosts, getUserPosts } from "../api/feedApis";
-import { useEntityActions } from "../../global/useEntityActions";
 import { useEntities } from "../../global/EntityProvider";
+import { useEntityActions } from "../../global/useEntityActions";
+import { getPosts, getUserPosts } from "../api/feedApis";
+import { useFeed } from "../context/FeedProvider";
 
 export const useFeedPosts = () => {
     const { setLoading } = useFeed();
     const { entities, setEntities } = useEntities();
-    const { setQueries } = useFeed();
+    const { setQueries, queries } = useFeed();
     const { mergePosts } = useEntityActions();
 
     const fetchGlobalPosts = async (page = 1) => {
