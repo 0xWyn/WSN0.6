@@ -4,11 +4,14 @@ import { usePostActions } from "../hooks/usePostActions.js";
 import { useFeedSocket } from "../socket/useFeedSocket.js";
 import CreatePost from "./CreatePost.jsx";
 import PostContainer from "./PostContainer.jsx";
+import { useFeedSelector } from "../hooks/useFeedSelector.js";
 
 export default function Feed() {
     useFeedSocket();
 
     const { fetchGlobalPosts } = useFeedPosts();
+    const { useGlobalPosts } = useFeedSelector();
+
     useEffect(() => {
         fetchGlobalPosts(1);
     }, []);
@@ -22,7 +25,8 @@ export default function Feed() {
         handleDeletePost(postId);
     };
 
-    const target = { type: "home", userId: null };
+    const posts = useGlobalPosts();
+
     return (
         <div className="relative min-h-screen bg-[#f8fafc] px-4 py-6">
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -59,7 +63,7 @@ export default function Feed() {
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                     <main className="flex-1 flex flex-col gap-6">
                         <CreatePost onSubmit={makePost} />
-                        <PostContainer target={target} onDelete={deletePost} />
+                        <PostContainer posts={posts} onDelete={deletePost} />
                     </main>
                     <aside className="flex w-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:w-80">
                         <div className="rounded-3xl bg-slate-100 p-4">
