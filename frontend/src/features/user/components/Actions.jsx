@@ -11,6 +11,13 @@ const ActionButton = ({ text, onClick, variant = "primary" }) => {
         hover:translate-y-[-1px]
         hover:bg-slate-800
     `,
+        primary_alt: `
+        bg-sky-600
+        text-white
+        shadow-[0_8px_20px_rgba(15,23,42,0.14)]
+        hover:translate-y-[-1px]
+        hover:bg-sky-500
+    `,
 
         secondary: `
         !border !border-white/70
@@ -33,8 +40,8 @@ const ActionButton = ({ text, onClick, variant = "primary" }) => {
 
 export default function Actions({ user }) {
     const navigate = useNavigate();
-    const { user: currentUser } = useAuth();
-    const isOwnProfile = user._id.toString() === currentUser._id;
+    const { user: auth } = useAuth();
+    const isOwnProfile = user._id.toString() === auth._id;
 
     const { followUser } = useUserActions(user._id);
 
@@ -57,8 +64,8 @@ export default function Actions({ user }) {
             ) : (
                 <>
                     <ActionButton
-                        text="Follow"
-                        variant="primary"
+                        text={`${user.isFollowing ? "Following" : "Follow"}`}
+                        variant={`${user.isFollowing ? "primary_alt" : "primary"}`}
                         onClick={followUser}
                     />
                     <ActionButton

@@ -4,10 +4,13 @@ import { useProfile } from "../hooks/useProfile";
 import ProfileView from "./ProfileView";
 import { useEntities } from "../../global/EntityProvider";
 import Posts from "./Posts";
+import { useUserSocket } from "../web/useUserSocket";
 
 export default function UserPage() {
     const { id } = useParams();
     const { loading, user } = useProfile(id);
+
+    useUserSocket();
 
     if (loading || !user) return <div>Loading...</div>;
 

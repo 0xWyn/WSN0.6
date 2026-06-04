@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useSocket } from "../socket/SocketProvider";
 import { useEntities } from "./EntityProvider";
 import { useEntityActions } from "./useEntityActions";
+import { useAuth } from "../auth/context/AuthProvider";
 
 const RealtimeContext = createContext(null);
 
@@ -10,6 +11,7 @@ export const RealtimeProvider = ({ children }) => {
     const { entities, setEntities } = useEntities();
     const { mergeUsers } = useEntityActions();
     const [presenceById, setPresenceById] = useState({});
+    const { user: auth } = useAuth();
 
     useEffect(() => {
         if (!socket) return;
@@ -30,21 +32,10 @@ export const RealtimeProvider = ({ children }) => {
             setPresenceById(presence);
         };
 
-        const handleUserUpdate = (data) => {
-            console.log(entities.users);
-            mergeUsers(data);
-            console.log(entities.users);
-        };
-
-        socket.on("user_follow_update", handleUserUpdate);
-        socket.on("user_unfollow_update", handleUserUpdate);
-        // Listen for presence updates
         socket.on("presence_update", handlePresence);
         socket.on("online_users_list", handleOnlineUsers);
 
         return () => {
-            socket.off("user_follow_update", handleUserUpdate);
-            socket.off("user_unfollow_update", handleUserUpdate);
             socket.off("presence_update", handlePresence);
             socket.off("online_users_list", handleOnlineUsers);
         };

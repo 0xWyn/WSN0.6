@@ -17,7 +17,7 @@ export const getUserById = async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ error: "User not found" });
         const isFollowing = user.followers.some(
-            (id) => id.toString() === req.user.id
+            (id) => id.toString() === req.user._id.toString()
         );
         const __isFull = true;
         const result = { ...user.toObject(), isFollowing, __isFull };
