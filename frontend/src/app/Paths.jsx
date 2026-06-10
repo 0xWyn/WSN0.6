@@ -9,7 +9,7 @@ const SignupForm = lazy(
     () => import("../features/auth/components/RegistrationForm.jsx")
 );
 const Feed = lazy(() => import("../features/feed/components/Feed.jsx"));
-const Main = lazy(() => import("../app/Main.jsx"));
+const Layout = lazy(() => import("../app/Layout.jsx"));
 const Settings = lazy(
     () => import("../features/settings/components/Settings.jsx")
 );
@@ -35,7 +35,7 @@ export default function Paths() {
                 <Route path="/register" element={<SignupForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<Main />}>
+                    <Route path="/" element={<Layout />}>
                         <Route index element={<Feed />} />
                         <Route path="home" element={<Feed />} />
                         <Route path="posts/:id" element={<PostPage />} />
