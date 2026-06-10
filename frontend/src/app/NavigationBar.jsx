@@ -44,8 +44,8 @@ export default function NavigationBar() {
     ];
 
     return (
-        <div className="flex flex-col justify-between gap-10 py-2">
-            <div className="flex flex-col gap-4 justify-center">
+        <div className="flex justify-center md-flex-col md-justify-between gap-10 py-2 items-center">
+            <div className="flex md-flex-col gap-4 justify-center items-center">
                 {sections.map((section) => (
                     <Link to={section.path} key={section.name}>
                         <div
@@ -72,7 +72,7 @@ export default function NavigationBar() {
 
             <button
                 onClick={logout}
-                className="bg-white text-black !text-xs !text-left border border-gray-300 !p-2 w-full hover:-translate-y-0.5 hover:bg-red-600 transition-all duration-300 relative"
+                className="bg-white text-black !text-xs !text-left border border-gray-300 !p-2 w-full hover:-translate-y-0.5 hover:bg-red-600 !transition-all !duration-300 relative"
             >
                 logout
             </button>
