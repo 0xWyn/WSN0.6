@@ -12,7 +12,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import searchRouter from "./routes/searchRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
+import clanRoutes from "./routes/clanRoutes.js";
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -37,6 +37,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/search", searchRouter);
+app.use("/api/clans", clanRoutes);
 const server = http.createServer(app);
 
 export const io = new Server(server, {
