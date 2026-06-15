@@ -30,6 +30,15 @@ export const myClans = async (req, res) => {
     }
 };
 
+export const getClanById = async (req, res) => {
+    try {
+        const { clanId } = req.params;
+        const clan = await Clan.findById(clanId);
+        res.status(200).json(clan);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 export const joinClan = async (req, res) => {
     try {
         const userId = req.user._id;

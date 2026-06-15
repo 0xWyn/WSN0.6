@@ -5,6 +5,7 @@ import {
     approveRequest,
     createClan,
     deleteClan,
+    getClanById,
     joinClan,
     leaveClan,
     myClans,
@@ -26,6 +27,7 @@ router.delete("/:clanId", protect, deleteClan);
 
 // Civilian
 router.get("/", protect, myClans);
+router.get("/:clanId", protect, getClanById);
 router.put("/:clanId", protect, joinClan);
 router.patch("/:clanId/leave", protect, leaveClan);
 
