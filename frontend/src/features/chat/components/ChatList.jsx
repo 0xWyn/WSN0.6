@@ -10,7 +10,7 @@ export default function ChatList() {
     const { entities } = useEntities();
 
     return (
-        <div className="relative w-full h-full min-h-0 border overflow-hidden bg-[#f8fafc] rounded-3xl">
+        <div className="relative w-full h-full min-h-0 overflow-hidden bg-[#f8fafc] rounded-3xl">
             <div className="pointer-events-none absolute inset-0">
                 <div className="absolute left-1/4 top-0 size-[32rem] rounded-full bg-amber-100/20 blur-3xl" />
 

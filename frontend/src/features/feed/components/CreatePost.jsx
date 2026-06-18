@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../../auth/context/AuthProvider";
 import Avatar from "../../user/components/Avatar";
 import Photo from "../../../components/icons/photo";
 import XMark from "../../../components/icons/x-mark";
+import { usePostActions } from "../hooks/usePostActions";
 
 export default function CreatePost({ onSubmit }) {
+    const { id } = useParams();
+    const { handleNewPost } = usePostActions();
+
     const [text, setText] = useState("");
     const [media, setMedia] = useState([]);
     const { user } = useAuth();
@@ -29,8 +33,8 @@ export default function CreatePost({ onSubmit }) {
         e.preventDefault();
         if (!text.trim() && !media.length) return;
 
-        const post = { text, media };
-        onSubmit(post);
+        const post = { text, media, clan: id };
+        handleNewPost(post);
         setText("");
         setMedia([]);
     };

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import CreatePost from "../../feed/components/CreatePost.jsx";
 import PostContainer from "../../feed/components/PostContainer.jsx";
-import { useGlobalPosts } from "../../feed/hooks/useGlobalPosts.js";
+import { useClanPosts } from "../../feed/hooks/useClanPosts.js";
 import { usePostActions } from "../../feed/hooks/usePostActions.js";
 import { useFeedSocket } from "../../feed/socket/useFeedSocket.js";
 import { useClan } from "../context/ClanProvider.jsx";
@@ -15,19 +15,15 @@ export default function ClanPage() {
 
     const clan = clans?.[id];
 
-    console.log(clan);
-    useFeedSocket();
+    const posts = useClanPosts(id);
+
+    useFeedSocket(id);
 
     const { handleNewPost, handleDeletePost } = usePostActions();
 
-    const makePost = async (post) => {
-        handleNewPost(post);
-    };
     const deletePost = async (postId) => {
         handleDeletePost(postId);
     };
-
-    const posts = useGlobalPosts();
 
     return (
         <>
@@ -60,11 +56,8 @@ export default function ClanPage() {
                     </header>
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                         <main className="flex-1 flex flex-col gap-6">
-                            <CreatePost onSubmit={makePost} />
-                            <PostContainer
-                                posts={posts}
-                                onDelete={deletePost}
-                            />
+                            <CreatePost />
+                            <PostContainer posts={posts} />
                         </main>
                         <aside className="flex w-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:w-80">
                             <div className="rounded-3xl bg-slate-100 p-4">

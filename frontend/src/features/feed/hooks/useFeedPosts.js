@@ -1,6 +1,6 @@
 import { useEntities } from "../../global/EntityProvider";
 import { useEntityActions } from "../../global/useEntityActions";
-import { getPosts, getUserPosts } from "../api/feedApis";
+import { getClanPosts, getUserPosts } from "../api/feedApis";
 import { useFeed } from "../context/FeedProvider";
 
 export const useFeedPosts = () => {
@@ -9,9 +9,9 @@ export const useFeedPosts = () => {
     const { setQueries, queries } = useFeed();
     const { mergePosts } = useEntityActions();
 
-    const fetchGlobalPosts = async (page = 1) => {
+    const fetchPosts = async (page = 1, clanId) => {
         try {
-            const { data } = await getPosts(page);
+            const { data } = await getClanPosts(page, clanId);
 
             mergePosts(data);
 
@@ -20,6 +20,34 @@ export const useFeedPosts = () => {
             setQueries((prev) => ({
                 ...prev,
                 homeFeedIds: [...new Set([...prev.homeFeedIds, ...newIds])],
+            }));
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchClanPosts = async (page = 1, clanId) => {
+        try {
+            const { data } = await getClanPosts(page, clanId);
+            mergePosts(data);
+
+            const newIds = data.map((post) => post._id);
+
+            setQueries((prev) => ({
+                ...prev,
+
+                clanPostsIds: {
+                    ...prev.clanPostsIds,
+
+                    [clanId]: [
+                        ...new Set([
+                            ...(prev.clanPostsIds[clanId] ?? []),
+                            ...newIds,
+                        ]),
+                    ],
+                },
             }));
         } catch (error) {
             console.error(error);
@@ -71,5 +99,5 @@ export const useFeedPosts = () => {
         }
     };
 
-    return { fetchGlobalPosts, fetchUserPosts, fetchSinglePost };
+    return { fetchClanPosts, fetchUserPosts, fetchSinglePost };
 };

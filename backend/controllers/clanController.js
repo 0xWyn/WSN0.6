@@ -1,18 +1,21 @@
 import Clan from "../models/clanModel.js";
 import User from "../models/userModel.js";
+import { io } from "../server.js";
 
 export const createClan = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { clanName, description, visibility, photo } = req.body;
+        const { clanName, description, visibility, avatar } = req.body;
         const newClan = await Clan.create({
             name: clanName,
             description,
             visibility,
             creator: userId,
+            avatar,
             members: [userId],
         });
-        res.status(201).json(newClan);
+        io.to(userId).emit("clan_created", newClan);
+        res.status(201).json({ msg: "Clan created successfully", newClan });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

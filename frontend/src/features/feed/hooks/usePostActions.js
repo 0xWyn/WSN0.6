@@ -4,13 +4,15 @@ import { deletePost, fetchPost, makePost } from "../api/feedApis";
 export const usePostActions = () => {
     const handleNewPost = async (post) => {
         try {
-            console.log("Hit");
+            const { text, clan } = post;
             const media = await uploadAllFiles(post.media, { folder: "posts" });
             const body = {
                 text: post.text,
                 media,
+                clan,
             };
             const res = await makePost(body);
+            console.log(res.data);
             return res.data;
         } catch (error) {
             console.error(error.response);
@@ -19,7 +21,8 @@ export const usePostActions = () => {
 
     const handleDeletePost = async (postId) => {
         try {
-            await deletePost(postId);
+            const { data } = await deletePost(postId);
+            console.log(data);
         } catch (error) {
             console.error(error.response);
         }

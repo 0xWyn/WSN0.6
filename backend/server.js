@@ -7,12 +7,12 @@ import mongoose from "mongoose";
 import { Server } from "socket.io";
 import authRoutes from "./routes/authRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import clanRoutes from "./routes/clanRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import searchRouter from "./routes/searchRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import clanRoutes from "./routes/clanRoutes.js";
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;

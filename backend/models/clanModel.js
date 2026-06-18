@@ -22,7 +22,7 @@ const clanSchema = new mongoose.Schema({
     ],
     visibility: {
         type: String,
-        enum: ["public", "request", "private"],
+        enum: ["public", "invite-only", "private"],
         default: "public",
     },
     joinRequests: [
@@ -42,7 +42,21 @@ const clanSchema = new mongoose.Schema({
         type: Number,
         default: 12,
     },
-    logo: String,
+    avatar: {
+        url: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            enum: ["image", "video"],
+            default: "image",
+        },
+        publicId: {
+            type: String,
+            default: "",
+        },
+    },
 });
 
 const Clan = mongoose.model("Clan", clanSchema);

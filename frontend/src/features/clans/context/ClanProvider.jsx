@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getClans } from "../api/clanApi";
+import { getClans } from "../api/clanApis";
 import { useAuth } from "../../auth/context/AuthProvider";
 
 const ClanContext = createContext(null);

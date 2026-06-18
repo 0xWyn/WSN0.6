@@ -5,6 +5,7 @@ import { useFeedSocket } from "../socket/useFeedSocket.js";
 import CreatePost from "./CreatePost.jsx";
 import PostContainer from "./PostContainer.jsx";
 import { useGlobalPosts } from "../hooks/useGlobalPosts.js";
+import { useParams } from "react-router-dom";
 
 export default function Feed() {
     useFeedSocket();

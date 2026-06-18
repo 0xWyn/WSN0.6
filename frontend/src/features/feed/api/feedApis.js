@@ -12,8 +12,8 @@ export const deletePost = (postId) => {
     return API.delete(`posts/${postId}`);
 };
 
-export const getPosts = (page = 1) => {
-    return API.get(`posts?page=${page}&limit=20`);
+export const getClanPosts = (page, clanId) => {
+    return API.get(`posts/${clanId}/?page=${page}&limit=20`);
 };
 
 export const fetchPost = (postId) => {
