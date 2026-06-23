@@ -5,6 +5,7 @@ import SecondaryNavigation from "../../../app/SecondaryNav.jsx";
 
 import { useClan } from "../context/ClanProvider.jsx";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 // Simple skeleton loader for better UX
 function SkeletonLoader() {
@@ -55,8 +56,7 @@ function DiscoverPanel() {
 }
 
 export default function HomePage() {
-    const { loading, clans } = useClan();
-    const [showModal, setShowModal] = useState(false);
+    const { loading, clans, setShowClanModal } = useClan();
 
     return (
         <div className="w-full h-full min-h-0 flex flex-col">
@@ -72,7 +72,7 @@ export default function HomePage() {
                     <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
                 </div>
 
-                <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col gap-6 p-6">
+                <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-6 p-6">
                     {/* Header */}
                     <header className="rounded-[36px] border border-white/60 bg-white/35 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
                         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -86,7 +86,7 @@ export default function HomePage() {
                                 </p>
                             </div>
                             <button
-                                onClick={() => setShowModal(true)}
+                                onClick={() => setShowClanModal(true)}
                                 className="rounded-2xl bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
                             >
                                 Create Clan
@@ -95,9 +95,9 @@ export default function HomePage() {
                     </header>
 
                     {/* Main grid */}
-                    <div className="grid flex-1 min-h-0 gap-6 lg:grid-cols-[1fr_320px]">
+                    <div className="grid flex-1 min-h-0 gap-6 min-[1200px]:grid-cols-[1fr_320px]">
                         {/* Clan list */}
-                        <section className="min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
+                        <section className="min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
                             <h2 className="mb-4 text-lg font-semibold text-slate-900">
                                 My Clans
                             </h2>
@@ -114,8 +114,6 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-
-            {showModal && <ClanCreationModal setShowModal={setShowModal} />}
         </div>
     );
 }

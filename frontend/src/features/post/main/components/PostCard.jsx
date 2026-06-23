@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EllipsisHorizontal } from "../../../../components/icons/ellipsis-horizontal.jsx";
 import EngagementBar from "../../../engagement/components/EngagementBar.jsx";
@@ -12,6 +12,7 @@ import PostMenu from "./PostMenu.jsx";
 export default function PostCard({ post }) {
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
+    const menuRef = useRef(null);
 
     const handleMenuClick = () => {
         console.log("Clicked menu button");
@@ -23,6 +24,20 @@ export default function PostCard({ post }) {
 
     const handleOpenPost = () => navigate(`/posts/${post._id}`);
     const { handleDeletePost } = usePostActions();
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <article
@@ -57,7 +72,10 @@ export default function PostCard({ post }) {
                 </div>
 
                 {showMenu && (
-                    <div className="absolute top-20 right-2 bg-white/80 z-30 origin-top-right  rounded-2xl border border-white/30 p-2 backdrop-blur-xl shadow-[0_12px_40px_rgba(15,23,42,0.12)] animate-in fade-in zoom-in-95 duration-200">
+                    <div
+                        ref={menuRef}
+                        className="absolute top-20 right-2 bg-white/80 z-30 origin-top-right  rounded-2xl border border-white/30 p-2 backdrop-blur-xl shadow-[0_12px_40px_rgba(15,23,42,0.12)] animate-in fade-in zoom-in-95 duration-200"
+                    >
                         <PostMenu post={post} />
                     </div>
                 )}

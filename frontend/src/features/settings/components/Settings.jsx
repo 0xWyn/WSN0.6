@@ -45,7 +45,7 @@ export default function Settings() {
     const items = [
         {
             label: "Profile",
-            path: "/settings/profile",
+            path: "/settings/profile" || "/settings",
             icon: "👤",
         },
         {
@@ -61,7 +61,7 @@ export default function Settings() {
     ];
 
     return (
-        <div className="flex h-full min-h-0 flex-col">
+        <div className="">
             <LocNav current="Settings" />
 
             <div className="relative flex-1 overflow-hidden bg-[#f8fafc]">

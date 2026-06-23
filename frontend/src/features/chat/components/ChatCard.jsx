@@ -33,7 +33,7 @@ export default function ChatCard({ chat }) {
     return (
         <div
             onClick={() => navigate(`/chats/${chat?._id}`)}
-            className="flex flex-col w-full md:justify-between group relative block overflow-hidden rounded-[28px] border border-white/80 bg-white/50 p-4 backdrop-blur-xl transition-all duration-300 hover:bg-white/60 hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(15,23,42,0.08)] md:flex-row gap-4"
+            className="flex flex-col w-full md:justify-between group relative block overflow-hidden rounded-[28px] border border-white/80 bg-white/10 p-4 backdrop-blur-xl !transition-all !duration-300 hover:bg-white/30 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(15,23,42,0.1)] md:flex-row gap-4"
         >
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.9),transparent_20%)]" />
             <div className="flex items-start w-full md:justify-between gap-4">

@@ -8,6 +8,7 @@ export const ClanProvider = ({ children }) => {
     const { user } = useAuth();
     const [clans, setClans] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [showClanModal, setShowClanModal] = useState(false);
 
     useEffect(() => {
         if (!user) return;
@@ -34,7 +35,9 @@ export const ClanProvider = ({ children }) => {
     }, [user]);
 
     return (
-        <ClanContext.Provider value={{ clans, loading }}>
+        <ClanContext.Provider
+            value={{ clans, loading, showClanModal, setShowClanModal }}
+        >
             {children}
         </ClanContext.Provider>
     );

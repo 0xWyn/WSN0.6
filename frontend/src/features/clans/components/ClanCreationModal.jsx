@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useClanActions } from "../hooks/useClanActions";
+import { useClan } from "../context/ClanProvider";
 
-export default function ClanCreationModal({ setShowModal }) {
+export default function ClanCreationModal() {
     const [form, setForm] = useState({
         clanName: "",
         description: "",
@@ -9,6 +10,7 @@ export default function ClanCreationModal({ setShowModal }) {
         avatarFile: null,
     });
 
+    const { setShowClanModal: setShowModal } = useClan();
     const { handleCreateClan } = useClanActions();
 
     const [error, setError] = useState({});

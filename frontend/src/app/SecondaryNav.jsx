@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/context/AuthProvider";
+import { Bars3 } from "../components/icons/hamburger";
+import { useState } from "react";
 
 const icons = {
     Profile: (
@@ -20,10 +22,17 @@ const icons = {
     ),
 };
 
+const OptionsMenu = () => {
+    return (
+        <div className="absolute w-md h-42 shadow-md rounded-xl hover:shadow-lg hover:-translate-y-1 border transition-all duration-300 top-10 z-300"></div>
+    );
+};
+
 export default function SecondaryNavigation() {
     const navigate = useNavigate();
     const { user: auth } = useAuth();
     const location = useLocation();
+    const [showMenu, setShowMenu] = useState(false);
 
     const pathname = location.pathname;
 
@@ -33,15 +42,10 @@ export default function SecondaryNavigation() {
             path: `/user/${auth._id}`,
             active: pathname === `/user/${auth._id}`,
         },
-        {
-            name: "Settings",
-            path: "/settings",
-            active: pathname.startsWith("/settings"),
-        },
     ];
 
     return (
-        <div className="h-14 flex shrink-0 items-center gap-3 overflow-hidden rounded-2xl border border-white/60 !bg-white/20 px-4 border-black">
+        <div className="h-14 flex shrink-0 items-center gap-3 overflow-hidden rounded-2xl border border-white/60 !bg-white/20 px-4 border-black relative z-50">
             {sections.map((section) => (
                 <div key={section.name} onClick={() => navigate(section.path)}>
                     <div
@@ -65,6 +69,13 @@ export default function SecondaryNavigation() {
                     </div>
                 </div>
             ))}
+            <button
+                onClick={() => setShowMenu((prev) => !prev)}
+                className="border"
+            >
+                <Bars3 />
+            </button>
+            {showMenu && <OptionsMenu />}
         </div>
     );
 }
