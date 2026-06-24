@@ -1,6 +1,6 @@
-import LocNav from "../../../components/ui/LocNav";
 import { useAuth } from "../../auth/context/AuthProvider";
 import { useEntities } from "../../global/EntityProvider";
+import LocNav from "../../navigation/components/LocNav";
 import { useChatContextLogic } from "../hooks/useChatContextLogic";
 import ChatCard from "./ChatCard";
 

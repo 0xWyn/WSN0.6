@@ -1,11 +1,8 @@
+import LocNav from "../../navigation/components/LocNav.jsx";
+import SecondaryNavigation from "../../navigation/components/SecondaryNav.jsx";
 import ClanContainer from "./ClanContainer.jsx";
-import LocNav from "../../../components/ui/LocNav.jsx";
-import ClanCreationModal from "./ClanCreationModal.jsx";
-import SecondaryNavigation from "../../../app/SecondaryNav.jsx";
 
 import { useClan } from "../context/ClanProvider.jsx";
-import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
 
 // Simple skeleton loader for better UX
 function SkeletonLoader() {
@@ -60,7 +57,7 @@ export default function HomePage() {
 
     return (
         <div className="w-full h-full min-h-0 flex flex-col">
-            <div className="w-full flex">
+            <div className="sticky top-0 z-40 w-full flex backdrop-blur-2xl">
                 <LocNav current="Home" redirect={false} />
                 <SecondaryNavigation />
             </div>

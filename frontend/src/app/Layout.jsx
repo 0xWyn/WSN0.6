@@ -1,9 +1,8 @@
 import { Outlet } from "react-router-dom";
-import NavigationBar from "./NavigationBar";
-import SlickNav from "./SlickNav";
 import ClanCreationModal from "../features/clans/components/ClanCreationModal";
-import { useState } from "react";
 import { useClan } from "../features/clans/context/ClanProvider";
+import SlickNav from "../features/navigation/components/SlickNav";
+
 export default function Layout() {
     const { showClanModal } = useClan();
 

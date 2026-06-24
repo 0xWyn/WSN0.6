@@ -5,8 +5,8 @@ import PostContainer from "../../feed/components/PostContainer.jsx";
 import { useClanPosts } from "../../feed/hooks/useClanPosts.js";
 import { usePostActions } from "../../feed/hooks/usePostActions.js";
 import { useFeedSocket } from "../../feed/socket/useFeedSocket.js";
+import LocNav from "../../navigation/components/LocNav.jsx";
 import { useClan } from "../context/ClanProvider.jsx";
-import LocNav from "../../../components/ui/LocNav.jsx";
 
 export default function ClanPage() {
     const [loading, setLoading] = useState(false);

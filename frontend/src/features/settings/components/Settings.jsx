@@ -1,42 +1,6 @@
 import { Link, Outlet } from "react-router-dom";
 import LocNav from "../../../components/ui/LocNav";
 
-// export default function Settings() {
-//     return (
-//         <div className="w-full h-full">
-//             <div className="w-full flex">
-//                 <LocNav current="Settings" />
-//                 <SecondaryNavigation />
-//             </div>
-//             <div className="min-h-0 flex-1 bg-white rounded-md w-full p-2 flex gap-1">
-//                 <div className="h-full w-80 border border-gray-300 rounded-md flex flex-col gap-10 p-4 text-2xl font-medium">
-//                     <div>
-//                         <Link to={`/settings/profile`}>
-//                             <p>Profile</p>
-//                             <hr className="text-gray-400" />
-//                         </Link>
-//                     </div>
-//                     <div>
-//                         <Link to={`/settings/account`}>
-//                             <p>Account</p>
-//                             <hr className="text-gray-400" />
-//                         </Link>
-//                     </div>
-//                     <div>
-//                         <Link to={`/settings/notifications`}>
-//                             <p>Notifications</p>
-//                             <hr className="text-gray-400" />
-//                         </Link>
-//                     </div>
-//                 </div>
-//                 <div className="flex-1 min-w-0 h-full">
-//                     <Outlet />
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
 import { useLocation } from "react-router-dom";
 
 export default function Settings() {
@@ -61,17 +25,18 @@ export default function Settings() {
     ];
 
     return (
-        <div className="">
-            <LocNav current="Settings" />
-
-            <div className="relative flex-1 overflow-hidden bg-[#f8fafc]">
+        <div className="flex h-full min-h-0 w-full flex-col">
+            <div className="sticky top-0 z-40 w-full backdrop-blur-2xl">
+                <LocNav current="Settings" />
+            </div>
+            <div className="relative flex-1 bg-[#f8fafc]">
                 {/* Background */}
-                <div className="pointer-events-none absolute inset-0">
+                <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70">
                     <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
                     <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
                 </div>
 
-                <div className="relative z-10 h-full p-6">
+                <div className="relative z-10 h-full min-w-0 p-6">
                     <div className="mx-auto flex h-full max-w-7xl flex-col gap-6">
                         {/* Header */}
                         <header className="rounded-[36px] border border-white/60 bg-white/35 p-8 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)]">

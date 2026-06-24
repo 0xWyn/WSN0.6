@@ -1,16 +1,16 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../features/auth/context/AuthProvider";
-import { useClan } from "../features/clans/context/ClanProvider";
+import { useAuth } from "../../auth/context/AuthProvider";
+import { useClan } from "../../clans/context/ClanProvider";
 import { useState, useEffect, useRef } from "react";
-import { icons } from "../components/icons/slickNav-icons";
-import { ChevronDown } from "../components/icons/chevron-down";
-import ClanCreationModal from "../features/clans/components/ClanCreationModal";
+import { icons } from "../../../components/icons/slickNav-icons";
+import { ChevronDown } from "../../../components/icons/chevron-down";
+import ClanCreationModal from "../../clans/components/ClanCreationModal";
 
 function BottomMenu() {
     const { logout } = useAuth();
 
-    const actions = { Logout: () => logout() };
-    const options = ["Logout"];
+    const actions = { Logout: () => logout(), "Add Account": () => {} };
+    const options = ["Logout", "Add Account"];
 
     return (
         <div className="p-2 rounded-[28px] backdrop-blur-xl border border-white/50 bg-white/70 flex min-w-32 flex-col gap-1 shadow-[0_20px_60px_rgba(15,23,42,0.10)]">

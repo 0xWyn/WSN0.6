@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../features/auth/context/AuthProvider";
-import { useChatNotifications } from "../features/notification/hooks/useChatNotifications";
-import { useClan } from "../features/clans/context/ClanProvider";
+import { useAuth } from "../../auth/context/AuthProvider";
+import { useChatNotifications } from "../../notification/hooks/useChatNotifications";
+import { useClan } from "../../clans/context/ClanProvider";
 
 export default function NavigationBar() {
     const { totalMessages } = useChatNotifications();

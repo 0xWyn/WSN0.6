@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../features/auth/context/AuthProvider";
-import { Bars3 } from "../components/icons/hamburger";
+import { useAuth } from "../../auth/context/AuthProvider";
+import { Bars3 } from "../../../components/icons/hamburger";
 import { useState } from "react";
 
 const icons = {
