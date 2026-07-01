@@ -65,4 +65,19 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("User", userSchema);
 
+userSchema.index(
+    {
+        name: "text",
+        username: "text",
+        bio: "text",
+    },
+    {
+        weights: {
+            username: 10,
+            displayName: 5,
+            bio: 1,
+        },
+    }
+);
+
 export default User;

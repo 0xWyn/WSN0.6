@@ -59,6 +59,11 @@ const clanSchema = new mongoose.Schema({
     },
 });
 
+clanSchema.index({
+    name: "text",
+    description: "text",
+});
+
 const Clan = mongoose.model("Clan", clanSchema);
 
 export default Clan;
