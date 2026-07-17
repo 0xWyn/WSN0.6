@@ -3,17 +3,18 @@ import { getClans } from "../apis/searchApis";
 import { useSearch } from "../context/SearchProvider";
 
 export const useSearchLogic = () => {
-    const { setResults, setLoadingSearch } = useSearch();
+    const { setResults, setSearching } = useSearch();
 
     const handleClanDirectorySearch = async (term) => {
         try {
-            setLoadingSearch(true);
+            setResults(null);
+            setSearching(true);
             const { data } = await getClans(term);
             setResults(data);
         } catch (error) {
             console.error(error);
         } finally {
-            setLoadingSearch("completed");
+            setSearching(false);
         }
     };
 

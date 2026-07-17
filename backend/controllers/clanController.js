@@ -5,16 +5,23 @@ import { io } from "../server.js";
 export const createClan = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { clanName, description, visibility, avatar } = req.body;
+        const { avatar, banner, name, description, domain, tags, visibility } =
+            req.body;
+
         const newClan = await Clan.create({
-            name: clanName,
-            description,
-            visibility,
-            creator: userId,
             avatar,
+            banner,
+            name: name.trim(),
+            description: description.trim(),
+            domain,
+            tags,
+            owner: userId,
             members: [userId],
+            visibility: visibility.toLowerCase(),
         });
+
         io.to(userId).emit("clan_created", newClan);
+
         res.status(201).json({ msg: "Clan created successfully", newClan });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -42,6 +49,7 @@ export const getClanById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 export const joinClan = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -61,7 +69,7 @@ export const joinClan = async (req, res) => {
                 .json({ msg: `You have joined ${clan.name}` });
         }
 
-        if (clan.visibility === "request") {
+        if (clan.visibility === "private") {
             const existingRequest = clan.joinRequests.find(
                 (req) => req.user === userId
             );

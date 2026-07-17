@@ -29,11 +29,8 @@ body,
 /* 3. Reset buttons so Tailwind classes work properly */
 
 button {
-    border-radius: 8px;
-    padding: 0.6em 1.2em;
     font-weight: 500;
     font-family: inherit;
-    transition: border-color 0.25s;
     cursor: pointer;
 }
 
@@ -42,6 +39,14 @@ img,
 video {
     max-width: 100%;
     display: block;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
 }
 
 .animate-error-in {
@@ -123,4 +128,29 @@ video {
 
 .animate-error-pop {
     animation: error-pop 0.35s ease-out;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
+    animation: shimmer 1.5s infinite;
 }

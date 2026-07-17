@@ -3,7 +3,39 @@ import mongoose from "mongoose";
 const clanSchema = new mongoose.Schema({
     name: String,
     description: String,
-    creator: {
+    avatar: {
+        url: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            enum: ["image", "video"],
+            default: "image",
+        },
+        publicId: {
+            type: String,
+            default: "",
+        },
+    },
+    banner: {
+        url: {
+            type: String,
+            default: "",
+        },
+        type: {
+            type: String,
+            enum: ["image", "video"],
+            default: "image",
+        },
+        publicId: {
+            type: String,
+            default: "",
+        },
+    },
+    domain: String,
+    tags: [String],
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
@@ -22,7 +54,7 @@ const clanSchema = new mongoose.Schema({
     ],
     visibility: {
         type: String,
-        enum: ["public", "invite-only", "private"],
+        enum: ["public", "private"],
         default: "public",
     },
     joinRequests: [
@@ -41,21 +73,6 @@ const clanSchema = new mongoose.Schema({
     maxMembers: {
         type: Number,
         default: 12,
-    },
-    avatar: {
-        url: {
-            type: String,
-            default: "",
-        },
-        type: {
-            type: String,
-            enum: ["image", "video"],
-            default: "image",
-        },
-        publicId: {
-            type: String,
-            default: "",
-        },
     },
 });
 

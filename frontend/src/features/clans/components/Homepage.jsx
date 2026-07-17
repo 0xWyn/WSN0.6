@@ -1,11 +1,8 @@
 import LocNav from "../../navigation/components/LocNav.jsx";
 import SecondaryNavigation from "../../navigation/components/SecondaryNav.jsx";
-import SearchBar from "../../search/components/SearchBar.jsx";
 import ClanContainer from "./ClanContainer.jsx";
 
 import { useClan } from "../context/ClanProvider.jsx";
-import { useSearch } from "../../search/context/SearchProvider.jsx";
-import { useRef } from "react";
 
 // Simple skeleton loader for better UX
 function SkeletonLoader() {
@@ -60,9 +57,8 @@ export default function HomePage() {
 
     return (
         <div className="w-full h-full min-h-0 flex flex-col">
-            <div className="sticky top-0 z-100 w-full flex backdrop-blur-2xl">
+            <div className="sticky top-0 w-full flex backdrop-blur-2xl">
                 <LocNav current="Home" redirect={false} />
-                <SearchBar location="clan-directory" />
                 <SecondaryNavigation />
             </div>
 

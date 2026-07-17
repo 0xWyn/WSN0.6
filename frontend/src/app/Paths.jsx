@@ -33,6 +33,9 @@ const Homepage = lazy(
 const ClanPage = lazy(
     () => import("../features/clans/components/ClanPage.jsx")
 );
+const Explore = lazy(
+    () => import("../features/explore/components/ExplorePage.jsx")
+);
 
 export default function Paths() {
     return (
@@ -57,6 +60,7 @@ export default function Paths() {
                             <Route path="user/:id" element={<ChatManager />} />
                         </Route>
                         <Route path="user/:id" element={<UserPage />} />
+                        <Route path="explore" element={<Explore />} />
                     </Route>
                 </Route>
             </Routes>

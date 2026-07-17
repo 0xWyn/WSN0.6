@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { icons } from "../../../components/icons/slickNav-icons";
 import { ChevronDown } from "../../../components/icons/chevron-down";
 import ClanCreationModal from "../../clans/components/ClanCreationModal";
+import { ChevronLeft } from "../../../components/icons/chevron-left";
 
 function BottomMenu() {
     const { logout } = useAuth();
@@ -36,6 +37,7 @@ export default function SlickNav() {
     const navigate = useNavigate();
     const location = useLocation();
     const [showBottomMenu, setShowBottomMenu] = useState(false);
+    const [collapsed, setCollapsed] = useState(false);
 
     const menuRef = useRef(null);
 
@@ -59,8 +61,8 @@ export default function SlickNav() {
         },
         {
             name: "Search",
-            path: "/search",
-            active: pathname.startsWith("/search"),
+            path: "/explore",
+            active: pathname.startsWith("/explore"),
         },
         {
             name: "Profile",
@@ -87,7 +89,15 @@ export default function SlickNav() {
         };
     }, []);
     return (
-        <aside className="h-screen flex h-full w-[280px] flex-col border-r border-white/40 bg-white/25 backdrop-blur-3xl">
+        <aside
+            className={`h-screen flex h-full  flex-col border-r border-white/40 bg-white/25 backdrop-blur-3xl relative transition-all duration-300 ${!collapsed ? "w-[280px]" : "w-[80px] overflow-hidden"}`}
+        >
+            <button
+                onClick={() => setCollapsed((state) => !state)}
+                className="absolute right-0 top-6 border !p-[1px] border-white/70 bg-white/60 backdrop-blur-lg text-slate-700 !rounded-full w-10 flex justify-center opacity-0 hover:opacity-100 transition-all duration-500 hover:shadow-[0_9px_10px_rgba(15,23,42,.10)] active:scale-80"
+            >
+                <ChevronLeft />
+            </button>
             {/* Top */}
 
             <div className="p-5">

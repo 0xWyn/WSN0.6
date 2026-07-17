@@ -4,7 +4,7 @@ import { SocketProvider } from "../features/socket/SocketProvider.jsx";
 import { EntityProvider } from "../features/global/EntityProvider.jsx";
 import { RealtimeProvider } from "../features/global/RealtimeProvider.jsx";
 import { ClanProvider } from "../features/clans/context/ClanProvider.jsx";
-import { SearchProvider } from "../features/search/context/SearchProvider.jsx";
+import { SearchProvider } from "../features/explore/context/SearchProvider.jsx";
 
 import Paths from "./Paths.jsx";
 

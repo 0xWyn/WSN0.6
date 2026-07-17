@@ -2,7 +2,7 @@ import { useClan } from "../context/ClanProvider";
 import ClanCard from "./ClanCard";
 
 export default function ClanContainer({ posts }) {
-    const { clans, loading } = useClan();
+    const { myClanIds, clanEntities, loading } = useClan();
 
     if (loading) {
         return (
@@ -12,8 +12,8 @@ export default function ClanContainer({ posts }) {
         );
     }
 
-    const mappedClans = Object.values(clans).map((clan) => {
-        return <ClanCard key={clan._id} clan={clan} />;
+    const mappedClans = myClanIds.map((id) => {
+        return <ClanCard key={id} clan={clanEntities[id]} />;
     });
 
     return (

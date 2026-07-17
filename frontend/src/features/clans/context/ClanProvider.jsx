@@ -1,13 +1,21 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getClans } from "../api/clanApis";
 import { useAuth } from "../../auth/context/AuthProvider";
+import { getMyClans } from "../api/clanApis";
 
 const ClanContext = createContext(null);
 
 export const ClanProvider = ({ children }) => {
     const { user } = useAuth();
-    const [clans, setClans] = useState(null);
+
+    const [clanEntities, setClanEntities] = useState({});
+
+    const [clansByCategory, setClansByCategory] = useState({});
+    const [exploreCategories, setExploreCategories] = useState([]);
+
+    const [myClanIds, setMyClanIds] = useState([]);
+
     const [loading, setLoading] = useState(false);
+
     const [showClanModal, setShowClanModal] = useState(false);
 
     useEffect(() => {
@@ -16,14 +24,31 @@ export const ClanProvider = ({ children }) => {
         const fetchClans = async () => {
             try {
                 setLoading(true);
-                const { data } = await getClans();
+                const { data } = await getMyClans();
 
                 const map = {};
 
                 data.forEach((clan) => {
                     map[clan._id] = clan;
                 });
-                setClans(map);
+
+                const ids = data.map((clan) => clan._id);
+
+                setMyClanIds(ids);
+                setClanEntities((prev) => ({ ...(prev || {}), ...map }));
+
+                setClansByCategory((prev) => {
+                    const map = { ...prev };
+                    data.forEach((clan) => {
+                        map[clan?.category] = [
+                            ...new Set([
+                                ...(prev[clan?.category] || []),
+                                clan._id,
+                            ]),
+                        ];
+                    });
+                    return map;
+                });
             } catch (error) {
                 console.error(error);
             } finally {
@@ -36,7 +61,19 @@ export const ClanProvider = ({ children }) => {
 
     return (
         <ClanContext.Provider
-            value={{ clans, loading, showClanModal, setShowClanModal }}
+            value={{
+                clanEntities,
+                setClanEntities,
+                myClanIds,
+                loading,
+                setLoading,
+                showClanModal,
+                setShowClanModal,
+                exploreCategories,
+                clansByCategory,
+                setExploreCategories,
+                setClansByCategory,
+            }}
         >
             {children}
         </ClanContext.Provider>
