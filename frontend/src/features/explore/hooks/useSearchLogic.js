@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { getClans } from "../apis/searchApis";
-import { useSearch } from "../context/SearchProvider";
+import { useExplore } from "../context/ExploreProvider";
 
 export const useSearchLogic = () => {
-    const { setResults, setSearching } = useSearch();
+    const { setResults, setSearching } = useExplore();
 
     const handleClanDirectorySearch = async (term) => {
         try {

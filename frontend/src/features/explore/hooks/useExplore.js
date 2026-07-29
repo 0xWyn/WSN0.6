@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useClan } from "../../clans/context/ClanProvider";
 import { getCategoryClans, getExploreSections } from "../apis/exploreApis";
 import { INTEREST_DOMAINS } from "../../../config/interestDomains";
 
-export const useExplore = () => {
+export const useExploreLogic = () => {
     const {
         setExploreCategories,
         setClansByCategory,

@@ -20,7 +20,7 @@ export default function SearchBar({ location = "clan-directory" }) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="relative flex items-center w-[420px] rounded-3xl border border-white/60 bg-white/70 backdrop-blur-xl px-4 text-sm transition-all duration-200 focus-within:border-slate-300 focus-within:ring-4 focus-within:ring-slate-200/50 text-slate-500"
+            className="relative flex items-center w-full rounded-3xl border border-white/60 bg-white/70 backdrop-blur-xl px-4 text-sm transition-all duration-200 focus-within:border-slate-300 focus-within:ring-4 focus-within:ring-slate-200/50 text-slate-500"
         >
             <MagnifyingGlass />
             <input

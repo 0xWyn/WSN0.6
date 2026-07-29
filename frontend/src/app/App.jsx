@@ -4,7 +4,7 @@ import { SocketProvider } from "../features/socket/SocketProvider.jsx";
 import { EntityProvider } from "../features/global/EntityProvider.jsx";
 import { RealtimeProvider } from "../features/global/RealtimeProvider.jsx";
 import { ClanProvider } from "../features/clans/context/ClanProvider.jsx";
-import { SearchProvider } from "../features/explore/context/SearchProvider.jsx";
+import { ExploreProvider } from "../features/explore/context/ExploreProvider.jsx";
 
 import Paths from "./Paths.jsx";
 
@@ -16,9 +16,9 @@ export default function App() {
                     <RealtimeProvider>
                         <ClanProvider>
                             <FeedProvider>
-                                <SearchProvider>
+                                <ExploreProvider>
                                     <Paths />
-                                </SearchProvider>
+                                </ExploreProvider>
                             </FeedProvider>
                         </ClanProvider>
                     </RealtimeProvider>

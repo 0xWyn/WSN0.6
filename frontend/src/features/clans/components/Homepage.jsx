@@ -3,6 +3,7 @@ import SecondaryNavigation from "../../navigation/components/SecondaryNav.jsx";
 import ClanContainer from "./ClanContainer.jsx";
 
 import { useClan } from "../context/ClanProvider.jsx";
+import { useState } from "react";
 
 // Simple skeleton loader for better UX
 function SkeletonLoader() {
@@ -16,7 +17,7 @@ function SkeletonLoader() {
 }
 
 // Sidebar overview panel
-function OverviewPanel({ clansCount = 0 }) {
+function OverviewPanel({ clansCount = 0, authoredClans = 0 }) {
     return (
         <div className="rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-sm">
             <h3 className="font-semibold text-slate-900">Overview</h3>
@@ -28,8 +29,14 @@ function OverviewPanel({ clansCount = 0 }) {
                     </span>
                 </div>
                 <div className="flex justify-between">
-                    <span className="text-slate-500">Active Members</span>
-                    <span className="font-semibold text-slate-900">—</span>
+                    <span className="text-slate-500">Clans Created</span>
+                    <span className="font-semibold text-slate-900">
+                        {authoredClans}
+                    </span>
+                </div>
+                <div className="flex justify-between">
+                    <span className="text-slate-500">Requested </span>
+                    <span className="font-semibold text-slate-900">-</span>
                 </div>
             </div>
         </div>
@@ -53,7 +60,9 @@ function DiscoverPanel() {
 }
 
 export default function HomePage() {
-    const { loading, clans, setShowClanModal } = useClan();
+    const { loading, myClanIds, authoredClans, setShowClanModal } = useClan();
+
+    const [viewing, setViewing] = useState("my-clans");
 
     return (
         <div className="w-full h-full min-h-0 flex flex-col">
@@ -82,9 +91,10 @@ export default function HomePage() {
                                     projects, and friendships.
                                 </p>
                             </div>
+
                             <button
                                 onClick={() => setShowClanModal(true)}
-                                className="rounded-2xl bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
+                                className="rounded-2xl bg-white/20 border border-white/95 backdrop-blur-2xl text-slate-600 px-4 py-1.5 font-semibold  transition hover:bg-white/40 hover:-translate-y-1 hover:shadow-sm hover:text-slate-800 whitespace-nowrap transition-all duration-300"
                             >
                                 Create Clan
                             </button>
@@ -98,13 +108,18 @@ export default function HomePage() {
                             <h2 className="mb-4 text-lg font-semibold text-slate-900">
                                 My Clans
                             </h2>
-                            {loading ? <SkeletonLoader /> : <ClanContainer />}
+                            {loading ? (
+                                <SkeletonLoader />
+                            ) : (
+                                <ClanContainer viewing={viewing} />
+                            )}
                         </section>
 
                         {/* Sidebar */}
                         <aside className="flex flex-col gap-6">
                             <OverviewPanel
-                                clansCount={Object.keys(clans ?? {}).length}
+                                clansCount={myClanIds.length}
+                                authoredClans={authoredClans.length}
                             />
                             <DiscoverPanel />
                         </aside>

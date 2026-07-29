@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { uploadToCloudinary } from "../../../utils/uploadToCloud";
-import { createClan } from "../api/clanApis";
+import { createClan, joinClan, getClanById } from "../api/clanApis";
+import { useClan } from "../context/ClanProvider";
 
 export const useClanActions = () => {
     const [creatingClan, setCreatingClan] = useState(false);
+    const [loadingClan, setLoadingClan] = useState(false);
+    const { clanEntities } = useClan();
 
     const handleCreateClan = async (details) => {
         try {
@@ -48,9 +51,38 @@ export const useClanActions = () => {
         }
     };
 
+    const handleJoinClan = async (clanId) => {
+        try {
+            const { data } = await joinClan(clanId);
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleFetchClan = async (clanId) => {
+        try {
+            console.log("Here");
+            setLoadingClan(true);
+            let clan = clanEntities[clanId];
+            if (!clan) {
+                const { data } = await getClanById(clanId);
+                clan = data;
+            }
+            return clan;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            console.log("here");
+            setLoadingClan(false);
+        }
+    };
     return {
         handleCreateClan,
         creatingClan,
         handleDeleteClan,
+        handleJoinClan,
+        handleFetchClan,
+        loadingClan,
     };
 };

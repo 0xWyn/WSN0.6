@@ -1,7 +1,7 @@
 import { useClan } from "../context/ClanProvider";
 import ClanCard from "./ClanCard";
 
-export default function ClanContainer({ posts }) {
+export default function ClanContainer({ viewing }) {
     const { myClanIds, clanEntities, loading } = useClan();
 
     if (loading) {
@@ -16,6 +16,7 @@ export default function ClanContainer({ posts }) {
         return <ClanCard key={id} clan={clanEntities[id]} />;
     });
 
+    // fetch clans by members and join requests or display requested as grayed out in my clans? instead of a whole category?
     return (
         <section className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 p-4">
             {mappedClans.length > 0 ? (

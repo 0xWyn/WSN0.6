@@ -8,7 +8,6 @@ export const ClanProvider = ({ children }) => {
     const { user } = useAuth();
 
     const [clanEntities, setClanEntities] = useState({});
-
     const [clansByCategory, setClansByCategory] = useState({});
     const [exploreCategories, setExploreCategories] = useState([]);
 
@@ -18,6 +17,11 @@ export const ClanProvider = ({ children }) => {
 
     const [showClanModal, setShowClanModal] = useState(false);
 
+    const authoredClans = myClanIds.map((id) =>
+        clanEntities[id].owner === user._id ? clanEntities[id] : null
+    );
+
+    const [requested, setRequested] = useState({});
     useEffect(() => {
         if (!user) return;
 
@@ -73,6 +77,7 @@ export const ClanProvider = ({ children }) => {
                 clansByCategory,
                 setExploreCategories,
                 setClansByCategory,
+                authoredClans,
             }}
         >
             {children}

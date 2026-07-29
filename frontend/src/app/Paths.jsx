@@ -36,6 +36,9 @@ const ClanPage = lazy(
 const Explore = lazy(
     () => import("../features/explore/components/ExplorePage.jsx")
 );
+const ClanResolver = lazy(
+    () => import("../features/clans/components/ClanResolver.jsx")
+);
 
 export default function Paths() {
     return (
@@ -47,6 +50,7 @@ export default function Paths() {
                     <Route path="/" element={<Layout />}>
                         <Route index element={<Homepage />} />
                         <Route path="home" element={<Homepage />}></Route>
+
                         <Route path="c/:id" element={<ClanPage />} />
 
                         <Route path="posts/:id" element={<PostPage />} />
