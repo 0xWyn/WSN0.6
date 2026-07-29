@@ -5,7 +5,6 @@ const EntityContext = createContext(null);
 export const EntityProvider = ({ children }) => {
     const [entities, setEntities] = useState({
         users: {},
-        posts: {},
         chats: {},
         messages: {},
         comments: {},

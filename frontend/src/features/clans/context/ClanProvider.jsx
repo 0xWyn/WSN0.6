@@ -12,6 +12,7 @@ export const ClanProvider = ({ children }) => {
     const [exploreCategories, setExploreCategories] = useState([]);
 
     const [myClanIds, setMyClanIds] = useState([]);
+    const [requestedClans, setRequestedClans] = useState([]);
 
     const [loading, setLoading] = useState(false);
 
@@ -21,7 +22,8 @@ export const ClanProvider = ({ children }) => {
         clanEntities[id].owner === user._id ? clanEntities[id] : null
     );
 
-    const [requested, setRequested] = useState({});
+    const [viewingClan, setViewingClan] = useState(false);
+
     useEffect(() => {
         if (!user) return;
 
@@ -36,9 +38,27 @@ export const ClanProvider = ({ children }) => {
                     map[clan._id] = clan;
                 });
 
-                const ids = data.map((clan) => clan._id);
+                // const ids = data
+                //     .filter((clan) => clan.members.includes(user._id))
+                //     .map((clan) => clan._id);
 
-                setMyClanIds(ids);
+                // const ids = data.map((clan) =>
+                //     clan.members.includes(user._id)
+                //         ? clan._id
+                //         : setRequestedClanIds((prev) => prev + 1)
+                // );
+                // setMyClanIds(ids);
+
+                data.forEach((clan) =>
+                    clan.members.includes(user._id)
+                        ? setMyClanIds((prev) => [
+                              ...new Set([...prev, clan._id]),
+                          ])
+                        : setRequestedClans((prev) => [
+                              ...new Set([...prev, clan._id]),
+                          ])
+                );
+
                 setClanEntities((prev) => ({ ...(prev || {}), ...map }));
 
                 setClansByCategory((prev) => {
@@ -78,6 +98,7 @@ export const ClanProvider = ({ children }) => {
                 setExploreCategories,
                 setClansByCategory,
                 authoredClans,
+                requestedClans,
             }}
         >
             {children}

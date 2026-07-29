@@ -11,7 +11,7 @@ import { useClan } from "../context/ClanProvider.jsx";
 export default function ClanPage() {
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
-    const { clans } = useClan();
+    const { clanEntities: clans } = useClan();
 
     const clan = clans?.[id];
 
@@ -56,7 +56,8 @@ export default function ClanPage() {
                     </header>
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                         <main className="flex-1 flex flex-col gap-6">
-                            <CreatePost />
+                            {/* Make createPost a rich modal */}
+                            {/* <CreatePost /> */}
                             <PostContainer posts={posts} />
                         </main>
                         <aside className="flex w-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:w-80">

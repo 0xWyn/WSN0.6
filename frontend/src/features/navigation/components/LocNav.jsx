@@ -20,7 +20,7 @@ export default function LocNav({ current, redirect = true }) {
                     <ArrowLeft />
                 </button>
             )}
-            <p className="relative z-10 text-[15px] font-semibold tracking-[0.1em] text-slate-800 uppercase">
+            <p className="relative z-10 text-xl font-bold text-slate-800">
                 {current}
             </p>
         </div>

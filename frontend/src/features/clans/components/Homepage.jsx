@@ -17,7 +17,11 @@ function SkeletonLoader() {
 }
 
 // Sidebar overview panel
-function OverviewPanel({ clansCount = 0, authoredClans = 0 }) {
+function OverviewPanel({
+    clansCount = 0,
+    authoredClans = 0,
+    requestedClans = 0,
+}) {
     return (
         <div className="rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-sm">
             <h3 className="font-semibold text-slate-900">Overview</h3>
@@ -36,7 +40,9 @@ function OverviewPanel({ clansCount = 0, authoredClans = 0 }) {
                 </div>
                 <div className="flex justify-between">
                     <span className="text-slate-500">Requested </span>
-                    <span className="font-semibold text-slate-900">-</span>
+                    <span className="font-semibold text-slate-900">
+                        {requestedClans}
+                    </span>
                 </div>
             </div>
         </div>
@@ -60,13 +66,19 @@ function DiscoverPanel() {
 }
 
 export default function HomePage() {
-    const { loading, myClanIds, authoredClans, setShowClanModal } = useClan();
+    const {
+        loading,
+        myClanIds,
+        authoredClans,
+        setShowClanModal,
+        requestedClans,
+    } = useClan();
 
     const [viewing, setViewing] = useState("my-clans");
 
     return (
         <div className="w-full h-full min-h-0 flex flex-col">
-            <div className="sticky top-0 w-full flex backdrop-blur-2xl">
+            <div className=" top-0 w-full flex backdrop-blur-2xl">
                 <LocNav current="Home" redirect={false} />
                 <SecondaryNavigation />
             </div>
@@ -108,6 +120,7 @@ export default function HomePage() {
                             <h2 className="mb-4 text-lg font-semibold text-slate-900">
                                 My Clans
                             </h2>
+                            {/* Enable filter for created, joined and requested */}
                             {loading ? (
                                 <SkeletonLoader />
                             ) : (
@@ -120,6 +133,7 @@ export default function HomePage() {
                             <OverviewPanel
                                 clansCount={myClanIds.length}
                                 authoredClans={authoredClans.length}
+                                requestedClans={requestedClans.length}
                             />
                             <DiscoverPanel />
                         </aside>

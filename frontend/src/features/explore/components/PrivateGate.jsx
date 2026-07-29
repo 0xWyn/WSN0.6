@@ -15,6 +15,7 @@ export default function PrivateGate() {
 
     const requested = clan.joinRequests.find(({ user }) => user === auth._id);
 
+    console.log(clan);
     return (
         <div className="h-full w-full absolute top-0 left-0 z-10">
             <div className="h-full bg-slate-900/35 backdrop-blur-xl flex items-center justify-center">
