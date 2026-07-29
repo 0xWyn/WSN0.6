@@ -1,4 +1,5 @@
 const cloudName = import.meta.env.VITE_CLOUD_NAME;
+
 const uploadToCloudinary = async (file, options = {}) => {
     const { folder = "posts" } = options;
     const formData = new FormData();
@@ -18,13 +19,15 @@ const uploadToCloudinary = async (file, options = {}) => {
 
     return {
         url: data.secure_url,
+        publicId: data.public_id,
         type: file.type.startsWith("video") ? "video" : "image",
     };
 };
 
 const uploadAllFiles = async (files, options = {}) => {
-    const { folder = "posts" } = options;
-    return await Promise.all(files.map(uploadToCloudinary));
+    return await Promise.all(
+        files.map((file) => uploadToCloudinary(file, options))
+    );
 };
 
 // ✅ export BOTH

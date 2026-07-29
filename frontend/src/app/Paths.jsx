@@ -27,6 +27,18 @@ const ChatManager = lazy(
     () => import("../features/chat/components/ChatResolver.jsx")
 );
 const UserPage = lazy(() => import("../features/user/components/UserPage.jsx"));
+const Homepage = lazy(
+    () => import("../features/clans/components/Homepage.jsx")
+);
+const ClanPage = lazy(
+    () => import("../features/clans/components/ClanPage.jsx")
+);
+const Explore = lazy(
+    () => import("../features/explore/components/ExplorePage.jsx")
+);
+const ClanResolver = lazy(
+    () => import("../features/clans/components/ClanResolver.jsx")
+);
 
 export default function Paths() {
     return (
@@ -36,8 +48,11 @@ export default function Paths() {
                 <Route path="/login" element={<LoginForm />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<Layout />}>
-                        <Route index element={<Feed />} />
-                        <Route path="home" element={<Feed />} />
+                        <Route index element={<Homepage />} />
+                        <Route path="home" element={<Homepage />}></Route>
+
+                        <Route path="c/:id" element={<ClanPage />} />
+
                         <Route path="posts/:id" element={<PostPage />} />
                         <Route path="settings" element={<Settings />}>
                             <Route index element={<SetProfile />} />
@@ -49,6 +64,7 @@ export default function Paths() {
                             <Route path="user/:id" element={<ChatManager />} />
                         </Route>
                         <Route path="user/:id" element={<UserPage />} />
+                        <Route path="explore" element={<Explore />} />
                     </Route>
                 </Route>
             </Routes>

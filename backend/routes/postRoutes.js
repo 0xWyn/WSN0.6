@@ -1,17 +1,21 @@
 import express from "express";
-import { protect } from "../middleware/auth.js";
+import { fetchComments } from "../controllers/commentController.js";
 import {
     createPost,
+    deletePost,
+    getClanPosts,
+    getGlobalPosts,
     getPostById,
-    getPosts,
     toggleLike,
 } from "../controllers/postController.js";
-import { fetchComments } from "../controllers/commentController.js";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getPosts);
+router.get("/", getGlobalPosts);
+router.get("/:clanId", getClanPosts);
 router.post("/", protect, createPost);
+router.delete("/:postId", protect, deletePost);
 router.patch("/:postId/like", protect, toggleLike);
 router.get("/:postId", protect, getPostById);
 router.get("/:postId/comments", protect, fetchComments);

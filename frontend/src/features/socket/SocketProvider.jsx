@@ -1,10 +1,11 @@
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "../auth/context/AuthProvider";
 
 const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
+    const [socket, setSocket] = useState(null);
     const socketRef = useRef(null);
     const { user } = useAuth();
 
@@ -31,6 +32,8 @@ export function SocketProvider({ children }) {
             reconnectionAttempts: 5,
             transports: ["websocket", "polling"],
         });
+
+        setSocket(socketRef.current);
 
         // Emit join event on connection
         const handleConnect = () => {
@@ -64,8 +67,12 @@ export function SocketProvider({ children }) {
         };
     }, [user]);
 
+    useEffect(() => {
+        console.log("socket changed", socket);
+    }, [socket]);
+
     return (
-        <SocketContext.Provider value={{ socket: socketRef.current }}>
+        <SocketContext.Provider value={{ socket }}>
             {children}
         </SocketContext.Provider>
     );

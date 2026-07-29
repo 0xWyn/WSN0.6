@@ -1,13 +1,18 @@
 import { Outlet } from "react-router-dom";
-import NavigationBar from "./NavigationBar";
+import ClanCreationModal from "../features/clans/components/ClanCreationModal";
+import { useClan } from "../features/clans/context/ClanProvider";
+import SlickNav from "../features/navigation/components/SlickNav";
 
 export default function Layout() {
+    const { showClanModal } = useClan();
+
     return (
-        <div className="md-flex-row flex flex-col flex-col-reverse w-screen min-w-sm h-screen items-stretch gap-2 p-2 bg-white overflow-x-scroll border">
-            <NavigationBar />
-            <div className="flex-1 min-w-0 w-full overflow-y-auto ">
+        <div className="flex w-screen items-stretch gap-2 bg-white overflow-x-scroll ">
+            <SlickNav />
+            <div className="flex-1 min-w-0 w-full h-screen overflow-y-auto">
                 <Outlet />
             </div>
+            {showClanModal && <ClanCreationModal />}
         </div>
     );
 }

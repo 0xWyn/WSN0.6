@@ -1,18 +1,28 @@
 import Clan from "../models/clanModel.js";
 import User from "../models/userModel.js";
+import { io } from "../server.js";
 
 export const createClan = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { clanName, description, visibility, photo } = req.body;
+        const { avatar, banner, name, description, domain, tags, visibility } =
+            req.body;
+
         const newClan = await Clan.create({
-            name: clanName,
-            description,
-            visibility,
-            creator: userId,
+            avatar,
+            banner,
+            name: name.trim(),
+            description: description.trim(),
+            domain,
+            tags,
+            owner: userId,
             members: [userId],
+            visibility: visibility.toLowerCase(),
         });
-        res.status(201).json(newClan);
+
+        io.to(userId).emit("clan_created", newClan);
+
+        res.status(201).json({ msg: "Clan created successfully", newClan });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -30,40 +40,58 @@ export const myClans = async (req, res) => {
     }
 };
 
+export const getClanById = async (req, res) => {
+    try {
+        const { clanId } = req.params;
+        const clan = await Clan.findById(clanId);
+        res.status(200).json(clan);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export const joinClan = async (req, res) => {
     try {
         const userId = req.user._id;
-        // const user = await User.findById(userId);
         const { clanId } = req.params;
 
         const clan = await Clan.findById(clanId);
 
+        if (!clan) {
+            return res.status(404).json({ error: "Clan not found" });
+        }
+
         if (clan.members.length >= clan.maxMembers)
             return res.status(400).json({ error: "Clan is full" });
+
+        if (clan.members.some((member) => member.equals(userId))) {
+            return res.status(400).json({ msg: "Already a member" });
+        }
 
         if (clan.visibility === "public") {
             clan.members.addToSet(userId);
             await clan.save();
             return res
                 .status(201)
-                .json({ msg: `You have joined ${clan.name}` });
+                .json({ msg: `You have joined ${clan.name}`, clan: clan._id });
         }
 
-        if (clan.visibility === "request") {
+        if (clan.visibility === "private") {
             const existingRequest = clan.joinRequests.find(
-                (req) => req.user === userId
+                (request) => request.user.toString() === userId.toString()
             );
 
             if (existingRequest) {
-                return res.status(400).json({ msg: alreadyRequested.status });
+                return res.status(200).json({ msg: existingRequest.status });
             }
 
             clan.joinRequests.push({
                 user: userId,
                 status: "Pending",
             });
+
             await clan.save();
-            return res.status(201).json({ msg: `Request sent` });
+            return res.status(201).json({ msg: `Request sent`, clan });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });

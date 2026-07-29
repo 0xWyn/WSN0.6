@@ -3,16 +3,16 @@ import { useEntities } from "../../global/EntityProvider";
 import { useFeed } from "../context/FeedProvider";
 import { useFeedPosts } from "./useFeedPosts";
 
-export const useGlobalPosts = () => {
+export const useClanPosts = (id) => {
     const { queries } = useFeed();
     const { entities } = useEntities();
-    const { fetchGlobalPosts } = useFeedPosts();
+    const { fetchClanPosts } = useFeedPosts();
 
     useEffect(() => {
-        fetchGlobalPosts(1);
-    }, []);
+        fetchClanPosts(1, id);
+    }, [id]);
 
-    const ids = queries.homeFeedIds;
+    const ids = queries.clanPostsIds[id];
 
     const posts = ids?.map((id) => entities.posts[id]) ?? [];
 

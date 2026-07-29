@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
     {
-        text: String,
         author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
+        text: String,
         media: [
             {
                 type: {
@@ -19,9 +19,17 @@ const postSchema = new mongoose.Schema(
         ],
         likes: [{ type: mongoose.Schema.Types.ObjectId }],
         replyCount: { type: Number, default: 0 },
+        clan: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Clan",
+        },
     },
     { timestamps: true }
 );
+
+postSchema.index({
+    text: "text",
+});
 
 const Post = mongoose.model("Post", postSchema);
 export default Post;

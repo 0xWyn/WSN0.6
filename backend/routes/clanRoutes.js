@@ -1,10 +1,10 @@
 import express from "express";
-import { protect } from "../middleware/auth.js";
 import {
     addModerator,
     approveRequest,
     createClan,
     deleteClan,
+    getClanById,
     joinClan,
     leaveClan,
     myClans,
@@ -12,6 +12,7 @@ import {
     removeMember,
     removeModerator,
 } from "../controllers/clanController.js";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.delete("/:clanId", protect, deleteClan);
 
 // Civilian
 router.get("/", protect, myClans);
+router.get("/:clanId", protect, getClanById);
 router.put("/:clanId", protect, joinClan);
 router.patch("/:clanId/leave", protect, leaveClan);
 

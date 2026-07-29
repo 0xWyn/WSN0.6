@@ -3,6 +3,8 @@ import { FeedProvider } from "../features/feed/context/FeedProvider.jsx";
 import { SocketProvider } from "../features/socket/SocketProvider.jsx";
 import { EntityProvider } from "../features/global/EntityProvider.jsx";
 import { RealtimeProvider } from "../features/global/RealtimeProvider.jsx";
+import { ClanProvider } from "../features/clans/context/ClanProvider.jsx";
+import { ExploreProvider } from "../features/explore/context/ExploreProvider.jsx";
 
 import Paths from "./Paths.jsx";
 
@@ -12,9 +14,13 @@ export default function App() {
             <SocketProvider>
                 <EntityProvider>
                     <RealtimeProvider>
-                        <FeedProvider>
-                            <Paths />
-                        </FeedProvider>
+                        <ClanProvider>
+                            <FeedProvider>
+                                <ExploreProvider>
+                                    <Paths />
+                                </ExploreProvider>
+                            </FeedProvider>
+                        </ClanProvider>
                     </RealtimeProvider>
                 </EntityProvider>
             </SocketProvider>

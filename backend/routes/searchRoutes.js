@@ -1,8 +1,14 @@
-import { searchDB } from "../controllers/searchController.js";
 import express from "express";
+import {
+    searchClanContent,
+    searchClanDirectory,
+    searchUserPosts,
+} from "../controllers/searchController.js";
 
-const searchRouter = express.Router();
+const router = express.Router();
 
-searchRouter.post("/", searchDB);
+router.get("/clans/:term", searchClanDirectory);
+router.get("/clans/:clanId/:term", searchClanContent);
+router.get("/user/:userId/:term", searchUserPosts);
 
-export default searchRouter;
+export default router;

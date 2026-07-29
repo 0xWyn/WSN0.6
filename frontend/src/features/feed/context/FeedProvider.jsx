@@ -6,6 +6,7 @@ const FeedContext = createContext();
 export const FeedProvider = ({ children }) => {
     const [queries, setQueries] = useState({
         homeFeedIds: [],
+        clanPostsIds: {},
         usersPostsIds: {},
         commentsByPost: {},
     });

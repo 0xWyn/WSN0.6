@@ -1,9 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../features/auth/context/AuthProvider";
-import { useChatNotifications } from "../features/notification/hooks/useChatNotifications";
+import { useAuth } from "../../auth/context/AuthProvider";
+import { useChatNotifications } from "../../notification/hooks/useChatNotifications";
+import { useClan } from "../../clans/context/ClanProvider";
 
 export default function NavigationBar() {
     const { totalMessages } = useChatNotifications();
+    const { loading, clans } = useClan();
 
     const location = useLocation();
     const { user, logout } = useAuth();
@@ -44,8 +46,28 @@ export default function NavigationBar() {
     ];
 
     return (
-        <div className="flex justify-center md-flex-col md-justify-between gap-10 py-2 items-center">
-            <div className="flex md-flex-col gap-4 justify-center items-center">
+        // <div className="flex flex-col justify-between gap-10 py-2">
+        //     <div className="flex flex-col gap-4 justify-center">
+        //         {sections.map((section) => (
+        //             <Link to={section.path} key={section.name}>
+        //                 <div
+        //                     className={`p-2 text-xs border border-gray-300 rounded-md font-medium hover:-translate-y-0.5 hover:bg-blue-600 transition-all duration-300 relative ${current === section.path.split("/")[0] ? "bg-blue-500 text-white" : ""}`}
+        //                 >
+        //                     {section.name}
+        //                 </div>
+        //             </Link>
+        //         ))}
+        //     </div>
+
+        //     <button
+        //         onClick={logout}
+        //         className="bg-white text-black !text-xs !text-left border border-gray-300 !p-2 w-full hover:-translate-y-0.5 hover:bg-red-600 transition-all duration-300 relative"
+        //     >
+        //         logout
+        //     </button>
+        // </div>
+        <div className="flex flex-col justify-between gap-10 py-2">
+            <div className="flex flex-col gap-4 justify-center">
                 {sections.map((section) => (
                     <Link to={section.path} key={section.name}>
                         <div
@@ -69,10 +91,26 @@ export default function NavigationBar() {
                     </Link>
                 ))}
             </div>
-
+            <div>
+                <h2>Clans</h2>
+                {loading && <div>...</div>}
+                {clans && (
+                    <div className="flex flex-col h-full gap-2">
+                        {Object.values(clans).map((clan) => (
+                            <div
+                                key={clan._id}
+                                className="flex flex-col items-center"
+                            >
+                                <div className="size-10 rounded-full border" />
+                                <p>{clan.name}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
             <button
                 onClick={logout}
-                className="bg-white text-black !text-xs !text-left border border-gray-300 !p-2 w-full hover:-translate-y-0.5 hover:bg-red-600 !transition-all !duration-300 relative"
+                className="bg-white text-black !text-xs !text-left border border-gray-300 !p-2 hover:-translate-y-0.5 hover:bg-red-600 !transition-all !duration-300 relative"
             >
                 logout
             </button>

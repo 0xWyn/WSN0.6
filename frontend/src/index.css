@@ -29,11 +29,8 @@ body,
 /* 3. Reset buttons so Tailwind classes work properly */
 
 button {
-    border-radius: 8px;
-    padding: 0.6em 1.2em;
     font-weight: 500;
     font-family: inherit;
-    transition: border-color 0.25s;
     cursor: pointer;
 }
 
@@ -42,4 +39,118 @@ img,
 video {
     max-width: 100%;
     display: block;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
+}
+
+.animate-error-in {
+    animation: error-in 300ms ease;
+}
+
+@keyframes error-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes violent-shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    10% {
+        transform: translateX(-8px);
+    }
+    20% {
+        transform: translateX(8px);
+    }
+    30% {
+        transform: translateX(-8px);
+    }
+    40% {
+        transform: translateX(8px);
+    }
+    50% {
+        transform: translateX(-6px);
+    }
+    60% {
+        transform: translateX(6px);
+    }
+    70% {
+        transform: translateX(-4px);
+    }
+    80% {
+        transform: translateX(4px);
+    }
+    90% {
+        transform: translateX(-2px);
+    }
+}
+
+.animate-violent-shake {
+    animation: violent-shake 0.4s ease-in-out;
+}
+
+@keyframes error-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.95);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    50% {
+        transform: translateX(4px);
+    }
+
+    75% {
+        transform: translateX(-2px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-error-pop {
+    animation: error-pop 0.35s ease-out;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
+    animation: shimmer 1.5s infinite;
 }
