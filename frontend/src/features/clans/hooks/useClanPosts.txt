@@ -1,0 +1,71 @@
+user logs into clan
+we fetch and setClan posts by id
+set posts in entities, (grouped by id);
+
+set Posts by clan([...ids]);
+
+post entities by ids (id: {clan})
+
+posts are persistent, and fetched by pagination;
+
+also fetching users, ie members, but that works automatically
+
+so the first thing
+
+const mergeData = (data, clanId) => {
+ const {setEntities, setQueries} = useEntities();
+
+ const postIds = data.map((post) => post._id);
+
+ setQueries((prev) => ({
+    ...prev, [postsByClan] : ({...prev[postsByClan], [clanId]: [...postIds]})
+ }));
+
+ data.forEach((post) => setQueries((prev) => ({...prev, [postsByUser]: ({...prev[postsByUser], [post.userId]: [...prev[postsByUser]]})})))
+
+ maybe this should all be individual functions;
+
+ setPostsByClan
+ setPostsByUser
+ setUserEntities
+ data.map((post) => {
+
+ })
+}
+
+useClanPosts = (clanId) => {
+    const [clanPosts, setClanPosts] = useState({});
+    const [loading, setLoading] = useState(false);
+
+    const {postsByClan, postEntities} = useEntities();
+    
+    postsByClan = {
+        clanId: ["1, 3, 4, 4"]
+    }
+    const posts = postsByClan.map((id) => postEntities[id]);
+
+    setClanPosts(post)
+useEffect(() => {
+const fetchClanPosts = async () => {
+    try {
+        setLoadingPosts(true);
+        const {data} = await getPosts(clanId);
+        mergeData(data);
+
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setLoadingPosts(false);
+    }
+}
+}, [])
+
+    return {clanPosts};
+}
+
+
+
+
+const posts = useClanPosts(clanId);
+
+posts.map((post) => <PostCard/> )

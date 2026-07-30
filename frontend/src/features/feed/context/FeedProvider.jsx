@@ -11,6 +11,11 @@ export const FeedProvider = ({ children }) => {
         commentsByPost: {},
     });
 
+    const [postEntities, setPostEntities] = useState({});
+
+    const [postsByClan, setPostsByClan] = useState({});
+    const [postsByAuthorId, setPostsByAuthorId] = useState({});
+
     const [loading, setLoading] = useState(true);
 
     return (
@@ -18,6 +23,15 @@ export const FeedProvider = ({ children }) => {
             value={{
                 queries,
                 setQueries,
+
+                postsByClan,
+                setPostsByClan,
+
+                postEntities,
+                setPostEntities,
+
+                postsByAuthorId,
+                setPostsByAuthorId,
 
                 loading,
                 setLoading,

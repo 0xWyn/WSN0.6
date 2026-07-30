@@ -6,49 +6,40 @@ import { useFeed } from "../context/FeedProvider";
 export const useFeedPosts = () => {
     const { setLoading } = useFeed();
     const { entities, setEntities } = useEntities();
-    const { setQueries, queries } = useFeed();
+    const { setPostsByClan, setPostEntities, setPostsByAuthorId } = useFeed();
     const { mergePosts } = useEntityActions();
-
-    const fetchPosts = async (page = 1, clanId) => {
-        try {
-            const { data } = await getClanPosts(page, clanId);
-
-            mergePosts(data);
-
-            const newIds = data.map((post) => post._id);
-
-            setQueries((prev) => ({
-                ...prev,
-                homeFeedIds: [...new Set([...prev.homeFeedIds, ...newIds])],
-            }));
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const fetchClanPosts = async (page = 1, clanId) => {
         try {
             const { data } = await getClanPosts(page, clanId);
+
             mergePosts(data);
 
             const newIds = data.map((post) => post._id);
 
-            setQueries((prev) => ({
-                ...prev,
+            setPostsByClan((prev) => ({ ...prev, [clanId]: [...newIds] }));
 
-                clanPostsIds: {
-                    ...prev.clanPostsIds,
+            setPostEntities(() => {
+                const map = {};
 
-                    [clanId]: [
-                        ...new Set([
-                            ...(prev.clanPostsIds[clanId] ?? []),
-                            ...newIds,
-                        ]),
-                    ],
-                },
-            }));
+                data.forEach((post) => {
+                    map[post._id] = post;
+                });
+
+                return map;
+            });
+
+            setPostsByAuthorId((prev) => {
+                const map = { ...prev };
+
+                data.forEach((post) => {
+                    map[post.author._id] = [
+                        ...new Set([...map[post.author._id], post._id]),
+                    ];
+                });
+
+                return map;
+            });
         } catch (error) {
             console.error(error);
         } finally {

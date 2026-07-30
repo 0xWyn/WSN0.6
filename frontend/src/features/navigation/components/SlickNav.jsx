@@ -90,6 +90,8 @@ export default function SlickNav() {
     }, []);
 
     useEffect(() => {
+        if (collapsed) return;
+
         const collapse = () => {
             pathname.split("/")[1] === "c"
                 ? setCollapsed(true)
