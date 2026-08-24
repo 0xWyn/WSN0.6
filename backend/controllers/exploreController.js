@@ -5,10 +5,9 @@ import Clan from "../models/clanModel.js";
 
 export const explore = async (req, res) => {
     try {
-        const clans = await Clan.find({}).populate(
-            "owner",
-            "name username avatar"
-        );
+        const clans = await Clan.find({})
+            .populate("owner", "name username avatar")
+            .populate("joinRequests.user", "username avatar");
 
         res.status(200).json(clans);
     } catch (error) {

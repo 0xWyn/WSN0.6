@@ -21,8 +21,6 @@ export const useFeedPosts = () => {
             setLoadingFeedPosts((prev) => ({ ...prev, clanPosts: true }));
             const { data } = await getClanPosts(page, clanId);
 
-            console.log(queries);
-
             setEntities((prev) => normalisePosts(data, prev));
 
             setQueries((prev) => updatePostsQuery(data, prev));
@@ -35,6 +33,7 @@ export const useFeedPosts = () => {
 
     const fetchUserPosts = async (page = 1, userId) => {
         try {
+            setLoadingFeedPosts((prev) => ({ ...prev, userPosts: true }));
             const { data } = await getUserPosts(userId, page);
 
             const ids = data.map((post) => post._id);
@@ -44,7 +43,7 @@ export const useFeedPosts = () => {
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
+            setLoadingFeedPosts((prev) => ({ ...prev, userPosts: false }));
         }
     };
 

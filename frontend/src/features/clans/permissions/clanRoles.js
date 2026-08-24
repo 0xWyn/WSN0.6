@@ -7,7 +7,7 @@ export const CLAN_ROLES = {
 export function getClanRole(clan, userId) {
     if (!clan || !userId) return null;
 
-    if (clan.owner === userId) {
+    if (clan.owner._id === userId) {
         return CLAN_ROLES.OWNER;
     }
 

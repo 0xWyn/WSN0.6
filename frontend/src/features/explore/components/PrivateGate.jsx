@@ -11,13 +11,15 @@ export default function PrivateGate() {
 
     const auth = useCurrentUser();
 
-    const { handleJoinClan } = useClanActions();
-
-    const requested = clan.joinRequests.find(({ user }) => user === auth._id);
+    const { handleJoinClan } = useClanActions(clan._id);
 
     console.log(clan);
+    const requested = clan.joinRequests.find(
+        ({ user }) => user._id === auth._id
+    );
+
     return (
-        <div className="h-full w-full absolute top-0 left-0 z-10">
+        <div className="h-full w-full fixed top-0 left-0 z-100">
             <div className="h-full bg-slate-900/35 backdrop-blur-xl flex items-center justify-center">
                 <div className="relative w-full max-w-lg overflow-hidden bg-white/90 backdrop-blur-sm rounded-[32px] shadow-[0_25px_80px_rgba(15,23,42,.18)] border border-white flex flex-col gap-4 p-8 py py-10">
                     <button
@@ -140,7 +142,10 @@ export default function PrivateGate() {
                         </span>
                     )}
 
-                    <button className="w-full mt-3 text-sm text-slate-500 hover:text-slate-800">
+                    <button
+                        onClick={() => setShowPrivateGate(false)}
+                        className="w-full mt-3 text-sm text-slate-500 hover:text-slate-800"
+                    >
                         {!requested ? "Maybe later " : "Cancel"}
                     </button>
                 </div>

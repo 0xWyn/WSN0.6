@@ -31,6 +31,8 @@ export default function RequestSettings() {
 const RequestCard = ({ req }) => {
     const navigate = useNavigate();
     const user = req.user;
+
+    console.log(user);
     const { activeClan } = useClan();
 
     const viewAccount = () => {
@@ -95,7 +97,7 @@ const RequestCard = ({ req }) => {
 
                 <button
                     onClick={() => handleAcceptRequest(user._id)}
-                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-800 active:scale-95"
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-800 hover:border hover:border-emerald-500 hover: text-emerald-500 active:scale-95"
                 >
                     Accept
                 </button>

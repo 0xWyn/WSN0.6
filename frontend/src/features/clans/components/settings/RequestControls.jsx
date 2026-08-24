@@ -40,7 +40,7 @@ export default function RequestControls({ onClose }) {
     return (
         <div className="z-100 flex-1 flex justify-center w-full h-full relative">
             {/* Main Child */}
-            <div className="fixed bottom-10 w-full max-w-3xl rounded-[28px] border border-white/70 bg-white/75 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.35)] backdrop-blur-2xl">
+            <div className="fixed bottom-10 w-md sm:w-xl lg:w-full max-w-3xl rounded-[28px] border border-white/70 bg-white/75 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.35)] backdrop-blur-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between px-2 pb-3">
                     <h1 className="font-medium text-sm uppercase tracking-widest text-slate-400">

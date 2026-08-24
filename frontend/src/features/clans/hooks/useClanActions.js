@@ -101,6 +101,11 @@ export const useClanActions = (clanId) => {
         }
     };
 
+    const fetchClanMembers = async (page = 1) => {
+        try {
+        } catch (error) {}
+    };
+
     return {
         handleCreateClan,
         creatingClan,

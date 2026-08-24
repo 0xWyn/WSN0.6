@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { act, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Bars3 } from "../../../components/icons/hamburger.jsx";
 import Pencil from "../../../components/icons/pencil.jsx";
@@ -19,6 +19,7 @@ export default function ClanContent() {
     const { id } = useParams();
 
     useClanResolver(id);
+
     const [showCreationModal, setShowCreationModal] = useState(false);
     const [showClanMenu, setShowClanMenu] = useState(false);
     const menuRef = useRef(null);
@@ -44,8 +45,6 @@ export default function ClanContent() {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-
-        console.log("doing this");
     }, []);
 
     if (loadingClans.activeClan) return <div>Loading...</div>;

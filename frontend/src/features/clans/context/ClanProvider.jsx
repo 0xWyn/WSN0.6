@@ -8,6 +8,7 @@ const ClanContext = createContext(null);
 export const ClanProvider = ({ children }) => {
     const user = useCurrentUser();
     const userId = user?._id;
+
     const { entities, setEntities } = useEntities();
 
     const [clansByCategory, setClansByCategory] = useState({});
@@ -24,7 +25,7 @@ export const ClanProvider = ({ children }) => {
     const [showClanModal, setShowClanModal] = useState(false);
 
     const authoredClans = myClanIds?.map((id) =>
-        entities.clans[id].owner === user?._id ? entities.clans[id] : null
+        entities?.clans?.[id]?.owner === user?._id ? entities.clans[id] : null
     );
 
     const [activeClan, setActiveClan] = useState(false);

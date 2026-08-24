@@ -51,7 +51,7 @@ export default function PostCard({ post }) {
             //     }
             // }}
             // onClick={handleOpenPost}
-            className="group relative w-full overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100"
+            className="group relative w-full overflow-hidden rounded-[24px] bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100"
         >
             <div className="p-5 sm:p-6">
                 {/* Header */}

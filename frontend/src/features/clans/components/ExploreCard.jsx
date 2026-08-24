@@ -13,7 +13,9 @@ export default function ExploreCard({ clan }) {
 
     const handleOpenClan = () => navigate(`/c/${clan._id}`);
     const handlePrivateClan = () => {
-        setShowPrivateGate(clan);
+        clan.members.includes(auth._id.toString())
+            ? handleOpenClan()
+            : setShowPrivateGate(clan);
     };
 
     const isMember = clan?.members?.includes(auth._id);

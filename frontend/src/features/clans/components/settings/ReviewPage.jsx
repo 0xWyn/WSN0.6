@@ -10,7 +10,10 @@ export default function ReviewPage() {
             {isReviewing && (
                 <RequestControls onClose={() => setIsReviewing(false)} />
             )}
-            <UserPage />
+            <div className="relative">
+                <div className="z-50 w-full h-full inset-0 absolute"></div>
+                <UserPage readOnly />
+            </div>
         </div>
     );
 }

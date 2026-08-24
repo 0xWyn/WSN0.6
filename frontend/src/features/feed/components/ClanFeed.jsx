@@ -5,9 +5,6 @@ import { useFeedSocket } from "../socket/useFeedSocket";
 import PostContainer from "./PostContainer";
 
 export default function ClanFeed() {
-    const { loadingFeedPosts } = useFeedPosts();
-    if (loadingFeedPosts.clanPosts) return null;
-
     const { id } = useParams();
 
     useFeedSocket(id);

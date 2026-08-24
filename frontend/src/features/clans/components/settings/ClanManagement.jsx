@@ -116,7 +116,7 @@ export default function ClanManagement() {
                                 </h3>
 
                                 {/* Component */}
-                                <div className="flex-1 min-h-0 overflow-hidden p-2 rounded-[24px]">
+                                <div className="flex-1 min-h-0 overflow-hidden p-2 rounded-[24px] border">
                                     <Outlet />
                                 </div>
                             </div>

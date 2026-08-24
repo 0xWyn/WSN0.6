@@ -55,10 +55,9 @@ export default function PostContainer({ posts = [] }) {
         );
     }
 
-    const mappedPosts = posts.map((id) => {
-        console.log(hydratePost(entities.posts[id]));
-        return <PostCard key={id} post={hydratePost(entities.posts[id])} />;
-    });
+    const mappedPosts = posts.map((id) => (
+        <PostCard key={id} post={hydratePost(entities.posts[id])} />
+    ));
 
     return (
         <section className="flex w-full flex-col gap-5 h-full min-h-0">

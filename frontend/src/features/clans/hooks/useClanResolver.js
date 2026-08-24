@@ -4,11 +4,12 @@ import { useEntities } from "../../global/EntityProvider";
 import { getClanById } from "../api/clanApis";
 
 export const useClanResolver = (id) => {
-    const { setActiveClan, setLoadingClans } = useClan();
+    const { setActiveClan, activeClan, setLoadingClans } = useClan();
     const { entities } = useEntities();
 
     useEffect(() => {
         if (!id) return;
+        if (activeClan) return;
         const fetchClan = async () => {
             try {
                 setLoadingClans((prev) => ({ ...prev, activeClan: true }));

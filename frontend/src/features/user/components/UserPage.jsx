@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import EditProfile from "./EditProfile";
 import { useUser } from "../context/UserProvider";
 
-export default function UserPage() {
+export default function UserPage({ readOnly = false }) {
     const { id } = useParams();
     const { loading, user } = useProfile(id);
     const { isEditing, setIsEditing } = useUser();
@@ -53,11 +53,11 @@ export default function UserPage() {
             <div className="px-4 py-6 z-10 flex justify-center w-full">
                 {/* Content */}
                 <div className="flex w-full max-w-5xl flex-col items-center gap-4 p-6">
-                    <ProfileView user={user} />
+                    <ProfileView user={user} readOnly={readOnly} />
 
                     {/* Feed */}
                     <div className="max-w-4xl w-full">
-                        <UserFeed userId={user._id} />
+                        <UserFeed userId={user._id} readOnly={readOnly} />
                     </div>
                 </div>
                 {/* Profile Card */}

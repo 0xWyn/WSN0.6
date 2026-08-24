@@ -69,15 +69,6 @@ export default function SlickNav() {
         };
     }, []);
 
-    useEffect(() => {
-        const collapse = () => {
-            pathname.split("/")[1] === "c"
-                ? setCollapsed(true)
-                : setCollapsed(false);
-        };
-        collapse();
-    }, [pathname]);
-
     return (
         <aside
             className={`h-screen flex h-full flex-col border-r border-white/40 bg-white/25 backdrop-blur-3xl relative transition-all duration-300 ${!collapsed ? "w-1/4" : "w-[80px] overflow-hidden"}`}
