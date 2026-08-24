@@ -1,99 +1,85 @@
-import { Link, Outlet } from "react-router-dom";
-import LocNav from "../../../components/ui/LocNav";
+import LocNav from "../../navigation/components/LocNav";
+import ProfileSettings from "./ProfileSettings";
 
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function Settings() {
     const location = useLocation();
+    const [activeSection, setActiveSection] = useState("Profile");
 
     const items = [
         {
             label: "Profile",
-            path: "/settings/profile" || "/settings",
             icon: "👤",
+            component: ProfileSettings,
         },
         {
             label: "Account",
-            path: "/settings/account",
             icon: "🔒",
+            component: null,
         },
         {
             label: "Notifications",
-            path: "/settings/notifications",
             icon: "🔔",
+            component: null,
         },
     ];
 
     return (
-        <div className="flex h-full min-h-0 w-full flex-col">
-            <div className="sticky top-0 z-40 w-full backdrop-blur-2xl">
+        <div className="relative flex flex-col h-full">
+            {/* Background */}
+            <div className="pointer-events-none fixed z-0 inset-0 overflow-hidden ">
+                <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
+                <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
+            </div>
+
+            {/* Navigation */}
+            <div className="sticky top-0 z-50 w-full backdrop-blur-2xl bg-white/60">
                 <LocNav current="Settings" />
             </div>
-            <div className="relative flex-1 bg-[#f8fafc]">
-                {/* Background */}
-                <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70">
-                    <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
-                    <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
-                </div>
 
-                <div className="relative z-10 h-full min-w-0 p-6">
-                    <div className="mx-auto flex h-full max-w-7xl flex-col gap-6">
-                        {/* Header */}
-                        <header className="rounded-[36px] border border-white/60 bg-white/35 p-8 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
-                            <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
-                                Settings
-                            </h1>
+            {/* Main */}
+            <div className="p-6 z-40 flex-1 min-h-0 flex items-center justify-center border-2 overflow-hidden">
+                {/* Main Child */}
+                <div className="h-full flex flex-wrap items-start justify-center gap-6 py-6 px-8 w-full max-w-6xl backrop-blur-xl border border-white/60 bg-white/40 rounded-[28px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] overflow-hidden">
+                    {/* Sidebar */}
+                    <aside className="space-y-8 p-4 flex flex-col">
+                        <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
+                            Settings
+                        </h1>
+                        <div className="flex flex-col gap-2">
+                            {items.map((item) => {
+                                const active = activeSection === item.label;
+                                return (
+                                    <div
+                                        key={item.label}
+                                        onClick={() =>
+                                            setActiveSection(item.label)
+                                        }
+                                    >
+                                        <div
+                                            className={`flex items-center gap-4 rounded-2xl px-4 py-4 transition-all duration-300 ${active ? "bg-white shadow-md text-slate-900" : "hover:bg-white/60 text-slate-600"}`}
+                                        >
+                                            <span>{item.icon}</span>
 
-                            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-                                Manage your profile, account security,
-                                notifications, and preferences.
-                            </p>
-                        </header>
-
-                        {/* Content */}
-                        <div className="grid flex-1 min-h-0 gap-6 lg:grid-cols-[280px_1fr]">
-                            {/* Sidebar */}
-                            <aside className="rounded-[32px] border border-white/60 bg-white/35 p-4 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
-                                <div className="flex flex-col gap-2">
-                                    {items.map((item) => {
-                                        const active =
-                                            location.pathname === item.path;
-
-                                        return (
-                                            <Link
-                                                key={item.path}
-                                                to={item.path}
-                                            >
-                                                <div
-                                                    className={`
-                                                        flex items-center gap-4
-                                                        rounded-2xl px-4 py-4
-                                                        transition-all duration-300
-                                                        ${
-                                                            active
-                                                                ? "bg-white shadow-md text-slate-900"
-                                                                : "hover:bg-white/60 text-slate-600"
-                                                        }
-                                                    `}
-                                                >
-                                                    <span>{item.icon}</span>
-
-                                                    <span className="font-medium">
-                                                        {item.label}
-                                                    </span>
-                                                </div>
-                                            </Link>
-                                        );
-                                    })}
-                                </div>
-                            </aside>
-
-                            {/* Main Content */}
-                            <section className="min-h-0 overflow-auto rounded-[32px] border border-white/60 bg-white/35 p-6 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
-                                <Outlet />
-                            </section>
+                                            <span className="font-medium">
+                                                {item.label}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    </div>
+                    </aside>
+
+                    {/* Content */}
+
+                    {items.map((item) =>
+                        item.label === activeSection && item.component ? (
+                            <item.component />
+                        ) : null
+                    )}
                 </div>
             </div>
         </div>

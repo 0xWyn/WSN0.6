@@ -27,17 +27,36 @@ const ChatManager = lazy(
     () => import("../features/chat/components/ChatResolver.jsx")
 );
 const UserPage = lazy(() => import("../features/user/components/UserPage.jsx"));
-const Homepage = lazy(
-    () => import("../features/clans/components/Homepage.jsx")
-);
+const Homepage = lazy(() => import("./Homepage.jsx"));
 const ClanPage = lazy(
     () => import("../features/clans/components/ClanPage.jsx")
 );
 const Explore = lazy(
     () => import("../features/explore/components/ExplorePage.jsx")
 );
-const ClanResolver = lazy(
-    () => import("../features/clans/components/ClanResolver.jsx")
+const ClanManagement = lazy(
+    () => import("../features/clans/components/settings/ClanManagement.jsx")
+);
+const ClanContent = lazy(
+    () => import("../features/clans/components/ClanContent.jsx")
+);
+const ReviewPage = lazy(
+    () => import("../features/clans/components/settings/ReviewPage.jsx")
+);
+const ClanRequests = lazy(
+    () => import("../features/clans/components/settings/RequestSettings.jsx")
+);
+const ClanGeneralSettings = lazy(
+    () => import("../features/clans/components/settings/GeneralSettings.jsx")
+);
+const ClanMemberSettings = lazy(
+    () => import("../features/clans/components/settings/MemberSettings.jsx")
+);
+const ClanModeratorSettings = lazy(
+    () => import("../features/clans/components/settings/ModeratorSettings.jsx")
+);
+const ClanSettingsLayout = lazy(
+    () => import("../features/clans/components/settings/ClanSettingsLayout.jsx")
 );
 
 export default function Paths() {
@@ -51,7 +70,37 @@ export default function Paths() {
                         <Route index element={<Homepage />} />
                         <Route path="home" element={<Homepage />}></Route>
 
-                        <Route path="c/:id" element={<ClanPage />} />
+                        <Route path="c/:id" element={<ClanPage />}>
+                            <Route index element={<ClanContent />} />
+
+                            <Route path="settings" element={<ClanManagement />}>
+                                <Route
+                                    index
+                                    element={<ClanGeneralSettings />}
+                                />
+                                <Route
+                                    path="requests"
+                                    element={<ClanRequests />}
+                                />
+                                <Route
+                                    path="general"
+                                    element={<ClanGeneralSettings />}
+                                />
+                                <Route
+                                    path="members"
+                                    element={<ClanMemberSettings />}
+                                />
+                                <Route
+                                    path="moderators"
+                                    element={<ClanModeratorSettings />}
+                                />
+                            </Route>
+
+                            <Route
+                                path="requests/:id"
+                                element={<ReviewPage />}
+                            />
+                        </Route>
 
                         <Route path="posts/:id" element={<PostPage />} />
                         <Route path="settings" element={<Settings />}>

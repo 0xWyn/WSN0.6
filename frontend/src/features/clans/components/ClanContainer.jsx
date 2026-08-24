@@ -1,10 +1,12 @@
+import { useEntities } from "../../global/EntityProvider";
 import { useClan } from "../context/ClanProvider";
 import ClanCard from "./ClanCard";
 
 export default function ClanContainer({ viewing }) {
-    const { myClanIds, clanEntities, loading } = useClan();
+    const { myClanIds, loadingClans } = useClan();
+    const { entities } = useEntities();
 
-    if (loading) {
+    if (loadingClans.myClans) {
         return (
             <div className="flex items-center justify-center py-20 text-slate-500">
                 Loading clans...
@@ -13,7 +15,7 @@ export default function ClanContainer({ viewing }) {
     }
 
     const mappedClans = myClanIds.map((id) => {
-        return <ClanCard key={id} clan={clanEntities[id]} />;
+        return <ClanCard key={id} clan={entities.clans[id]} />;
     });
 
     // fetch clans by members and join requests or display requested as grayed out in my clans? instead of a whole category?

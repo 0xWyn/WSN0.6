@@ -5,36 +5,18 @@ const FeedContext = createContext();
 
 export const FeedProvider = ({ children }) => {
     const [queries, setQueries] = useState({
-        homeFeedIds: [],
-        clanPostsIds: {},
-        usersPostsIds: {},
+        postsByClan: {},
+        postsByUser: {},
         commentsByPost: {},
+        commentsByUser: {},
+        repliesByComment: {},
     });
-
-    const [postEntities, setPostEntities] = useState({});
-
-    const [postsByClan, setPostsByClan] = useState({});
-    const [postsByAuthorId, setPostsByAuthorId] = useState({});
-
-    const [loading, setLoading] = useState(true);
 
     return (
         <FeedContext.Provider
             value={{
                 queries,
                 setQueries,
-
-                postsByClan,
-                setPostsByClan,
-
-                postEntities,
-                setPostEntities,
-
-                postsByAuthorId,
-                setPostsByAuthorId,
-
-                loading,
-                setLoading,
             }}
         >
             {children}

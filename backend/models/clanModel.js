@@ -69,6 +69,10 @@ const clanSchema = new mongoose.Schema(
                     enum: ["Pending", "Accepted", "Rejected"],
                     default: "Pending",
                 },
+                requestedAt: {
+                    type: Date,
+                    default: Date.now,
+                },
             },
         ],
         maxMembers: {

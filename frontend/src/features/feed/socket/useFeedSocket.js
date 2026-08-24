@@ -1,13 +1,11 @@
 import { useEffect } from "react";
-import { useEntityActions } from "../../global/useEntityActions";
-import { useSocket } from "../../socket/SocketProvider";
-import { useQueryActions } from "../hooks/useQueryActions";
 import { useEntities } from "../../global/EntityProvider";
+import { useSocket } from "../../socket/SocketProvider";
 import { useFeed } from "../context/FeedProvider";
+import { normaliseComments, normalisePosts } from "../utils/normaliseEntities";
+import { updateCommentsQuery, updatePostsQuery } from "../utils/updateQueries";
 
 export const useFeedSocket = (clanId) => {
-    const { mergePosts } = useEntityActions();
-    const { addClanPost, removeClanPost } = useQueryActions();
     const { socket } = useSocket();
 
     const { setEntities } = useEntities();
@@ -16,34 +14,19 @@ export const useFeedSocket = (clanId) => {
     useEffect(() => {
         if (!socket) return;
 
-        console.log("Registering feed listeners");
-
         const handleNewPost = (post) => {
-            console.log("TRIGGERED");
-            setEntities((prev) => ({
-                ...prev,
-                posts: {
-                    [post._id]: { ...prev.posts[post._id], ...post },
-                    ...prev.posts,
-                },
-            }));
-            setQueries((prev) => ({
-                ...prev,
-                clanPostsIds: {
-                    ...prev.clanPostsIds,
-                    [post.clan]: [
-                        ...new Set([
-                            post._id,
-                            ...(prev.clanPostsIds[post.clan] || []),
-                        ]),
-                    ],
-                },
-            }));
+            setEntities((prev) => normalisePosts([post], prev));
+
+            setQueries((prev) => updatePostsQuery([post], prev));
         };
 
         const handleUpdatedPost = (post) => {
-            mergePosts([post]);
-            console.log("Updated post");
+            setEntities((prev) => normalisePosts([post], prev));
+        };
+
+        const handleUpdatedComment = (comment) => {
+            console.log(comment);
+            setEntities((prev) => normaliseComments([comment], prev));
         };
 
         const handleDeletedPost = (post) => {
@@ -55,23 +38,33 @@ export const useFeedSocket = (clanId) => {
 
             setQueries((prev) => ({
                 ...prev,
-                clanPostsIds: {
-                    ...prev.clanPostsIds,
-                    [post.clan]: prev.clanPostsIds[post.clan].filter(
+                postsByClan: {
+                    ...prev.postsByClan,
+                    [post.clan]: prev.postsByClan[post.clan].filter(
                         (id) => id !== post._id
                     ),
                 },
             }));
         };
 
+        const handleNewComment = (comment) => {
+            setEntities((prev) => normaliseComments([comment], prev));
+
+            setQueries((prev) => updateCommentsQuery([comment], prev));
+        };
+
+        socket.on("new_comment", handleNewComment);
         socket.on("updated_post", handleUpdatedPost);
+        socket.on("updated_comment", handleUpdatedComment);
         socket.on("new_post", handleNewPost);
         socket.on("deleted_post", handleDeletedPost);
 
         return () => {
+            socket.off("new_comment", handleNewComment);
             socket.off("updated_post", handleUpdatedPost);
+            socket.off("updated_comment", handleUpdatedComment);
             socket.off("new_post", handleNewPost);
             socket.off("deleted_post", handleDeletedPost);
         };
-    }, [socket, clanId, mergePosts, removeClanPost]);
+    }, [socket]);
 };

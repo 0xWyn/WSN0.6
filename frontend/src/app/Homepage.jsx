@@ -1,8 +1,8 @@
-import LocNav from "../../navigation/components/LocNav.jsx";
-import SecondaryNavigation from "../../navigation/components/SecondaryNav.jsx";
-import ClanContainer from "./ClanContainer.jsx";
+import LocNav from "../features/navigation/components/LocNav.jsx";
+import SecondaryNavigation from "../features/navigation/components/SecondaryNav.jsx";
+import ClanContainer from "../features/clans/components/ClanContainer.jsx";
 
-import { useClan } from "../context/ClanProvider.jsx";
+import { useClan } from "../features/clans/context/ClanProvider.jsx";
 import { useState } from "react";
 
 // Simple skeleton loader for better UX
@@ -83,13 +83,14 @@ export default function HomePage() {
                 <SecondaryNavigation />
             </div>
 
-            <div className="relative bg-[#f8fafc] px-4 py-6 flex-1">
+            <div className="relative bg-[#f8fafc] px-4 py-6 flex-1 min-w-xs">
                 {/* Decorative background */}
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                     <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
                     <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
                 </div>
 
+                {/* Main */}
                 <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-6 p-6">
                     {/* Header */}
                     <header className="rounded-[36px] border border-white/60 bg-white/35 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
@@ -113,7 +114,7 @@ export default function HomePage() {
                         </div>
                     </header>
 
-                    {/* Main grid */}
+                    {/* Section Grid */}
                     <div className="grid flex-1 min-h-0 gap-6 min-[1200px]:grid-cols-[1fr_320px]">
                         {/* Clan list */}
                         <section className="min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">

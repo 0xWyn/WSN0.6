@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider.jsx";
+import { useCurrentUser } from "../hooks/useCurrentUser.js";
 
 export default function ProtectedRoute() {
     const location = useLocation();
 
-    const { user, loading } = useAuth();
+    const { loading } = useAuth();
+    const user = useCurrentUser();
 
     if (loading) {
         return (

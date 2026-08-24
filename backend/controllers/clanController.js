@@ -34,7 +34,7 @@ export const myClans = async (req, res) => {
 
         const clans = await Clan.find({
             $or: [{ members: userId }, { "joinRequests.user": userId }],
-        });
+        }).populate("joinRequests.user", "username avatar");
 
         res.status(200).json(clans);
     } catch (error) {
@@ -45,7 +45,10 @@ export const myClans = async (req, res) => {
 export const getClanById = async (req, res) => {
     try {
         const { clanId } = req.params;
-        const clan = await Clan.findById(clanId);
+        const clan = await Clan.findById(clanId).populate(
+            "joinRequests.user",
+            "username avatar"
+        );
         res.status(200).json(clan);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -126,6 +129,7 @@ export const approveRequest = async (req, res) => {
 
         return res.status(202).json({ msg: "User successfully added" });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -141,7 +145,7 @@ export const rejectRequest = async (req, res) => {
 
         if (
             !(
-                clan.creator.toString() === userId.toString() ||
+                clan.owner.toString() === userId.toString() ||
                 clan.moderators.includes(userId)
             )
         )
@@ -153,6 +157,7 @@ export const rejectRequest = async (req, res) => {
 
         return res.status(202).json({ msg: "Request removed" });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -165,7 +170,7 @@ export const removeMember = async (req, res) => {
 
         if (
             !(
-                clan.creator.toString() === userId.toString() ||
+                clan.owner.toString() === userId.toString() ||
                 clan.moderators.includes(userId)
             )
         )

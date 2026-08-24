@@ -1,9 +1,9 @@
-import { useAuth } from "../../../auth/context/AuthProvider";
+import { useCurrentUser } from "../../../auth/hooks/useCurrentUser";
 import { usePostActions } from "../../../feed/hooks/usePostActions";
 
 export default function PostMenu({ post }) {
     const { handleDeletePost } = usePostActions();
-    const { user: auth } = useAuth();
+    const auth = useCurrentUser();
     const isAuthor = auth?._id === post.author._id;
     const options = ["Edit", "Delete"];
     const actions = {

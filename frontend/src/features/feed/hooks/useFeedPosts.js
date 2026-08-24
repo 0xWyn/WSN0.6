@@ -1,73 +1,46 @@
+import { useEffect, useState } from "react";
 import { useEntities } from "../../global/EntityProvider";
 import { useEntityActions } from "../../global/useEntityActions";
-import { getClanPosts, getUserPosts } from "../api/feedApis";
+import { fetchPost, getClanPosts, getUserPosts } from "../api/feedApis";
 import { useFeed } from "../context/FeedProvider";
+import { normalisePosts } from "../utils/normaliseEntities";
+import { updatePostsQuery } from "../utils/updateQueries";
 
 export const useFeedPosts = () => {
-    const { setLoading } = useFeed();
+    const [loadingFeedPosts, setLoadingFeedPosts] = useState({
+        clanPosts: false,
+        userPosts: false,
+        singlePost: false,
+    });
+
     const { entities, setEntities } = useEntities();
-    const { setPostsByClan, setPostEntities, setPostsByAuthorId } = useFeed();
-    const { mergePosts } = useEntityActions();
+    const { queries, setQueries } = useFeed();
 
     const fetchClanPosts = async (page = 1, clanId) => {
         try {
+            setLoadingFeedPosts((prev) => ({ ...prev, clanPosts: true }));
             const { data } = await getClanPosts(page, clanId);
 
-            mergePosts(data);
+            console.log(queries);
 
-            const newIds = data.map((post) => post._id);
+            setEntities((prev) => normalisePosts(data, prev));
 
-            setPostsByClan((prev) => ({ ...prev, [clanId]: [...newIds] }));
-
-            setPostEntities(() => {
-                const map = {};
-
-                data.forEach((post) => {
-                    map[post._id] = post;
-                });
-
-                return map;
-            });
-
-            setPostsByAuthorId((prev) => {
-                const map = { ...prev };
-
-                data.forEach((post) => {
-                    map[post.author._id] = [
-                        ...new Set([...map[post.author._id], post._id]),
-                    ];
-                });
-
-                return map;
-            });
+            setQueries((prev) => updatePostsQuery(data, prev));
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
+            setLoadingFeedPosts((prev) => ({ ...prev, clanPosts: false }));
         }
     };
 
-    const fetchUserPosts = async (userId, page = 1) => {
+    const fetchUserPosts = async (page = 1, userId) => {
         try {
             const { data } = await getUserPosts(userId, page);
 
-            mergePosts(data);
-
             const ids = data.map((post) => post._id);
-            setQueries((prev) => ({
-                ...prev,
+            setQueries((prev) => updatePostsQuery(data, prev));
 
-                usersPostsIds: {
-                    ...prev.usersPostsIds,
-
-                    [userId]: [
-                        ...new Set([
-                            ...(prev.usersPostsIds[userId] || []),
-                            ...ids,
-                        ]),
-                    ],
-                },
-            }));
+            setEntities((prev) => normalisePosts(data, prev));
         } catch (error) {
             console.error(error);
         } finally {
@@ -77,18 +50,25 @@ export const useFeedPosts = () => {
 
     const fetchSinglePost = async (postId) => {
         try {
-            let post = entities.posts[postId];
+            setLoadingFeedPosts((prev) => ({ ...prev, singlePost: true }));
 
-            if (!post) {
+            if (!entities.posts[postId]) {
+                console.log("fetchingPost");
                 const { data } = await fetchPost(postId);
-                mergePosts([data]);
-                post = data;
+
+                setEntities((prev) => normalisePosts([data], prev));
             }
-            return post;
         } catch (error) {
             console.error(error.response);
+        } finally {
+            setLoadingFeedPosts((prev) => ({ ...prev, singlePost: false }));
         }
     };
 
-    return { fetchClanPosts, fetchUserPosts, fetchSinglePost };
+    return {
+        fetchClanPosts,
+        fetchUserPosts,
+        fetchSinglePost,
+        loadingFeedPosts,
+    };
 };

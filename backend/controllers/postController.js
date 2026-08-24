@@ -35,7 +35,13 @@ export const createPost = async (req, res) => {
             media,
             clan,
         });
-        io.emit("new_post", newPost);
+
+        const post = await Post.findById(newPost._id).populate(
+            "author",
+            "username avatar"
+        );
+
+        io.emit("new_post", post);
         res.status(201).json({ msg: "Post created successfully" });
     } catch (error) {
         console.error(error.response);
@@ -72,10 +78,11 @@ export const getPostById = async (req, res) => {
             "username avatar"
         );
         if (!post) return res.status(404).json({ msg: "Post not found" });
-        res.json(post);
+
+        res.status(200).json(post);
         return;
     } catch (error) {
-        // console.error(error);
+        console.error(error);
     }
 };
 

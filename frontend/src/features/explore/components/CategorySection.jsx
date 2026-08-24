@@ -1,12 +1,12 @@
-import { useClan } from "../../clans/context/ClanProvider";
 import ExploreCard from "../../clans/components/ExploreCard";
+import { useEntities } from "../../global/EntityProvider";
 
 export default function CategorySection({ domain, clanIds }) {
     const { name, icon, description } = domain;
-    const { clanEntities } = useClan();
+    const { entities } = useEntities();
 
     return (
-        <section className="rounded-[28px] border border-white bg-white/65 backdrop-blur-2xl p-6 px-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
+        <section className="rounded-[28px] border border-white/60 bg-white/50 backdrop-blur-2xl p-6 px-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
             {/* Section Header */}
             <div className="mb-5 flex items-start justify-between gap-4">
                 <div className="flex flex-col items-start mb-4 px-2">
@@ -34,11 +34,11 @@ export default function CategorySection({ domain, clanIds }) {
 
             <div className="space-y-3 overflow-y-auto no-scrollbar max-h-100">
                 {clanIds.map((id) => (
-                    <ExploreCard key={id} clan={clanEntities[id]} />
+                    <ExploreCard key={id} clan={entities.clans[id]} />
                 ))}
             </div>
 
-            <button className="mt-4 rounded-full bg-slate-50 !px-4 !py-2 !text-sm !font-medium text-slate-700 !transition-all !duration-200 hover:bg-slate-100 hover:text-slate-900 w-full">
+            <button className="mt-4 rounded-full bg-white/50 !px-4 !py-2 !text-sm !font-medium text-slate-700 !transition-all !duration-200 border border-white hover:bg-white hover:text-slate-950 w-full">
                 See more ↓
             </button>
         </section>

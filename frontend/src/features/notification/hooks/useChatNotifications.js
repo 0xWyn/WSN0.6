@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { useAuth } from "../../auth/context/AuthProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useChatContextLogic } from "../../chat/hooks/useChatContextLogic";
 import { useEntities } from "../../global/EntityProvider";
 
 export const useChatNotifications = () => {
-    const { user } = useAuth();
+    const user = useCurrentUser();
 
     const { chatIds } = useChatContextLogic();
     const { entities } = useEntities();

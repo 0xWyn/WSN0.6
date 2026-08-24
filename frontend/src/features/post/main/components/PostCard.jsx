@@ -14,17 +14,6 @@ export default function PostCard({ post }) {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
-    const handleMenuClick = () => {
-        console.log("Clicked menu button");
-        setShowMenu((prev) => !prev);
-    };
-    if (!post) return null;
-
-    const { author, media, text } = post;
-
-    const handleOpenPost = () => navigate(`/posts/${post._id}`);
-    const { handleDeletePost } = usePostActions();
-
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -39,60 +28,77 @@ export default function PostCard({ post }) {
         };
     }, []);
 
+    if (!post) return null;
+
+    const { author, media, text } = post;
+
+    const handleOpenPost = () => {
+        navigate(`/posts/${post._id}`);
+    };
+
+    const handleMenuClick = (e) => {
+        e.stopPropagation();
+        setShowMenu((prev) => !prev);
+    };
+
+    const { handleDeletePost } = usePostActions();
+
     return (
         <article
-            className="group relative w-full overflow-hidden rounded-[32px] border border-white/60 bg-white/40 backdrop-blur-3xl
-        
-        shadow-[0_4px_30px_rgba(15,23,42,0.05)] transition-all duration-300 hover:shadow-[0_16px_60px_rgba(15,23,42,0.10)] hover:bg-white/60"
+            // onKeyDown={(e) => {
+            //     if (e.key === "Enter" || e.key === " ") {
+            //         handleOpenPost();
+            //     }
+            // }}
+            // onClick={handleOpenPost}
+            className="group relative w-full overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100"
         >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-50">
-                <div className="absolute left-1/7 top-0 size-52 rounded-full bg-amber-100/20 blur-2xl overflow-hidden" />
-
-                <div className="absolute bottom-0 right-0 size-40 rounded-full bg-sky-100/20 blur-xl" />
-            </div>
-
-            <div className="relative z-100 flex flex-col gap-6 p-6 md:p-7 pointer-events-auto">
+            <div className="p-5 sm:p-6">
                 {/* Header */}
-                <div className="flex items-start w-full justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <Avatar size={12} user={author} />
+                <header className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                        <Avatar size={10} user={author} />
                         <div className="min-w-0">
                             <Author post={post} />
                         </div>
                     </div>
-                    <button
-                        onClick={() => {
-                            console.log("Clicked");
-                            setShowMenu((prev) => !prev);
-                        }}
-                        className="!px-10 !z-30 !pointer-events-auto"
-                    >
-                        <EllipsisHorizontal />
-                    </button>
-                </div>
 
-                {showMenu && (
-                    <div
-                        ref={menuRef}
-                        className="absolute top-20 right-2 bg-white/80 z-30 origin-top-right  rounded-2xl border border-white/30 p-2 backdrop-blur-xl shadow-[0_12px_40px_rgba(15,23,42,0.12)] animate-in fade-in zoom-in-95 duration-200"
-                    >
-                        <PostMenu post={post} />
+                    <div ref={menuRef} className="relative shrink-0">
+                        {showMenu && (
+                            <div className="absolute top-11 right-0 bg-white/80 z-30 w-48 rounded-2xl border border-white/30 p-1.5 backdrop-blur-xl shadow-[0_12px_40px_rgba(15,23,42,0.12)] animate-in fade-in zoom-in-95 duration-200">
+                                <PostMenu post={post} />
+                            </div>
+                        )}
+
+                        <button
+                            type="button"
+                            onClick={handleMenuClick}
+                            aria-label="Post options"
+                            className="flex size-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                        >
+                            <EllipsisHorizontal />
+                        </button>
                     </div>
-                )}
+                </header>
 
                 {/* Content */}
-                <div onClick={handleOpenPost} className="flex flex-col gap-4">
-                    <Text text={text} />
-                    {post.media.length > 0 && (
-                        <div className="overflow-hidden rounded-[28px]">
-                            <Media media={post.media} />
+                <div className="mt-4">
+                    {text && (
+                        <div className="text-md leading-7 text-slate-700">
+                            {text}
+                        </div>
+                    )}
+                    {media?.length > 0 && (
+                        <div className="mt-4 overflow-hidden rounded-[28px]">
+                            <Media media={media} />
                         </div>
                     )}
                 </div>
 
-                <div className="flex gap-4 border-white/40 pt-5 z-20 group">
+                {/* Engagement */}
+                <div className="mt-4 border-t border-slate-100 pt-2">
                     <EngagementBar
-                        value={post}
+                        object={post}
                         type="post"
                         onCommentClick={handleOpenPost}
                     />

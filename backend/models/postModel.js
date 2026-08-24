@@ -17,8 +17,8 @@ const postSchema = new mongoose.Schema(
                 url: { type: String, required: true },
             },
         ],
-        likes: [{ type: mongoose.Schema.Types.ObjectId }],
-        replyCount: { type: Number, default: 0 },
+        likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        replies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
         clan: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Clan",

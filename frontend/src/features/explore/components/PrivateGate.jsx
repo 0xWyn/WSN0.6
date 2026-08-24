@@ -1,6 +1,6 @@
 import LockKeyhole from "../../../components/icons/lock-keyhole";
 import XMark from "../../../components/icons/x-mark";
-import { useAuth } from "../../auth/context/AuthProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useClanActions } from "../../clans/hooks/useClanActions";
 import { useExplore } from "../context/ExploreProvider";
 
@@ -9,7 +9,7 @@ export default function PrivateGate() {
 
     const { setShowPrivateGate, showPrivateGate: clan } = useExplore();
 
-    const { user: auth } = useAuth();
+    const auth = useCurrentUser();
 
     const { handleJoinClan } = useClanActions();
 

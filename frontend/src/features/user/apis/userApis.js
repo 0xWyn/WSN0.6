@@ -11,3 +11,7 @@ export const getUser = (userId) => {
 export const toggleFollow = (userId) => {
     return API.patch(`users/${userId}/follow`);
 };
+
+export const patchProfile = (data) => {
+    return API.patch(`users/profile`, data);
+};

@@ -10,11 +10,12 @@ import CategorySection from "./CategorySection.jsx";
 import PrivateGate from "./PrivateGate.jsx";
 import ResultsContainer from "./ResultsContainer.jsx";
 import SearchBar from "./SearchBar.jsx";
+import { useEntities } from "../../global/EntityProvider.jsx";
 
 export default function ExplorePage() {
     const { results, showPrivateGate } = useExplore();
     const { viewCategory } = useExploreLogic();
-    const { clansByCategory, loading, clanEntities } = useClan();
+    const { clansByCategory, loadingClans } = useClan();
 
     const [selectedDomain, setSelectedDomain] = useState("all");
 
@@ -37,7 +38,7 @@ export default function ExplorePage() {
         const { name, icon, description } = emptyDomain;
 
         return (
-            <section className="rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-8 px-10 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
+            <section className="rounded-[28px] border border-white/60 bg-white/50 backdrop-blur-2xl p-6 px-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
                 {/* Header */}
                 <div className="mb-6">
                     <div className="flex flex-col items-start mb-4 px-2">
@@ -82,23 +83,23 @@ export default function ExplorePage() {
     };
 
     return (
-        <div className=" bg-[#f8fafc] min-h-0 flex flex-col w-full h-full">
+        <div className="bg-[#f8fafc] min-h-screen w-full">
+            {/* Decorative background */}
+            <div className="pointer-events-none fixed z-0 inset-0 overflow-hidden">
+                <div className="absolute left-80 lg:left-1/4 top-0 size-[26rem] lg:size-[40rem] rounded-full bg-amber-200/15 blur-3xl" />
+                <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
+            </div>
+
             {/* Navigation */}
-            <div className="w-full top-0 backdrop-blur-2xl flex border-b border-white/40 bg-white/60 backdrop-blur-3xl z-10">
+            <div className="sticky w-full top-0 backdrop-blur-2xl flex border-b border-white/40 bg-white/60 z-40">
                 <LocNav current="Explore" />
             </div>
 
             {/* Main */}
-            <div className="relative bg-[#f8fafc] px-4 py-6 flex flex-col gap-2">
-                {/* Decorative background */}
-                <div className="pointer-events-none fixed inset-0 overflow-hidden">
-                    <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/20 blur-3xl" />
-                    <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/15 blur-3xl" />
-                </div>
-
+            <div className="px-4 py-6 z-10 flex flex-col gap-2">
                 {/* Content */}
-                <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-6 p-6">
-                    <header className="rounded-[32px] border border-white/90 bg-white/65 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] space-y-2">
+                <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 p-6">
+                    <header className="rounded-[32px] border border-white/60 bg-white/50 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] space-y-2">
                         <div className="flex flex-col gap-2 items-center">
                             <div className="flex items-center gap-3">
                                 <Telescope />
@@ -118,7 +119,7 @@ export default function ExplorePage() {
                         <nav className="mt-10 p-2 flex gap-2 overflow-x-auto no-scrollbar">
                             <button
                                 type="button"
-                                className={`relative flex shrink-0 whitespace-nowrap items-center justify-center gap-2 !px-4 !py-2 !rounded-full text-sm transition-all duration-200 ${selectedDomain === "all" ? "bg-slate-900 text-white shadow-[0_20px_90px_rgba(15,23,42,0.08)]" : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"}`}
+                                className={`relative flex shrink-0 !font-normal whitespace-nowrap items-center justify-center gap-2 px-3 !py-0.5 !rounded-full text-sm transition-all duration-200 ${selectedDomain === "all" ? "bg-slate-700 text-white shadow-[0_20px_90px_rgba(15,23,42,0.08)]" : "bg-white/65 text-slate-700 hover:bg-white"}`}
                                 onClick={() => {
                                     setSelectedDomain("all");
                                 }}
@@ -129,12 +130,12 @@ export default function ExplorePage() {
                                 <button
                                     type="button"
                                     key={name}
-                                    className={`relative flex shrink-0 whitespace-nowrap items-center justify-center gap-2 !px-4 !py-1 !rounded-full text-sm transition-all duration-200 ${selectedDomain === name ? "bg-slate-900 text-white shadow-[0_20px_90px_rgba(15,23,42,0.08)]" : "bg-slate-50 text-slate-700 hover:bg-slate-100"}`}
+                                    className={`relative flex shrink-0 !font-normal whitespace-nowrap items-center justify-center gap-2 px-3 !py-1.5 !rounded-full text-sm transition-all duration-200 ${selectedDomain === name ? "bg-slate-700 text-white shadow-[0_20px_90px_rgba(15,23,42,0.08)]" : "bg-white/65 text-slate-700 hover:bg-white"}`}
                                     onClick={() => {
                                         setSelectedDomain(name);
                                     }}
                                 >
-                                    <span className="size-8 aspect-square flex items-center justify-center rounded-xl">
+                                    <span className="aspect-square flex items-center justify-center rounded-xl">
                                         {icon}
                                     </span>
                                     {name}
@@ -146,7 +147,7 @@ export default function ExplorePage() {
                     {/* Clan Sections */}
 
                     <div className="p-4 lg:px-6 space-y-10 relative">
-                        {loading ? (
+                        {loadingClans.categories ? (
                             <CategorySkeleton />
                         ) : (
                             domainsToRender.map((domain) => {

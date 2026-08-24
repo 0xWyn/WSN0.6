@@ -1,13 +1,12 @@
-import { Link } from "react-router-dom";
-import Avatar from "../../user/components/Avatar";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/context/AuthProvider";
 import { formatDate } from "../../../utils/formatDate";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useRealtime } from "../../global/RealtimeProvider";
+import Avatar from "../../user/components/Avatar";
 
 export default function ChatCard({ chat }) {
     const { presenceById } = useRealtime();
-    const { user } = useAuth();
+    const user = useCurrentUser();
 
     const navigate = useNavigate();
 

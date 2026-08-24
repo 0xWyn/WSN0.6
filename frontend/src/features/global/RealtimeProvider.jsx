@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useCurrentUser } from "../auth/hooks/useCurrentUser";
 import { useSocket } from "../socket/SocketProvider";
 import { useEntities } from "./EntityProvider";
 import { useEntityActions } from "./useEntityActions";
-import { useAuth } from "../auth/context/AuthProvider";
 
 const RealtimeContext = createContext(null);
 
@@ -11,7 +11,8 @@ export const RealtimeProvider = ({ children }) => {
     const { entities, setEntities } = useEntities();
     const { mergeUsers } = useEntityActions();
     const [presenceById, setPresenceById] = useState({});
-    const { user: auth } = useAuth();
+
+    const auth = useCurrentUser();
 
     useEffect(() => {
         if (!socket) return;

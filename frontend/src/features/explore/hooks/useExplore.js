@@ -2,28 +2,27 @@ import { useEffect, useState } from "react";
 import { useClan } from "../../clans/context/ClanProvider";
 import { getCategoryClans, getExploreSections } from "../apis/exploreApis";
 import { INTEREST_DOMAINS } from "../../../config/interestDomains";
+import { useEntities } from "../../global/EntityProvider";
 
 export const useExploreLogic = () => {
-    const {
-        setExploreCategories,
-        setClansByCategory,
-        setClanEntities,
-        setLoading,
-    } = useClan();
+    const { setClansByCategory, setLoadingClans } = useClan();
+
+    const { setEntities, entities } = useEntities();
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                setLoading(true);
+                setLoadingClans((prev) => ({ ...prev, categories: true }));
                 const { data } = await getExploreSections();
 
-                setClanEntities((prev) => {
-                    const map = { ...prev };
+                const map = {};
 
-                    data.forEach((clan) => (map[clan._id] = clan));
+                data.forEach((clan) => (map[clan._id] = clan));
 
-                    return map;
-                });
+                setEntities((prev) => ({
+                    ...prev,
+                    clans: { ...(prev.clans || {}), ...map },
+                }));
 
                 setClansByCategory(() => {
                     const map = Object.fromEntries(
@@ -34,14 +33,12 @@ export const useExploreLogic = () => {
                         map[clan.domain]?.push(clan._id);
                     });
 
-                    console.log(map);
-
                     return map;
                 });
             } catch (error) {
                 console.log(error);
             } finally {
-                setLoading(false);
+                setLoadingClans((prev) => ({ ...prev, categories: false }));
             }
         };
 

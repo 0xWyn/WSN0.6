@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useAuth } from "../../auth/context/AuthProvider";
-import { useSocket } from "../../socket/SocketProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useEntities } from "../../global/EntityProvider";
+import { useSocket } from "../../socket/SocketProvider";
 
 export const useActiveChatSocket = (id, setMessageIds) => {
     const { socket } = useSocket();
-    const { user } = useAuth();
+    const user = useCurrentUser();
     const { entities, setEntities } = useEntities();
 
     useEffect(() => {

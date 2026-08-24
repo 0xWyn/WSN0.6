@@ -1,16 +1,17 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { useAuth } from "../auth/context/AuthProvider";
+import { useCurrentUser } from "../auth/hooks/useCurrentUser";
 
 const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
     const [socket, setSocket] = useState(null);
     const socketRef = useRef(null);
-    const { user } = useAuth();
+    const user = useCurrentUser();
 
+    const userId = user?._id;
     useEffect(() => {
-        if (!user) {
+        if (!userId) {
             // Disconnect if user logs out
             if (socketRef.current) {
                 socketRef.current.disconnect();
@@ -20,12 +21,12 @@ export function SocketProvider({ children }) {
         }
 
         // Prevent duplicate socket connections
-        if (socketRef.current?.connected) {
+        if (socketRef.current) {
             return;
         }
 
         // Create socket connection with better configuration
-        socketRef.current = io("http://localhost:5000", {
+        const newSocket = io("http://localhost:5000", {
             reconnection: true,
             reconnectionDelay: 1000,
             reconnectionDelayMax: 5000,
@@ -33,12 +34,13 @@ export function SocketProvider({ children }) {
             transports: ["websocket", "polling"],
         });
 
-        setSocket(socketRef.current);
+        socketRef.current = newSocket;
+
+        setSocket(newSocket);
 
         // Emit join event on connection
         const handleConnect = () => {
-            console.log("Socket connected:", socketRef.current.id);
-            socketRef.current.emit("join", user._id);
+            newSocket.emit("join", userId);
         };
 
         // Handle connection errors
@@ -51,23 +53,28 @@ export function SocketProvider({ children }) {
             console.warn("Socket disconnected:", reason);
         };
 
-        socketRef.current.on("connect", handleConnect);
-        socketRef.current.on("connect_error", handleConnectError);
-        socketRef.current.on("disconnect", handleDisconnect);
+        newSocket.on("connect", handleConnect);
+        newSocket.on("connect_error", handleConnectError);
+        newSocket.on("disconnect", handleDisconnect);
 
         // Cleanup function
         return () => {
             if (socketRef.current) {
-                socketRef.current.off("connect", handleConnect);
-                socketRef.current.off("connect_error", handleConnectError);
-                socketRef.current.off("disconnect", handleDisconnect);
-                socketRef.current.disconnect();
-                socketRef.current = null;
+                newSocket.off("connect", handleConnect);
+                newSocket.off("connect_error", handleConnectError);
+                newSocket.off("disconnect", handleDisconnect);
+
+                newSocket.disconnect();
+
+                if (socketRef.current === newSocket) {
+                    socketRef.current = null;
+                }
             }
         };
-    }, [user]);
+    }, [userId]);
 
     useEffect(() => {
+        if (!socket) return;
         console.log("socket changed", socket);
     }, [socket]);
 

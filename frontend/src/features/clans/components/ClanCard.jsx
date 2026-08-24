@@ -1,13 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import { useClan } from "../context/ClanProvider";
 
 export default function ClanCard({ clan }) {
     const navigate = useNavigate();
 
     const handleOpenClan = () => navigate(`/c/${clan._id}`);
-
+    const { setActiveClan } = useClan();
     return (
         <div
-            onClick={handleOpenClan}
+            onClick={() => {
+                setActiveClan(clan);
+                handleOpenClan();
+            }}
             className="group relative overflow-hidden rounded-3xl border border-white/60 bg-white/35 backdrop-blur-2xl p-5 cursor-pointer shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white/50"
         >
             {/* Background accents */}

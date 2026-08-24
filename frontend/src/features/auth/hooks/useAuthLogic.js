@@ -1,12 +1,27 @@
 import API from "../../../utils/axiosInterceptor";
 
-export const useAuthLogic = (setUser, setLoading, navigate, location) => {
+export const useAuthLogic = (
+    setAuthId,
+    setLoading,
+    setEntities,
+    navigate,
+    location
+) => {
     const from = location.state?.from?.pathname || "/";
+
+    const upsertAuth = (user) => {
+        setAuthId(user._id);
+
+        setEntities((prev) => ({
+            ...prev,
+            users: { ...prev.users, [user._id]: user },
+        }));
+    };
 
     const register = async (credentials) => {
         try {
             const { data } = await API.post("auth/register", credentials);
-            setUser(data);
+            upsertAuth(data);
             navigate("/");
         } catch (error) {
             console.error(error.response.data);
@@ -17,8 +32,7 @@ export const useAuthLogic = (setUser, setLoading, navigate, location) => {
         try {
             setLoading(true);
             const { data } = await API.post("auth/login", credentials);
-            setUser(data);
-            console.log(data);
+            upsertAuth(data);
             navigate(from);
         } catch (error) {
             console.error(error.response);
@@ -31,10 +45,9 @@ export const useAuthLogic = (setUser, setLoading, navigate, location) => {
         try {
             setLoading(true);
             const res = await API.get("auth/idme");
-            setUser(res.data.user);
-            console.log(res.data.user);
+            upsertAuth(res.data.user);
         } catch (error) {
-            setUser(null);
+            setAuthId(null);
         } finally {
             setLoading(false);
         }
@@ -43,12 +56,19 @@ export const useAuthLogic = (setUser, setLoading, navigate, location) => {
     const logout = async () => {
         try {
             const { data } = await API.post("auth/logout");
-            console.log(data);
-            setUser(null);
+            setEntities({
+                users: {},
+                chats: {},
+                messages: {},
+                comments: {},
+                posts: {},
+                clans: {},
+            });
+            setAuthId(null);
             navigate("/login");
         } catch (error) {
             console.error(error);
-            setUser(null);
+            setAuthId(null);
             navigate("/login");
         }
     };

@@ -1,18 +1,19 @@
-export default function ArrowLeft() {
+export default function ArrowLeft({ size = 24 }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
+            width={size}
+            height={size}
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
+            fill="none"
             stroke="currentColor"
-            className="size-6"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-arrow-left-icon lucide-arrow-left"
         >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-            />
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
         </svg>
     );
 }

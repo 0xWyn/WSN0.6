@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/context/AuthProvider";
-import { Bars3 } from "../../../components/icons/hamburger";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Bars3 } from "../../../components/icons/hamburger";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 
 const icons = {
     Profile: (
@@ -29,8 +29,9 @@ const OptionsMenu = () => {
 };
 
 export default function SecondaryNavigation() {
+    const auth = useCurrentUser();
+
     const navigate = useNavigate();
-    const { user: auth } = useAuth();
     const location = useLocation();
     const [showMenu, setShowMenu] = useState(false);
 

@@ -8,6 +8,8 @@ export const EntityProvider = ({ children }) => {
         chats: {},
         messages: {},
         comments: {},
+        posts: {},
+        clans: {},
     });
 
     return (

@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../../auth/context/AuthProvider";
-import Avatar from "../../user/components/Avatar";
 import Photo from "../../../components/icons/photo";
 import XMark from "../../../components/icons/x-mark";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
+import Avatar from "../../user/components/Avatar";
 import { usePostActions } from "../hooks/usePostActions";
-import Earth from "../../../components/icons/earth";
 
 const MAX_MEDIA = 5;
 
 export default function CreatePost({ closeModal, clan }) {
     const { id } = useParams();
     const { handleNewPost } = usePostActions();
-    const { user } = useAuth();
+    const user = useCurrentUser();
 
     const [text, setText] = useState("");
+    const [visibility, setVisibility] = useState("public");
     const [media, setMedia] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
     const [feedback, setFeedback] = useState("");
@@ -90,13 +90,13 @@ export default function CreatePost({ closeModal, clan }) {
                             <h3 className="font-semibold text-slate-900">
                                 {user?.name || "You"}
                             </h3>
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => alert("Setting visibility")}
                                 className="h-8 w-8 flex items-center justify-center bg-slate-50 rounded-[14px] text-slate-700"
                             >
                                 <Earth size={20} />
-                            </button>
+                            </button> */}
                         </div>
 
                         <div className="mt-1 flex items-center gap-2">
@@ -122,7 +122,7 @@ export default function CreatePost({ closeModal, clan }) {
 
             <form
                 onSubmit={handleSubmit}
-                className="relative mt-4 px-2 space-y-6"
+                className="relative mt-4 px-2 space-y-2"
             >
                 <div className="border border-slate-200/80 bg-white p-2 rounded-[20px] shadow-inner shadow-slate-100/70">
                     <textarea
@@ -153,7 +153,7 @@ export default function CreatePost({ closeModal, clan }) {
                         )}
                     </div>
                 </div>
-
+                {/* 
                 <div className="flex items-center gap-2 pt-3">
                     <label htmlFor="media">
                         <Photo />
@@ -164,13 +164,13 @@ export default function CreatePost({ closeModal, clan }) {
                     <button type="button">#</button>
 
                     <button type="button">@</button>
-                </div>
+                </div> */}
                 {previews.length > 0 && (
                     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         {previews.map((preview) => (
                             <div
                                 key={preview.url}
-                                className="group relative overflow-hidden rounded-[24px] bg-slate-50 shadow-[0_10px_30px_rgba(15,23,42,0.05)] hover:-translate-y-1 hover:shadow-2xl transition duration-300"
+                                className="group relative overflow-hidden rounded-md bg-slate-50 shadow-[0_10px_30px_rgba(15,23,42,0.05)] hover:-translate-y-1 hover:shadow-2xl transition duration-300"
                             >
                                 <div className="absolute left-3 top-3 z-10">
                                     <span className="rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
@@ -230,15 +230,20 @@ export default function CreatePost({ closeModal, clan }) {
                             : "border-slate-200 bg-white/70 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                 >
-                    <div className="flex size-11 items-center justify-center rounded-full bg-slate-50 text-slate-600">
-                        <Photo />
-                    </div>
                     <div>
-                        <p className="text-sm font-semibold text-slate-800">
-                            {media.length > 0
-                                ? `${media.length}/${MAX_MEDIA} files ready`
-                                : "Add photos or videos"}
-                        </p>
+                        <div
+                            className="flex items-center
+                         justify-center"
+                        >
+                            <div className="flex size-11 items-center justify-center rounded-full bg-slate-50 text-slate-600">
+                                <Photo />
+                            </div>
+                            <p className="text-sm font-semibold text-slate-800">
+                                {media.length > 0
+                                    ? `${media.length}/${MAX_MEDIA} files ready`
+                                    : "Add photos or videos"}
+                            </p>
+                        </div>
                         <p className="mt-1 text-sm text-slate-500">
                             Drag and drop or browse up to {MAX_MEDIA} files
                         </p>
@@ -275,7 +280,7 @@ export default function CreatePost({ closeModal, clan }) {
                         ) : null}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 ">
                         <button
                             type="button"
                             onClick={closeModal}

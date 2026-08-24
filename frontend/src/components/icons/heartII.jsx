@@ -6,7 +6,7 @@ export default function HeartIconII({ isLiked }) {
             viewBox="0 0 24 24"
             strokeWidth={1}
             stroke={`${isLiked ? "" : "currentColor"}`}
-            className="size-6"
+            className="size-[16px]"
         >
             <path
                 strokeLinecap="round"

@@ -1,15 +1,11 @@
 export default function Identity({ user }) {
     return (
-        <div className="pb-2">
-            <p className="text-xs uppercase tracking-[0.5em] text-slate-200 md:text-slate-400">
-                Profile
-            </p>
-
-            <h1 className="!text-[2em] !font-semibold !tracking-[-0.1] text-slate-900 md:text-4xl">
+        <div className="min-w-0">
+            <h1 className="text-2xl truncate font-semibold tracking-tight text-slate-900 md:text-3xl py-1">
                 {user.name}
             </h1>
 
-            <p className="text-[15px] text-slate-500 md:text-base">
+            <p className="mt-0.5 truncate text-sm text-slate-500">
                 @{user.username}
             </p>
         </div>

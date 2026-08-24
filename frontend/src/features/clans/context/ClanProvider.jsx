@@ -1,35 +1,40 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/context/AuthProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
+import { useEntities } from "../../global/EntityProvider";
 import { getMyClans } from "../api/clanApis";
 
 const ClanContext = createContext(null);
 
 export const ClanProvider = ({ children }) => {
-    const { user } = useAuth();
+    const user = useCurrentUser();
+    const userId = user?._id;
+    const { entities, setEntities } = useEntities();
 
-    const [clanEntities, setClanEntities] = useState({});
     const [clansByCategory, setClansByCategory] = useState({});
-    const [exploreCategories, setExploreCategories] = useState([]);
 
     const [myClanIds, setMyClanIds] = useState([]);
     const [requestedClans, setRequestedClans] = useState([]);
 
-    const [loading, setLoading] = useState(false);
+    const [loadingClans, setLoadingClans] = useState({
+        activeClan: false,
+        categories: false,
+        myClans: false,
+    });
 
     const [showClanModal, setShowClanModal] = useState(false);
 
-    const authoredClans = myClanIds.map((id) =>
-        clanEntities[id].owner === user._id ? clanEntities[id] : null
+    const authoredClans = myClanIds?.map((id) =>
+        entities.clans[id].owner === user?._id ? entities.clans[id] : null
     );
 
-    const [viewingClan, setViewingClan] = useState(false);
+    const [activeClan, setActiveClan] = useState(false);
 
     useEffect(() => {
-        if (!user) return;
+        if (!userId) return;
 
         const fetchClans = async () => {
             try {
-                setLoading(true);
+                setLoadingClans((prev) => ({ ...prev, myClans: true }));
                 const { data } = await getMyClans();
 
                 const map = {};
@@ -38,28 +43,21 @@ export const ClanProvider = ({ children }) => {
                     map[clan._id] = clan;
                 });
 
-                // const ids = data
-                //     .filter((clan) => clan.members.includes(user._id))
-                //     .map((clan) => clan._id);
+                // clan queries
+                const myIds = data
+                    .filter((clan) => clan.members.includes(userId))
+                    .map((clan) => clan._id);
+                const requestedIds = data
+                    .filter((clan) => clan.joinRequests.includes(userId))
+                    .map((clan) => clan._id);
 
-                // const ids = data.map((clan) =>
-                //     clan.members.includes(user._id)
-                //         ? clan._id
-                //         : setRequestedClanIds((prev) => prev + 1)
-                // );
-                // setMyClanIds(ids);
+                setMyClanIds(myIds);
+                setRequestedClans(requestedIds);
 
-                data.forEach((clan) =>
-                    clan.members.includes(user._id)
-                        ? setMyClanIds((prev) => [
-                              ...new Set([...prev, clan._id]),
-                          ])
-                        : setRequestedClans((prev) => [
-                              ...new Set([...prev, clan._id]),
-                          ])
-                );
-
-                setClanEntities((prev) => ({ ...(prev || {}), ...map }));
+                setEntities((prev) => ({
+                    ...prev,
+                    clans: { ...(prev.clans || {}), ...map },
+                }));
 
                 setClansByCategory((prev) => {
                     const map = { ...prev };
@@ -76,29 +74,33 @@ export const ClanProvider = ({ children }) => {
             } catch (error) {
                 console.error(error);
             } finally {
-                setLoading(false);
+                setLoadingClans((prev) => ({ ...prev, myClans: false }));
             }
         };
 
         fetchClans();
-    }, [user]);
+    }, [userId]);
+
+    useEffect(() => {
+        return () => {
+            setMyClanIds([]);
+        };
+    }, []);
 
     return (
         <ClanContext.Provider
             value={{
-                clanEntities,
-                setClanEntities,
                 myClanIds,
-                loading,
-                setLoading,
+                loadingClans,
+                setLoadingClans,
                 showClanModal,
                 setShowClanModal,
-                exploreCategories,
                 clansByCategory,
-                setExploreCategories,
                 setClansByCategory,
                 authoredClans,
                 requestedClans,
+                activeClan,
+                setActiveClan,
             }}
         >
             {children}
