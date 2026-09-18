@@ -1,22 +1,34 @@
-import { use, useState } from "react";
-import { EllipsisHorizontal } from "../../../../components/icons/ellipsis-horizontal";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEntities } from "../../../global/EntityProvider";
+import { useClanManagement } from "../../context/ClanManagementProvider";
 import { useClan } from "../../context/ClanProvider";
-import { useClanActions } from "../../hooks/useClanActions";
+import { useClanSettings } from "../../hooks/useClanSettings";
 
 export default function RequestSettings() {
     const { activeClan: clan } = useClan();
 
-    const joinRequests = clan.joinRequests || [];
+    const { fetchClanRequests, loadingClanSettings } = useClanSettings(
+        clan?._id
+    );
+
+    const { requests } = useClanManagement();
+
+    useEffect(() => {
+        if (!clan?._id) return;
+        fetchClanRequests();
+    }, [clan?._id]);
+
+    if (!clan) return null;
+
+    if (loadingClanSettings.fetchRequests) return <div>Loading...</div>;
 
     return (
         <div className="overflow-y-auto h-full p-2">
-            {joinRequests.length > 0 ? (
+            {requests?.length > 0 ? (
                 <div className="space-y-3 mb-50">
-                    {joinRequests.map((req) => (
-                        <div className="relative">
-                            <RequestCard req={req} key={req._id} />
-                        </div>
+                    {requests?.map((req) => (
+                        <RequestCard req={req} key={req._id} />
                     ))}
                 </div>
             ) : (
@@ -30,17 +42,17 @@ export default function RequestSettings() {
 
 const RequestCard = ({ req }) => {
     const navigate = useNavigate();
-    const user = req.user;
 
-    console.log(user);
-    const { activeClan } = useClan();
+    const { entities } = useEntities();
+
+    const user = entities.users[req.user];
 
     const viewAccount = () => {
-        navigate(`/c/${activeClan._id}/requests/${req.user._id}`);
+        navigate(`/c/${req.clan}/requests/${req.user}`);
     };
 
-    const { handleRejectRequest, handleAcceptRequest } = useClanActions(
-        activeClan._id
+    const { handleRejectRequest, handleAcceptRequest } = useClanSettings(
+        req.clan
     );
 
     return (
@@ -89,14 +101,14 @@ const RequestCard = ({ req }) => {
                 </button>
 
                 <button
-                    onClick={() => handleRejectRequest(user._id)}
+                    onClick={() => handleRejectRequest(req._id)}
                     className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition-all hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 active:scale-95"
                 >
                     Decline
                 </button>
 
                 <button
-                    onClick={() => handleAcceptRequest(user._id)}
+                    onClick={() => handleAcceptRequest(req._id)}
                     className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-slate-800 hover:border hover:border-emerald-500 hover: text-emerald-500 active:scale-95"
                 >
                     Accept

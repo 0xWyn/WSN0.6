@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
-import { useEntities } from "../../global/EntityProvider";
-import { getMyClans } from "../api/clanApis";
+import { useSetEntities } from "../../global/EntityProvider";
+import { getMyClans, getMyRequestedClans } from "../api/clanApis";
 
 const ClanContext = createContext(null);
 
@@ -9,29 +9,29 @@ export const ClanProvider = ({ children }) => {
     const user = useCurrentUser();
     const userId = user?._id;
 
-    const { entities, setEntities } = useEntities();
-
-    const [clansByCategory, setClansByCategory] = useState({});
-
-    const [myClanIds, setMyClanIds] = useState([]);
-    const [requestedClans, setRequestedClans] = useState([]);
+    const [activeClan, setActiveClan] = useState(null);
+    const [myClanIds, setMyClanIds] = useState(null);
+    const [requestedIds, setRequestedIds] = useState([]);
 
     const [loadingClans, setLoadingClans] = useState({
         activeClan: false,
-        categories: false,
         myClans: false,
     });
 
     const [showClanModal, setShowClanModal] = useState(false);
+    const [showPrivateGate, setShowPrivateGate] = useState(false);
 
-    const authoredClans = myClanIds?.map((id) =>
-        entities?.clans?.[id]?.owner === user?._id ? entities.clans[id] : null
-    );
+    const { setEntities } = useSetEntities();
 
-    const [activeClan, setActiveClan] = useState(false);
+    const authoredClans = [];
 
     useEffect(() => {
-        if (!userId) return;
+        if (!userId) {
+            setMyClanIds(null);
+            setRequestedIds([]);
+            setActiveClan(null);
+            return;
+        }
 
         const fetchClans = async () => {
             try {
@@ -42,36 +42,47 @@ export const ClanProvider = ({ children }) => {
 
                 data.forEach((clan) => {
                     map[clan._id] = clan;
+
+                    if ((clan.founder || clan.founder._id) === userId) {
+                        authoredClans.push(clan);
+                    }
                 });
 
                 // clan queries
-                const myIds = data
-                    .filter((clan) => clan.members.includes(userId))
-                    .map((clan) => clan._id);
-                const requestedIds = data
-                    .filter((clan) => clan.joinRequests.includes(userId))
-                    .map((clan) => clan._id);
+                const myIds = data.map((clan) => clan._id);
 
                 setMyClanIds(myIds);
-                setRequestedClans(requestedIds);
 
                 setEntities((prev) => ({
                     ...prev,
                     clans: { ...(prev.clans || {}), ...map },
                 }));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoadingClans((prev) => ({ ...prev, myClans: false }));
+            }
+        };
 
-                setClansByCategory((prev) => {
-                    const map = { ...prev };
-                    data.forEach((clan) => {
-                        map[clan?.category] = [
-                            ...new Set([
-                                ...(prev[clan?.category] || []),
-                                clan._id,
-                            ]),
-                        ];
-                    });
-                    return map;
+        const getRequestedClans = async () => {
+            try {
+                setLoadingClans((prev) => ({ ...prev, myClans: true }));
+
+                const { data } = await getMyRequestedClans();
+
+                const map = {};
+                data.map((clan) => {
+                    map[clan._id] = clan;
                 });
+
+                setEntities((prev) => ({
+                    ...prev,
+                    clans: { ...prev.clans, ...map },
+                }));
+
+                const ids = data.map((clan) => clan._id);
+
+                setRequestedIds(ids);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -80,13 +91,8 @@ export const ClanProvider = ({ children }) => {
         };
 
         fetchClans();
+        getRequestedClans();
     }, [userId]);
-
-    useEffect(() => {
-        return () => {
-            setMyClanIds([]);
-        };
-    }, []);
 
     return (
         <ClanContext.Provider
@@ -96,12 +102,13 @@ export const ClanProvider = ({ children }) => {
                 setLoadingClans,
                 showClanModal,
                 setShowClanModal,
-                clansByCategory,
-                setClansByCategory,
                 authoredClans,
-                requestedClans,
+                requestedIds,
                 activeClan,
                 setActiveClan,
+                setMyClanIds,
+                showPrivateGate,
+                setShowPrivateGate,
             }}
         >
             {children}

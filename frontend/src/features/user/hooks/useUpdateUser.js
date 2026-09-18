@@ -1,8 +1,7 @@
-import { useAuth } from "../../auth/context/AuthProvider";
-import { useEntities } from "../../global/EntityProvider";
+import { useSetEntities } from "../../global/EntityProvider";
 
 export const useUpdateUser = () => {
-    const { setEntities } = useEntities();
+    const { setEntities } = useSetEntities();
 
     const updateUser = (user) => {
         setEntities((prev) => ({

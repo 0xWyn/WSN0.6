@@ -5,7 +5,7 @@ import {
     updateCommentsQuery,
     updateRepliesQuery,
 } from "../../../feed/utils/updateQueries";
-import { useEntities } from "../../../global/EntityProvider";
+import { useEntities, useSetEntities } from "../../../global/EntityProvider";
 import {
     deleteComment,
     fetchComments,
@@ -14,7 +14,8 @@ import {
 } from "../apis/commentApis";
 
 export const useComments = (postId) => {
-    const { setEntities, entities } = useEntities();
+    const { entities } = useEntities();
+    const { setEntities } = useSetEntities();
     const { setQueries } = useFeed();
 
     const [loadingComments, setLoadingComments] = useState({

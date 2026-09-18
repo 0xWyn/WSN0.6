@@ -39,10 +39,6 @@ export default function ClanCard({ clan }) {
                         <h3 className="truncate text-lg font-semibold text-slate-900">
                             {clan.name}
                         </h3>
-
-                        <p className="text-sm text-slate-500">
-                            {clan.members?.length ?? 0} members
-                        </p>
                     </div>
 
                     <span

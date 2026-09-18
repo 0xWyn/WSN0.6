@@ -1,34 +1,48 @@
 import express from "express";
 import {
-    addModerator,
     approveRequest,
+    cancelMyRequest,
     createClan,
     deleteClan,
+    demoteMember,
     getClanById,
+    getClanMembers,
+    getJoinRequests,
     joinClan,
     leaveClan,
     myClans,
+    myRequestedClans,
+    promoteMember,
     rejectRequest,
     removeMember,
-    removeModerator,
 } from "../controllers/clanController.js";
 import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Admin
+// General
 router.post("/", protect, createClan);
-router.patch("/:clanId/approve/:memberId", protect, approveRequest);
-router.patch("/:clanId/reject/:memberId", protect, rejectRequest);
-router.delete("/:clanId/remove/:memberId", protect, removeMember);
-router.put("/:clanId/moderators/:memberId", protect, addModerator);
-router.delete("/:clanId/moderators/:memberId", protect, removeModerator);
-router.delete("/:clanId", protect, deleteClan);
 
 // Civilian
 router.get("/", protect, myClans);
+router.get("/requested", protect, myRequestedClans);
 router.get("/:clanId", protect, getClanById);
 router.put("/:clanId", protect, joinClan);
 router.patch("/:clanId/leave", protect, leaveClan);
+router.delete("/:clanId/request", protect, cancelMyRequest);
+
+// Admin
+router.get("/:clanId/members", protect, getClanMembers);
+router.get("/:clanId/joinRequests", protect, getJoinRequests);
+
+router.put("/:clanId/request/:requestId", protect, approveRequest);
+router.delete("/:clanId/request/:requestId", protect, rejectRequest);
+
+router.patch("/:clanId/members/:membershipId/promote", protect, promoteMember);
+router.patch("/:clanId/members/:membershipId/demote", protect, demoteMember);
+
+router.delete("/:clanId/members/:membershipId", protect, removeMember);
+
+router.delete("/:clanId", protect, deleteClan);
 
 export default router;

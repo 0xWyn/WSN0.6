@@ -2,6 +2,7 @@ import API from "../../../utils/axiosInterceptor";
 
 export const useAuthLogic = (
     setAuthId,
+    setCurrentUser,
     setLoading,
     setEntities,
     navigate,
@@ -11,6 +12,7 @@ export const useAuthLogic = (
 
     const upsertAuth = (user) => {
         setAuthId(user._id);
+        setCurrentUser(user);
 
         setEntities((prev) => ({
             ...prev,
@@ -48,6 +50,7 @@ export const useAuthLogic = (
             upsertAuth(res.data.user);
         } catch (error) {
             setAuthId(null);
+            setCurrentUser(null);
         } finally {
             setLoading(false);
         }
@@ -55,20 +58,21 @@ export const useAuthLogic = (
 
     const logout = async () => {
         try {
-            const { data } = await API.post("auth/logout");
-            setEntities({
+            await API.post("auth/logout");
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setEntities((prev) => ({
+                ...prev,
                 users: {},
                 chats: {},
                 messages: {},
                 comments: {},
                 posts: {},
                 clans: {},
-            });
+            }));
             setAuthId(null);
-            navigate("/login");
-        } catch (error) {
-            console.error(error);
-            setAuthId(null);
+            setCurrentUser(null);
             navigate("/login");
         }
     };

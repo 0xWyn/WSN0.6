@@ -1,7 +1,8 @@
-export const upsertClans = (clan, prev) => {
+export const upsertClans = (clans, prev) => {
     const map = { ...prev };
 
-    map.clans = { ...(prev.clans || {}), [clan._id]: clan };
-
+    clans.forEach((clan) => {
+        map.clans = { ...(map.clans || {}), [clan._id]: clan };
+    });
     return map;
 };

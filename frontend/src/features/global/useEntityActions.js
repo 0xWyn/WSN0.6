@@ -1,7 +1,7 @@
-import { useEntities } from "./EntityProvider";
+import { useSetEntities } from "./EntityProvider";
 
 export const useEntityActions = () => {
-    const { setEntities } = useEntities();
+    const { setEntities } = useSetEntities();
 
     const mergePosts = (posts) => {
         setEntities((prev) => {
@@ -34,20 +34,20 @@ export const useEntityActions = () => {
 
     const mergeUsers = (users) => {
         setEntities((prev) => {
-            const next = { ...prev };
+            const map = { ...prev };
 
             users.forEach((user) => {
-                next.users = {
-                    ...next.users,
+                map.users = {
+                    ...map.users,
 
                     [user._id]: {
-                        ...next.users[user._id],
+                        ...map.users[user._id],
                         ...user,
                     },
                 };
             });
 
-            return next;
+            return map;
         });
     };
 

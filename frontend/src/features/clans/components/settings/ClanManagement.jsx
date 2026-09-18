@@ -1,31 +1,23 @@
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import LocNav from "../../../navigation/components/LocNav";
+import { useClanManagement } from "../../context/ClanManagementProvider";
 import { useClan } from "../../context/ClanProvider";
 import { useClanAccess } from "../../hooks/useClanAccess";
-import { useClanResolver } from "../../hooks/useClanResolver";
 import { IdentityBadge } from "../IdentityBadge";
-import { useEffect, useState } from "react";
 
 export default function ClanManagement() {
-    const { id } = useParams();
     const location = useLocation();
 
-    useClanResolver(id);
-    const { activeClan: clan, loadingClans } = useClan();
-    const { isAuthority, isLeader } = useClanAccess(clan);
-    const navigate = useNavigate();
+    const { activeClan: clan } = useClan();
+    const { requests } = useClanManagement();
 
-    // const [section, setSection] = useState("general");
+    const { isAuthority, isFounder } = useClanAccess(clan);
+    const navigate = useNavigate();
 
     const currentLocation = location.pathname?.split("/").pop();
 
     const section =
         currentLocation === "settings" ? "general" : currentLocation;
-
-    if (loadingClans.activeClan)
-        return (
-            <div className="animate-spin size-10 border-4 border-r-white rounded-full"></div>
-        );
 
     const sections = {
         general: {
@@ -36,7 +28,7 @@ export default function ClanManagement() {
             },
         },
         requests: {
-            title: `Requests (${clan?.joinRequests?.length})`,
+            title: `Requests (${requests.length})`,
             permission: isAuthority && clan.visibility === "private",
             function: () => {
                 navigate("requests");
@@ -51,7 +43,7 @@ export default function ClanManagement() {
         },
         moderators: {
             title: "Moderators",
-            permission: isLeader,
+            permission: isFounder,
             function: () => {
                 navigate("moderators");
             },
@@ -76,7 +68,6 @@ export default function ClanManagement() {
 
             {/* Main */}
             <div className="relative min-h-0 px-4 py-6">
-                {/* Content */}
                 <div className="mx-auto h-full min-h-0 w-full max-w-6xl flex flex-col gap-5">
                     {/* Header */}
                     <header className="rounded-[36px] border border-white/60 bg-white/35 p-8 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)] w-full">
@@ -111,12 +102,12 @@ export default function ClanManagement() {
                         {/* Right Panel */}
                         {section && (
                             <div className="flex flex-col flex-1 h-full space-y-4 p-8 border border-white/60 bg-white/35 backdrop-blur-3xl shadow-[0_20px_30px_rgba(10,15,20,0.03)] rounded-[24px]">
-                                <h3 className="text-lg sm:text-3xl sm:font-bold font-medium text-slate-800">
+                                <h3 className="text-lg sm:text-2xl font-bold text-slate-800">
                                     {sections[section].title}
                                 </h3>
 
                                 {/* Component */}
-                                <div className="flex-1 min-h-0 overflow-hidden p-2 rounded-[24px] border">
+                                <div className="flex-1 min-h-0 overflow-hidden rounded-[24px] p-2">
                                     <Outlet />
                                 </div>
                             </div>

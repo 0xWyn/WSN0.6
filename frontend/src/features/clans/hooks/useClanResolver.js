@@ -4,24 +4,25 @@ import { useEntities } from "../../global/EntityProvider";
 import { getClanById } from "../api/clanApis";
 
 export const useClanResolver = (id) => {
-    const { setActiveClan, activeClan, setLoadingClans } = useClan();
+    const { setActiveClan, setLoadingClans } = useClan();
     const { entities } = useEntities();
 
     useEffect(() => {
         if (!id) return;
-        if (activeClan) return;
-        const fetchClan = async () => {
+
+        const resolveClan = async () => {
             try {
-                setLoadingClans((prev) => ({ ...prev, activeClan: true }));
                 const clan = entities?.clans?.[id];
 
-                if (!clan) {
-                    const { data } = await getClanById(id);
-                    setActiveClan(data);
+                if (clan) {
+                    setActiveClan(clan);
                     return;
                 }
 
-                setActiveClan(clan);
+                setLoadingClans((prev) => ({ ...prev, activeClan: true }));
+
+                const { data } = await getClanById(id);
+                setActiveClan(data);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -29,6 +30,6 @@ export const useClanResolver = (id) => {
             }
         };
 
-        fetchClan();
-    }, [id]);
+        resolveClan();
+    }, [id, entities]);
 };

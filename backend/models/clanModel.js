@@ -3,6 +3,11 @@ import mongoose from "mongoose";
 const clanSchema = new mongoose.Schema(
     {
         name: String,
+        founder: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
         description: String,
         avatar: {
             url: {
@@ -36,45 +41,11 @@ const clanSchema = new mongoose.Schema(
         },
         domain: String,
         tags: [String],
-        owner: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        moderators: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
-        members: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
         visibility: {
             type: String,
             enum: ["public", "private"],
             default: "public",
         },
-        joinRequests: [
-            {
-                user: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "User",
-                },
-                status: {
-                    type: String,
-                    enum: ["Pending", "Accepted", "Rejected"],
-                    default: "Pending",
-                },
-                requestedAt: {
-                    type: Date,
-                    default: Date.now,
-                },
-            },
-        ],
         maxMembers: {
             type: Number,
             default: 12,

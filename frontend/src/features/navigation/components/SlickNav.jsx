@@ -7,12 +7,14 @@ import { useAuth } from "../../auth/context/AuthProvider";
 import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useClan } from "../../clans/context/ClanProvider";
 import { useEntities } from "../../global/EntityProvider";
+import { useNotification } from "../../notification/context/NotificationProvider";
 
 function ClanMenu({ clan }) {}
 export default function SlickNav() {
     const user = useCurrentUser();
     const { myClanIds, setShowClanModal, activeClan } = useClan();
     const { entities } = useEntities();
+    const { unreadCount } = useNotification();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -81,13 +83,17 @@ export default function SlickNav() {
             </button>
             {/* Top */}
 
-            <div className="p-4">
+            <div className="p-4 w-full">
                 {/* Navigation */}
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-2 w-full">
                     {sections.map((section) => (
-                        <Link key={section.name} to={section.path}>
+                        <Link
+                            key={section.name}
+                            to={section.path}
+                            className="w-full"
+                        >
                             <div
-                                className={`group flex items-center gap-4 rounded-[24px] px-4 py-3 transition-all duration-300 ${
+                                className={`relative group flex items-center gap-4 rounded-[24px] px-4 py-3 transition-all duration-300 w-full  ${
                                     section.active
                                         ? "border border-white/80 bg-white/80 text-slate-900 shadow-[0_8px_30px_rgba(15,23,42,0.08)]"
                                         : "border border-transparent text-slate-600 hover:border-white/40 hover:bg-white/40 hover:text-slate-900"
@@ -106,6 +112,12 @@ export default function SlickNav() {
                                 <span className="font-medium">
                                     {section.name}
                                 </span>
+
+                                {section.name === "Notifications" && (
+                                    <span
+                                        className={`${unreadCount > 0 ? "opacity-100" : "opacity-0"} size-2 bg-amber-500 rounded-full absolute bottom-full top-2 right-4`}
+                                    ></span>
+                                )}
                             </div>
                         </Link>
                     ))}
@@ -121,13 +133,13 @@ export default function SlickNav() {
                         </h3>
 
                         <span className="rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-slate-600">
-                            {myClanIds.length}
+                            {myClanIds?.length ?? "0"}
                         </span>
                     </div>
 
                     {/* Clans */}
                     <div className="flex-1 max-h-46 overflow-y-auto pr-1">
-                        {myClanIds.map((id) => {
+                        {myClanIds?.map((id) => {
                             const isActive = pathname.split("/").includes(id);
 
                             const clan = entities?.clans?.[id] || null;
@@ -140,12 +152,12 @@ export default function SlickNav() {
                                                 : "hover:bg-white/50"
                                         }`}
                                     >
-                                        <div className="flex h-8 w-8 overflow-hidden items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-sky-200 text-xs font-bold text-slate-800">
+                                        <div className="flex h-8 w-8 overflow-hidden items-center justify-center rounded-full shrink-0 bg-gradient-to-br from-amber-200 to-sky-200 text-xs font-bold text-slate-800">
                                             {clan?.avatar ? (
                                                 <img
                                                     src={clan.avatar.url}
                                                     alt={clan.name}
-                                                    className="object-cover w-full h-full shrink-0"
+                                                    className="object-cover w-full h-full shrink-0 rounded-full"
                                                 />
                                             ) : (
                                                 <p>{clan?.name?.charAt(0)}</p>
@@ -197,7 +209,7 @@ export default function SlickNav() {
                         }`}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-amber-300 to-sky-300 text-xl font-black text-slate-900 shadow-lg overflow-hidden">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-amber-300 to-sky-300 text-xl font-black text-slate-900 shadow-lg overflow-hidden shrink-0">
                                 {user?.avatar?.url ? (
                                     <div className="w-full h-full">
                                         <img

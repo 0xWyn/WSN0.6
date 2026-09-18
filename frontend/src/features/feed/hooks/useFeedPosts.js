@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useEntities } from "../../global/EntityProvider";
+import { useEntities, useSetEntities } from "../../global/EntityProvider";
 import { useEntityActions } from "../../global/useEntityActions";
 import { fetchPost, getClanPosts, getUserPosts } from "../api/feedApis";
 import { useFeed } from "../context/FeedProvider";
@@ -13,8 +13,9 @@ export const useFeedPosts = () => {
         singlePost: false,
     });
 
-    const { entities, setEntities } = useEntities();
-    const { queries, setQueries } = useFeed();
+    const { entities } = useEntities();
+    const { setEntities } = useSetEntities();
+    const { setQueries } = useFeed();
 
     const fetchClanPosts = async (page = 1, clanId) => {
         try {

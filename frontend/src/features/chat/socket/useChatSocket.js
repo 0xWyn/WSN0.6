@@ -1,10 +1,10 @@
 import { useEffect } from "react";
+import { useSetEntities } from "../../global/EntityProvider";
 import { useSocket } from "../../socket/SocketProvider";
-import { useEntities } from "../../global/EntityProvider";
 
 export const useChatSocket = (chatIds, setChatIds) => {
     const { socket } = useSocket();
-    const { entities, setEntities } = useEntities();
+    const { setEntities } = useSetEntities();
     useEffect(() => {
         if (!socket) return;
 

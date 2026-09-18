@@ -71,76 +71,78 @@ export default function HomePage() {
         myClanIds,
         authoredClans,
         setShowClanModal,
-        requestedClans,
+        requestedIds,
     } = useClan();
 
     const [viewing, setViewing] = useState("my-clans");
 
     return (
-        <div className="w-full h-full min-h-0 flex flex-col">
-            <div className=" top-0 w-full flex backdrop-blur-2xl">
-                <LocNav current="Home" redirect={false} />
-                <SecondaryNavigation />
-            </div>
-
-            <div className="relative bg-[#f8fafc] px-4 py-6 flex-1 min-w-xs">
-                {/* Decorative background */}
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                    <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
-                    <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
+        <>
+            <div className="w-full h-full min-h-0 flex flex-col">
+                <div className=" top-0 w-full flex backdrop-blur-2xl">
+                    <LocNav current="Home" redirect={false} />
+                    <SecondaryNavigation />
                 </div>
 
-                {/* Main */}
-                <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-6 p-6">
-                    {/* Header */}
-                    <header className="rounded-[36px] border border-white/60 bg-white/35 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
-                        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                            <div>
-                                <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
-                                    Your Clans
-                                </h1>
-                                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-                                    Build communities around ideas, hobbies,
-                                    projects, and friendships.
-                                </p>
+                <div className="relative bg-[#f8fafc] px-4 py-6 flex-1 min-w-xs">
+                    {/* Decorative background */}
+                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                        <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
+                        <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
+                    </div>
+
+                    {/* Main */}
+                    <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-6 p-6">
+                        {/* Header */}
+                        <header className="rounded-[36px] border border-white/60 bg-white/35 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
+                            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                                <div>
+                                    <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
+                                        Your Clans
+                                    </h1>
+                                    <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+                                        Build communities around ideas, hobbies,
+                                        projects, and friendships.
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() => setShowClanModal(true)}
+                                    className="rounded-2xl bg-white/20 border border-white/95 backdrop-blur-2xl text-slate-600 px-4 py-1.5 font-semibold  transition hover:bg-white/40 hover:-translate-y-1 hover:shadow-sm hover:text-slate-800 whitespace-nowrap transition-all duration-300"
+                                >
+                                    Create Clan
+                                </button>
                             </div>
+                        </header>
 
-                            <button
-                                onClick={() => setShowClanModal(true)}
-                                className="rounded-2xl bg-white/20 border border-white/95 backdrop-blur-2xl text-slate-600 px-4 py-1.5 font-semibold  transition hover:bg-white/40 hover:-translate-y-1 hover:shadow-sm hover:text-slate-800 whitespace-nowrap transition-all duration-300"
-                            >
-                                Create Clan
-                            </button>
+                        {/* Section Grid */}
+                        <div className="grid flex-1 min-h-0 gap-6 min-[1200px]:grid-cols-[1fr_320px]">
+                            {/* Clan list */}
+                            <section className="min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
+                                <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                                    My Clans
+                                </h2>
+                                {/* Enable filter for created, joined and requested */}
+                                {loading ? (
+                                    <SkeletonLoader />
+                                ) : (
+                                    <ClanContainer viewing={viewing} />
+                                )}
+                            </section>
+
+                            {/* Sidebar */}
+                            <aside className="flex flex-col gap-6">
+                                <OverviewPanel
+                                    clansCount={myClanIds?.length ?? "0"}
+                                    authoredClans={authoredClans.length}
+                                    requestedClans={requestedIds.length}
+                                />
+                                <DiscoverPanel />
+                            </aside>
                         </div>
-                    </header>
-
-                    {/* Section Grid */}
-                    <div className="grid flex-1 min-h-0 gap-6 min-[1200px]:grid-cols-[1fr_320px]">
-                        {/* Clan list */}
-                        <section className="min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
-                            <h2 className="mb-4 text-lg font-semibold text-slate-900">
-                                My Clans
-                            </h2>
-                            {/* Enable filter for created, joined and requested */}
-                            {loading ? (
-                                <SkeletonLoader />
-                            ) : (
-                                <ClanContainer viewing={viewing} />
-                            )}
-                        </section>
-
-                        {/* Sidebar */}
-                        <aside className="flex flex-col gap-6">
-                            <OverviewPanel
-                                clansCount={myClanIds.length}
-                                authoredClans={authoredClans.length}
-                                requestedClans={requestedClans.length}
-                            />
-                            <DiscoverPanel />
-                        </aside>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

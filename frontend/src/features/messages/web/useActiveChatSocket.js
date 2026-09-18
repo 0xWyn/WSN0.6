@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
-import { useEntities } from "../../global/EntityProvider";
+import { useEntities, useSetEntities } from "../../global/EntityProvider";
 import { useSocket } from "../../socket/SocketProvider";
 
 export const useActiveChatSocket = (id, setMessageIds) => {
     const { socket } = useSocket();
     const user = useCurrentUser();
-    const { entities, setEntities } = useEntities();
+    const { setEntities } = useSetEntities();
 
     useEffect(() => {
         if (!socket) return;

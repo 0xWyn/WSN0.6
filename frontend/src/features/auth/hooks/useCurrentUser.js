@@ -1,9 +1,7 @@
-import { useEntities } from "../../global/EntityProvider";
 import { useAuth } from "../context/AuthProvider";
 
 export const useCurrentUser = () => {
-    const { authId } = useAuth();
-    const { entities } = useEntities();
+    const { currentUser } = useAuth();
 
-    return authId ? (entities.users[authId] ?? null) : null;
+    return currentUser ?? null;
 };

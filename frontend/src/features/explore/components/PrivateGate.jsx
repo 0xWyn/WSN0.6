@@ -1,22 +1,32 @@
+import { useState } from "react";
 import LockKeyhole from "../../../components/icons/lock-keyhole";
 import XMark from "../../../components/icons/x-mark";
-import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useClanActions } from "../../clans/hooks/useClanActions";
 import { useExplore } from "../context/ExploreProvider";
+import { useClan } from "../../clans/context/ClanProvider";
 
 export default function PrivateGate() {
     const data = ["1", "2", "3", "4"];
+    const { setShowPrivateGate, showPrivateGate: clan } = useClan();
 
-    const { setShowPrivateGate, showPrivateGate: clan } = useExplore();
+    const { handleJoinClan, handleCancelRequest } = useClanActions(clan._id);
 
-    const auth = useCurrentUser();
+    const [requested, setRequested] = useState(clan.requested);
 
-    const { handleJoinClan } = useClanActions(clan._id);
+    const handleCancel = () => {
+        if (requested) {
+            setRequested(false);
 
-    console.log(clan);
-    const requested = clan.joinRequests.find(
-        ({ user }) => user._id === auth._id
-    );
+            return handleCancelRequest();
+        } else {
+            return setShowPrivateGate(false);
+        }
+    };
+
+    const handleJoin = () => {
+        setRequested(true);
+        return handleJoinClan(clan._id);
+    };
 
     return (
         <div className="h-full w-full fixed top-0 left-0 z-100">
@@ -79,17 +89,10 @@ export default function PrivateGate() {
                                 key={dat}
                                 className="rounded-full bg-slate-100 px-3 py-2 text-sm items-center"
                             >
-                                {index === 0 && (
-                                    <p>
-                                        👥
-                                        {clan?.members.length} member
-                                        {clan?.members.length > 1 ? "s" : ""}
-                                    </p>
-                                )}
                                 {index === 1 && (
                                     <p>
                                         👑
-                                        {clan?.owner?.username}
+                                        {clan?.founder?.username}
                                     </p>
                                 )}
                                 {index === 2 && (
@@ -121,7 +124,7 @@ export default function PrivateGate() {
                     {!requested ? (
                         <button
                             className={`bg-gradient-to-r from-violet-500 to-indigo-500 text-white py-3 font-medium transition hover:scale-[1.02] active:scale-[.99] rounded-2xl w-full`}
-                            onClick={() => handleJoinClan(clan._id)}
+                            onClick={() => handleJoin()}
                         >
                             Request Access
                         </button>
@@ -143,10 +146,19 @@ export default function PrivateGate() {
                     )}
 
                     <button
-                        onClick={() => setShowPrivateGate(false)}
-                        className="w-full mt-3 text-sm text-slate-500 hover:text-slate-800"
+                        onClick={handleCancel}
+                        className="w-full mt-3 text-sm text-slate-500 hover:text-slate-800 p-2 rounded-2xl"
                     >
-                        {!requested ? "Maybe later " : "Cancel"}
+                        {!requested ? (
+                            <span>Maybe later</span>
+                        ) : (
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xs tracking-wider font-normal">
+                                    Your request is currently pending. Click to
+                                    here to cancel.
+                                </span>
+                            </div>
+                        )}
                     </button>
                 </div>
             </div>

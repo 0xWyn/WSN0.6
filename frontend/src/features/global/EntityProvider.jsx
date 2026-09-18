@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-const EntityContext = createContext(null);
+const EntityStateContext = createContext(null);
+const EntityActionsContext = createContext(null);
 
 export const EntityProvider = ({ children }) => {
     const [entities, setEntities] = useState({
@@ -10,13 +11,17 @@ export const EntityProvider = ({ children }) => {
         comments: {},
         posts: {},
         clans: {},
+        notifications: {},
     });
 
     return (
-        <EntityContext.Provider value={{ entities, setEntities }}>
-            {children}
-        </EntityContext.Provider>
+        <EntityStateContext.Provider value={{ entities }}>
+            <EntityActionsContext.Provider value={{ setEntities }}>
+                {children}
+            </EntityActionsContext.Provider>
+        </EntityStateContext.Provider>
     );
 };
 
-export const useEntities = () => useContext(EntityContext);
+export const useEntities = () => useContext(EntityStateContext);
+export const useSetEntities = () => useContext(EntityActionsContext);

@@ -20,7 +20,7 @@ export const CLAN_PERMISSIONS = {
 export const ROLE_PERMISSIONS = {
     [CLAN_ROLES.MEMBER]: ["create_post"],
 
-    [CLAN_ROLES.MODERATOR]: [
+    [CLAN_ROLES.LEADER]: [
         "create_post",
         "manage_requests",
         "remove_member",
@@ -30,7 +30,7 @@ export const ROLE_PERMISSIONS = {
         "delete_any_comment",
     ],
 
-    [CLAN_ROLES.OWNER]: [
+    [CLAN_ROLES.FOUNDER]: [
         "create_post",
         "manage_requests",
         "remove_member",

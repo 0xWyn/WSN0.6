@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useEntities } from "../../global/EntityProvider";
+import { useSetEntities } from "../../global/EntityProvider";
 import { useSocket } from "../../socket/SocketProvider";
 import { useFeed } from "../context/FeedProvider";
 import { normaliseComments, normalisePosts } from "../utils/normaliseEntities";
@@ -8,7 +8,7 @@ import { updateCommentsQuery, updatePostsQuery } from "../utils/updateQueries";
 export const useFeedSocket = (clanId) => {
     const { socket } = useSocket();
 
-    const { setEntities } = useEntities();
+    const { setEntities } = useSetEntities();
     const { setQueries } = useFeed();
 
     useEffect(() => {

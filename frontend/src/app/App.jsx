@@ -6,7 +6,8 @@ import { RealtimeProvider } from "../features/global/RealtimeProvider.jsx";
 import { ClanProvider } from "../features/clans/context/ClanProvider.jsx";
 import { ExploreProvider } from "../features/explore/context/ExploreProvider.jsx";
 import { UserProvider } from "../features/user/context/UserProvider.jsx";
-
+import { ClanManagementProvider } from "../features/clans/context/ClanManagementProvider.jsx";
+import { NotificationProvider } from "../features/notification/context/NotificationProvider.jsx";
 import Paths from "./Paths.jsx";
 
 export default function App() {
@@ -14,17 +15,21 @@ export default function App() {
         <EntityProvider>
             <AuthProvider>
                 <SocketProvider>
-                    <RealtimeProvider>
-                        <ClanProvider>
+                    <ClanProvider>
+                        <ClanManagementProvider>
                             <FeedProvider>
                                 <ExploreProvider>
                                     <UserProvider>
-                                        <Paths />
+                                        <NotificationProvider>
+                                            <RealtimeProvider>
+                                                <Paths />
+                                            </RealtimeProvider>
+                                        </NotificationProvider>
                                     </UserProvider>
                                 </ExploreProvider>
                             </FeedProvider>
-                        </ClanProvider>
-                    </RealtimeProvider>
+                        </ClanManagementProvider>
+                    </ClanProvider>
                 </SocketProvider>
             </AuthProvider>
         </EntityProvider>

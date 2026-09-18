@@ -1,24 +1,16 @@
 import { useState } from "react";
 import { uploadToCloudinary } from "../../../utils/uploadToCloud";
-import {
-    acceptRequest,
-    createClan,
-    joinClan,
-    rejectRequest,
-} from "../api/clanApis";
+import { cancelRequest, createClan, joinClan } from "../api/clanApis";
 
 export const useClanActions = (clanId) => {
-    const [creatingClan, setCreatingClan] = useState(false);
     const [loadingClanActions, setLoadingClanActions] = useState({
-        handleRequest: false,
-        create: false,
-        delete: false,
-        join: false,
+        create: true,
+        join: true,
     });
 
     const handleCreateClan = async (details) => {
         try {
-            setCreatingClan(true);
+            setLoadingClanActions((prev) => ({ ...prev, create: true }));
             const { name, description, domain, tags, visibility } = details;
             const avatar = details.avatar
                 ? await uploadToCloudinary(details?.avatar, {
@@ -48,14 +40,7 @@ export const useClanActions = (clanId) => {
         } catch (error) {
             console.error(error);
         } finally {
-            setCreatingClan(false);
-        }
-    };
-
-    const handleDeleteClan = async () => {
-        try {
-        } catch (error) {
-            console.error(error.response);
+            setLoadingClanActions((prev) => ({ ...prev, create: false }));
         }
     };
 
@@ -64,55 +49,23 @@ export const useClanActions = (clanId) => {
             const { data } = await joinClan(clanId);
             console.log(data);
         } catch (error) {
-            console.error(error);
+            console.log(error.response.data);
         }
     };
 
-    const handleAcceptRequest = async (memberId) => {
+    const handleCancelRequest = async () => {
         try {
-            setLoadingClanActions((prev) => ({ ...prev, handleRequest: true }));
-            const { data } = await acceptRequest(clanId, memberId);
-
-            console.log(data.msg);
+            const { data } = await cancelRequest(clanId);
+            console.log(data);
         } catch (error) {
-            console.error(error);
-        } finally {
-            setLoadingClanActions((prev) => ({
-                ...prev,
-                handleRequest: false,
-            }));
+            console.error(error.response.data);
         }
-    };
-
-    const handleRejectRequest = async (memberId) => {
-        try {
-            setLoadingClanActions((prev) => ({ ...prev, handleRequest: true }));
-
-            const { data } = await rejectRequest(clanId, memberId);
-
-            console.log(data.msg);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoadingClanActions((prev) => ({
-                ...prev,
-                handleRequest: false,
-            }));
-        }
-    };
-
-    const fetchClanMembers = async (page = 1) => {
-        try {
-        } catch (error) {}
     };
 
     return {
         handleCreateClan,
-        creatingClan,
-        handleDeleteClan,
         handleJoinClan,
-        handleAcceptRequest,
-        handleRejectRequest,
         loadingClanActions,
+        handleCancelRequest,
     };
 };

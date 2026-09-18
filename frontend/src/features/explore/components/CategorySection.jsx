@@ -1,11 +1,19 @@
 import ExploreCard from "../../clans/components/ExploreCard";
 import { useEntities } from "../../global/EntityProvider";
+import { useExplore } from "../context/ExploreProvider";
+import { EmptyDomain } from "./EmptyDomain";
 
-export default function CategorySection({ domain, clanIds }) {
+export default function CategorySection({ domain, type = "all" }) {
+    if (!domain) return;
+
     const { name, icon, description } = domain;
+
+    const { clansByDomain } = useExplore();
     const { entities } = useEntities();
 
-    return (
+    const clanIds = clansByDomain[name] || [];
+
+    return clanIds.length > 0 ? (
         <section className="rounded-[28px] border border-white/60 bg-white/50 backdrop-blur-2xl p-6 px-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
             {/* Section Header */}
             <div className="mb-5 flex items-start justify-between gap-4">
@@ -42,5 +50,7 @@ export default function CategorySection({ domain, clanIds }) {
                 See more ↓
             </button>
         </section>
-    );
+    ) : type !== "all" ? (
+        <EmptyDomain domain={domain} />
+    ) : null;
 }

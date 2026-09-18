@@ -2,85 +2,27 @@ import { useState } from "react";
 import { Telescope } from "../../../components/icons/telescope.jsx";
 import CategorySkeleton from "../../../components/ui/CategorySkeletonLoader.jsx";
 import { INTEREST_DOMAINS } from "../../../config/interestDomains.js";
-import { useClan } from "../../clans/context/ClanProvider.jsx";
 import LocNav from "../../navigation/components/LocNav.jsx";
 import { useExplore } from "../context/ExploreProvider.jsx";
-import { useExploreLogic } from "../hooks/useExplore.js";
 import CategorySection from "./CategorySection.jsx";
 import PrivateGate from "./PrivateGate.jsx";
 import ResultsContainer from "./ResultsContainer.jsx";
 import SearchBar from "./SearchBar.jsx";
-import { useEntities } from "../../global/EntityProvider.jsx";
+import { useClan } from "../../clans/context/ClanProvider.jsx";
 
 export default function ExplorePage() {
-    const { results, showPrivateGate } = useExplore();
-    const { viewCategory } = useExploreLogic();
-    const { clansByCategory, loadingClans } = useClan();
-
     const [selectedDomain, setSelectedDomain] = useState("all");
+
+    const { results, loadingExplore, clansByDomain } = useExplore();
+
+    const { showPrivateGate } = useClan();
 
     const domainsToRender =
         selectedDomain === "all"
             ? INTEREST_DOMAINS
             : INTEREST_DOMAINS.filter(({ name }) => name === selectedDomain);
 
-    const EmptyState = () => {
-        if (selectedDomain === "all") return;
-
-        const clanIds = clansByCategory?.[selectedDomain] ?? [];
-
-        if (clanIds.length > 0) return;
-
-        const emptyDomain = INTEREST_DOMAINS.find(
-            ({ name }) => name === selectedDomain
-        );
-
-        const { name, icon, description } = emptyDomain;
-
-        return (
-            <section className="rounded-[28px] border border-white/60 bg-white/50 backdrop-blur-2xl p-6 px-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
-                {/* Header */}
-                <div className="mb-6">
-                    <div className="flex flex-col items-start mb-4 px-2">
-                        <div className="flex w-full justify-between items-center">
-                            <div className="flex items-center gap-3 mb-2">
-                                <span>{icon}</span>
-                                <h2 className="text-2xl font-semibold text-slate-900">
-                                    {name}
-                                </h2>
-                            </div>
-                            {clanIds.length > 0 ? (
-                                <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
-                                    {clanIds.length} clan
-                                    {clanIds.length > 1 ? "s" : ""}
-                                </span>
-                            ) : (
-                                <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
-                                    0 clans
-                                </span>
-                            )}
-                        </div>
-                        <p className="text-sm text-slate-500">{description}</p>
-                    </div>
-                </div>
-
-                {/* Elements */}
-                <div className="relative border border-slate-50/20 rounded-xl">
-                    <section className="flex flex-col gap-2 py-2 rounded-3xl overflow-y-auto no-scrollbar max-h-100">
-                        <div className="rounded-[32px] border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
-                            <h3 className="font-semibold text-slate-900">
-                                No clans yet
-                            </h3>
-                            <p className="mt-2 text-sm text-slate-600">
-                                Create your first clan and start building a
-                                community.
-                            </p>
-                        </div>
-                    </section>
-                </div>
-            </section>
-        );
-    };
+    if (loadingExplore) return <div>Loading..</div>;
 
     return (
         <div className="bg-[#f8fafc] min-h-screen w-full">
@@ -99,6 +41,7 @@ export default function ExplorePage() {
             <div className="px-4 py-6 z-10 flex flex-col gap-2">
                 {/* Content */}
                 <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 p-6">
+                    {/* Header */}
                     <header className="rounded-[32px] border border-white/60 bg-white/50 backdrop-blur-2xl p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] space-y-2">
                         <div className="flex flex-col gap-2 items-center">
                             <div className="flex items-center gap-3">
@@ -116,6 +59,7 @@ export default function ExplorePage() {
                             </div>
                         </div>
 
+                        {/* Nav */}
                         <nav className="mt-10 p-2 flex gap-2 overflow-x-auto no-scrollbar">
                             <button
                                 type="button"
@@ -126,6 +70,8 @@ export default function ExplorePage() {
                             >
                                 All
                             </button>
+
+                            {/* Options */}
                             {INTEREST_DOMAINS.map(({ icon, name }) => (
                                 <button
                                     type="button"
@@ -145,25 +91,18 @@ export default function ExplorePage() {
                     </header>
 
                     {/* Clan Sections */}
-
                     <div className="p-4 lg:px-6 space-y-10 relative">
-                        {loadingClans.categories ? (
+                        {loadingExplore ? (
                             <CategorySkeleton />
                         ) : (
-                            domainsToRender.map((domain) => {
-                                const clanIds =
-                                    clansByCategory?.[domain.name] ?? [];
-                                if (clanIds.length > 0)
-                                    return (
-                                        <CategorySection
-                                            key={domain.name}
-                                            domain={domain}
-                                            clanIds={clanIds}
-                                        />
-                                    );
-                            })
+                            domainsToRender.map((domain) => (
+                                <CategorySection
+                                    key={domain.name}
+                                    domain={domain}
+                                    type={selectedDomain}
+                                />
+                            ))
                         )}
-                        <EmptyState />
 
                         {results && (
                             <div className="space-y-6 absolute z-20 w-full h-full bg-[#f8fafc]/10 backdrop-blur-lg top-0 rounded-xl shadow-[0_10px_40px_rgba(10, 10, 10, 0.5)] p-8">

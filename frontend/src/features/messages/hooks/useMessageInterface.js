@@ -5,10 +5,11 @@ import {
     markChatRead,
 } from "../apis/messageApis";
 import { useActiveChatSocket } from "../web/useActiveChatSocket";
-import { useEntities } from "../../global/EntityProvider";
+import { useEntities, useSetEntities } from "../../global/EntityProvider";
 
 export const useMessageInterface = (id) => {
-    const { entities, setEntities } = useEntities();
+    const { entities } = useEntities();
+    const { setEntities } = useSetEntities();
     const [messageIds, setMessageIds] = useState([]);
     const [loading, setLoading] = useState(true);
 

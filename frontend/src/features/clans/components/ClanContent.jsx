@@ -1,24 +1,18 @@
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Bars3 } from "../../../components/icons/hamburger.jsx";
 import Pencil from "../../../components/icons/pencil.jsx";
-import { useCurrentUser } from "../../auth/hooks/useCurrentUser.js";
 import ClanFeed from "../../feed/components/ClanFeed.jsx";
 import CreatePost from "../../feed/components/CreatePost.jsx";
 import { useFeedPosts } from "../../feed/hooks/useFeedPosts.js";
 import LocNav from "../../navigation/components/LocNav.jsx";
 import { useClan } from "../context/ClanProvider.jsx";
 import { useClanAccess } from "../hooks/useClanAccess.js";
-import { useClanResolver } from "../hooks/useClanResolver.js";
 import ClanMenu from "./ClanMenu.jsx";
 import { IdentityBadge } from "./IdentityBadge.jsx";
 
 export default function ClanContent() {
-    const user = useCurrentUser();
-
     const { id } = useParams();
-
-    useClanResolver(id);
 
     const [showCreationModal, setShowCreationModal] = useState(false);
     const [showClanMenu, setShowClanMenu] = useState(false);
@@ -148,7 +142,7 @@ export default function ClanContent() {
 
                             {/* Identity */}
                             <div className="mt-4">
-                                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between pb-2 border-slate-300">
                                     <div>
                                         <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
                                             {clan.name}
@@ -160,17 +154,10 @@ export default function ClanContent() {
                                             </p>
                                         )}
                                     </div>
-                                    <div className="flex shrink-0 items-center gap-2 text-sm text-slate-500">
-                                        <span className="font-semibold text-slate-800">
-                                            {clan.members?.length ?? 0}
-                                        </span>
-                                        member
-                                        {clan.members?.length === 1 ? "" : "s"}
-                                    </div>
                                 </div>
 
                                 {clan.tags?.length > 0 && (
-                                    <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+                                    <div className="mt-2 pt-4 border-t border-slate-200 flex gap-2 overflow-x-auto pb-1">
                                         {" "}
                                         {clan.tags.map((tag) => (
                                             <span

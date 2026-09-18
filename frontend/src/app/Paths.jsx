@@ -55,8 +55,8 @@ const ClanMemberSettings = lazy(
 const ClanModeratorSettings = lazy(
     () => import("../features/clans/components/settings/ModeratorSettings.jsx")
 );
-const ClanSettingsLayout = lazy(
-    () => import("../features/clans/components/settings/ClanSettingsLayout.jsx")
+const NotificationPage = lazy(
+    () => import("../features/notification/components/NotificationPage.jsx")
 );
 
 export default function Paths() {
@@ -112,6 +112,10 @@ export default function Paths() {
                             <Route path=":id" element={<ChatInterface />} />
                             <Route path="user/:id" element={<ChatManager />} />
                         </Route>
+                        <Route
+                            path="notifications"
+                            element={<NotificationPage />}
+                        />
                         <Route path="user/:id" element={<UserPage />} />
                         <Route path="explore" element={<Explore />} />
                     </Route>
