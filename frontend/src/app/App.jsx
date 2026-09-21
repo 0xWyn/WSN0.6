@@ -5,25 +5,33 @@ import { EntityProvider } from "../features/global/EntityProvider.jsx";
 import { RealtimeProvider } from "../features/global/RealtimeProvider.jsx";
 import { ClanProvider } from "../features/clans/context/ClanProvider.jsx";
 import { ExploreProvider } from "../features/explore/context/ExploreProvider.jsx";
-
+import { UserProvider } from "../features/user/context/UserProvider.jsx";
+import { ClanManagementProvider } from "../features/clans/context/ClanManagementProvider.jsx";
+import { NotificationProvider } from "../features/notification/context/NotificationProvider.jsx";
 import Paths from "./Paths.jsx";
 
 export default function App() {
     return (
-        <AuthProvider>
-            <SocketProvider>
-                <EntityProvider>
-                    <RealtimeProvider>
-                        <ClanProvider>
+        <EntityProvider>
+            <AuthProvider>
+                <SocketProvider>
+                    <ClanProvider>
+                        <ClanManagementProvider>
                             <FeedProvider>
                                 <ExploreProvider>
-                                    <Paths />
+                                    <UserProvider>
+                                        <NotificationProvider>
+                                            <RealtimeProvider>
+                                                <Paths />
+                                            </RealtimeProvider>
+                                        </NotificationProvider>
+                                    </UserProvider>
                                 </ExploreProvider>
                             </FeedProvider>
-                        </ClanProvider>
-                    </RealtimeProvider>
-                </EntityProvider>
-            </SocketProvider>
-        </AuthProvider>
+                        </ClanManagementProvider>
+                    </ClanProvider>
+                </SocketProvider>
+            </AuthProvider>
+        </EntityProvider>
     );
 }

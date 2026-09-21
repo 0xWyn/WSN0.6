@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { useSocket } from "../../socket/SocketProvider";
-import { useEntities } from "../../global/EntityProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useEntityActions } from "../../global/useEntityActions";
-import { useAuth } from "../../auth/context/AuthProvider";
+import { useSocket } from "../../socket/SocketProvider";
 
 export const useUserSocket = () => {
     const { socket } = useSocket();
-    const { user: auth } = useAuth();
+    const auth = useCurrentUser();
     const { mergeUsers } = useEntityActions();
 
     useEffect(() => {

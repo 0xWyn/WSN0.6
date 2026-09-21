@@ -1,103 +1,74 @@
-import { useEntities } from "../../global/EntityProvider";
+import { useEffect, useState } from "react";
+import { useEntities, useSetEntities } from "../../global/EntityProvider";
 import { useEntityActions } from "../../global/useEntityActions";
-import { getClanPosts, getUserPosts } from "../api/feedApis";
+import { fetchPost, getClanPosts, getUserPosts } from "../api/feedApis";
 import { useFeed } from "../context/FeedProvider";
+import { normalisePosts } from "../utils/normaliseEntities";
+import { updatePostsQuery } from "../utils/updateQueries";
 
 export const useFeedPosts = () => {
-    const { setLoading } = useFeed();
-    const { entities, setEntities } = useEntities();
-    const { setQueries, queries } = useFeed();
-    const { mergePosts } = useEntityActions();
+    const [loadingFeedPosts, setLoadingFeedPosts] = useState({
+        clanPosts: false,
+        userPosts: false,
+        singlePost: false,
+    });
 
-    const fetchPosts = async (page = 1, clanId) => {
-        try {
-            const { data } = await getClanPosts(page, clanId);
-
-            mergePosts(data);
-
-            const newIds = data.map((post) => post._id);
-
-            setQueries((prev) => ({
-                ...prev,
-                homeFeedIds: [...new Set([...prev.homeFeedIds, ...newIds])],
-            }));
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { entities } = useEntities();
+    const { setEntities } = useSetEntities();
+    const { setQueries } = useFeed();
 
     const fetchClanPosts = async (page = 1, clanId) => {
         try {
+            setLoadingFeedPosts((prev) => ({ ...prev, clanPosts: true }));
             const { data } = await getClanPosts(page, clanId);
-            mergePosts(data);
 
-            const newIds = data.map((post) => post._id);
+            setEntities((prev) => normalisePosts(data, prev));
 
-            setQueries((prev) => ({
-                ...prev,
-
-                clanPostsIds: {
-                    ...prev.clanPostsIds,
-
-                    [clanId]: [
-                        ...new Set([
-                            ...(prev.clanPostsIds[clanId] ?? []),
-                            ...newIds,
-                        ]),
-                    ],
-                },
-            }));
+            setQueries((prev) => updatePostsQuery(data, prev));
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
+            setLoadingFeedPosts((prev) => ({ ...prev, clanPosts: false }));
         }
     };
 
-    const fetchUserPosts = async (userId, page = 1) => {
+    const fetchUserPosts = async (page = 1, userId) => {
         try {
+            setLoadingFeedPosts((prev) => ({ ...prev, userPosts: true }));
             const { data } = await getUserPosts(userId, page);
 
-            mergePosts(data);
-
             const ids = data.map((post) => post._id);
-            setQueries((prev) => ({
-                ...prev,
+            setQueries((prev) => updatePostsQuery(data, prev));
 
-                usersPostsIds: {
-                    ...prev.usersPostsIds,
-
-                    [userId]: [
-                        ...new Set([
-                            ...(prev.usersPostsIds[userId] || []),
-                            ...ids,
-                        ]),
-                    ],
-                },
-            }));
+            setEntities((prev) => normalisePosts(data, prev));
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false);
+            setLoadingFeedPosts((prev) => ({ ...prev, userPosts: false }));
         }
     };
 
     const fetchSinglePost = async (postId) => {
         try {
-            let post = entities.posts[postId];
+            setLoadingFeedPosts((prev) => ({ ...prev, singlePost: true }));
 
-            if (!post) {
+            if (!entities.posts[postId]) {
+                console.log("fetchingPost");
                 const { data } = await fetchPost(postId);
-                mergePosts([data]);
-                post = data;
+
+                setEntities((prev) => normalisePosts([data], prev));
             }
-            return post;
         } catch (error) {
             console.error(error.response);
+        } finally {
+            setLoadingFeedPosts((prev) => ({ ...prev, singlePost: false }));
         }
     };
 
-    return { fetchClanPosts, fetchUserPosts, fetchSinglePost };
+    return {
+        fetchClanPosts,
+        fetchUserPosts,
+        fetchSinglePost,
+        loadingFeedPosts,
+    };
 };

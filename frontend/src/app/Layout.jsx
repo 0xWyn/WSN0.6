@@ -7,9 +7,9 @@ export default function Layout() {
     const { showClanModal } = useClan();
 
     return (
-        <div className="flex w-screen items-stretch gap-2 bg-white overflow-x-scroll ">
+        <div className="flex w-screen items-stretch gap-2 bg-white overflow-x-scroll">
             <SlickNav />
-            <div className="flex-1 min-w-0 w-full h-screen overflow-y-auto">
+            <div className="relative flex-1 min-w-0 w-full h-screen overflow-y-auto">
                 <Outlet />
             </div>
             {showClanModal && <ClanCreationModal />}

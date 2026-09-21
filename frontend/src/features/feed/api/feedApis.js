@@ -13,7 +13,7 @@ export const deletePost = (postId) => {
 };
 
 export const getClanPosts = (page, clanId) => {
-    return API.get(`posts/${clanId}/?page=${page}&limit=20`);
+    return API.get(`posts/clan/${clanId}/?page=${page}&limit=20`);
 };
 
 export const fetchPost = (postId) => {

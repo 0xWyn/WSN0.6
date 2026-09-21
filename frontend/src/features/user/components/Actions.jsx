@@ -1,37 +1,20 @@
 import { useAuth } from "../../auth/context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useUserActions } from "../hooks/useUserActions";
+import { useUser } from "../context/UserProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 
 const ActionButton = ({ text, onClick, variant = "primary" }) => {
     const variants = {
-        primary: `
-        bg-slate-900
-        text-white
-        shadow-[0_8px_20px_rgba(15,23,42,0.14)]
-        hover:translate-y-[-1px]
-        hover:bg-slate-800
-    `,
-        primary_alt: `
-        bg-sky-600
-        text-white
-        shadow-[0_8px_20px_rgba(15,23,42,0.14)]
-        hover:translate-y-[-1px]
-        hover:bg-sky-500
-    `,
-
-        secondary: `
-        !border !border-white/70
-        !bg-white/60
-        text-slate-700
-        backdrop-blur-xl
-        hover:bg-white/80
+        primary: `bg-slate-900 text-slate-300 shadow-[0_8px_20px_rgba(15,23,42,0.06)] hover:translate-y-[-1px] hover:bg-slate-800 hover:text-slate-50`,
+        secondary: `border border-slate-100 bg-white/60 text-slate-700 backdrop-blur-xl hover:bg-white hover:text-slate-950
     `,
     };
 
     return (
         <button
             onClick={onClick}
-            className={`!rounded-full !px-5 !py-2 !text-sm !font-medium !transition-all duration-200  hover:translate-y-[-1px] ${variants[variant]}`}
+            className={`rounded-full px-5 py-2 text-xs sm:text-sm transition-all duration-300 hover:translate-y-[-1px] ${variants[variant]}`}
         >
             {text}
         </button>
@@ -40,13 +23,13 @@ const ActionButton = ({ text, onClick, variant = "primary" }) => {
 
 export default function Actions({ user }) {
     const navigate = useNavigate();
-    const { user: auth } = useAuth();
+    const auth = useCurrentUser();
     const isOwnProfile = user._id.toString() === auth._id;
-
+    const { setIsEditing } = useUser();
     const { followUser } = useUserActions(user._id);
 
     const editProfile = () => {
-        navigate("/settings/profile");
+        setIsEditing(true);
     };
 
     const messageUser = () => {
@@ -54,7 +37,7 @@ export default function Actions({ user }) {
     };
 
     return (
-        <div className="flex gap-3">
+        <div className="flex gap-2">
             {isOwnProfile ? (
                 <ActionButton
                     text="Edit Profile"

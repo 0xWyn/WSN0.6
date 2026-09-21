@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEntities, useSetEntities } from "../../global/EntityProvider";
 import { useAuthLogic } from "../hooks/useAuthLogic";
 
 const AuthContext = createContext(null);
@@ -8,32 +9,50 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [user, setUser] = useState(null);
+    const { entities } = useEntities();
+    const { setEntities } = useSetEntities();
+
+    const [authId, setAuthId] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { register, login, fetchUser, logout } = useAuthLogic(
-        setUser,
+
+    const { register, login, logout, fetchUser } = useAuthLogic(
+        setAuthId,
+        setCurrentUser,
         setLoading,
+        setEntities,
         navigate,
         location
     );
 
     useEffect(() => {
-        fetchUser();
-    }, []);
+        if (!authId) {
+            setCurrentUser(null);
+            return;
+        }
+
+        const nextUser = entities.users[authId] ?? null;
+        setCurrentUser((prev) => {
+            if (prev?._id === nextUser?._id) return prev;
+            return nextUser;
+        });
+    }, [authId, entities.users]);
 
     useEffect(() => {
-        const handleLogout = () => {
-            setUser(null);
-        };
-
-        window.addEventListener("auth:logout", handleLogout);
-
-        return () => window.removeEventListener("auth:logout", handleLogout);
+        fetchUser();
     }, []);
 
     return (
         <AuthContext.Provider
-            value={{ user, register, login, logout, loading }}
+            value={{
+                authId,
+                currentUser,
+                setAuthId,
+                register,
+                login,
+                logout,
+                loading,
+            }}
         >
             {children}
         </AuthContext.Provider>

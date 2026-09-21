@@ -1,23 +1,35 @@
+import { useState } from "react";
 import LockKeyhole from "../../../components/icons/lock-keyhole";
 import XMark from "../../../components/icons/x-mark";
-import { useAuth } from "../../auth/context/AuthProvider";
 import { useClanActions } from "../../clans/hooks/useClanActions";
 import { useExplore } from "../context/ExploreProvider";
+import { useClan } from "../../clans/context/ClanProvider";
 
 export default function PrivateGate() {
     const data = ["1", "2", "3", "4"];
+    const { setShowPrivateGate, showPrivateGate: clan } = useClan();
 
-    const { setShowPrivateGate, showPrivateGate: clan } = useExplore();
+    const { handleJoinClan, handleCancelRequest } = useClanActions(clan._id);
 
-    const { user: auth } = useAuth();
+    const [requested, setRequested] = useState(clan.requested);
 
-    const { handleJoinClan } = useClanActions();
+    const handleCancel = () => {
+        if (requested) {
+            setRequested(false);
 
-    const requested = clan.joinRequests.find(({ user }) => user === auth._id);
+            return handleCancelRequest();
+        } else {
+            return setShowPrivateGate(false);
+        }
+    };
 
-    console.log(clan);
+    const handleJoin = () => {
+        setRequested(true);
+        return handleJoinClan(clan._id);
+    };
+
     return (
-        <div className="h-full w-full absolute top-0 left-0 z-10">
+        <div className="h-full w-full fixed top-0 left-0 z-100">
             <div className="h-full bg-slate-900/35 backdrop-blur-xl flex items-center justify-center">
                 <div className="relative w-full max-w-lg overflow-hidden bg-white/90 backdrop-blur-sm rounded-[32px] shadow-[0_25px_80px_rgba(15,23,42,.18)] border border-white flex flex-col gap-4 p-8 py py-10">
                     <button
@@ -77,17 +89,10 @@ export default function PrivateGate() {
                                 key={dat}
                                 className="rounded-full bg-slate-100 px-3 py-2 text-sm items-center"
                             >
-                                {index === 0 && (
-                                    <p>
-                                        👥
-                                        {clan?.members.length} member
-                                        {clan?.members.length > 1 ? "s" : ""}
-                                    </p>
-                                )}
                                 {index === 1 && (
                                     <p>
                                         👑
-                                        {clan?.owner?.username}
+                                        {clan?.founder?.username}
                                     </p>
                                 )}
                                 {index === 2 && (
@@ -119,7 +124,7 @@ export default function PrivateGate() {
                     {!requested ? (
                         <button
                             className={`bg-gradient-to-r from-violet-500 to-indigo-500 text-white py-3 font-medium transition hover:scale-[1.02] active:scale-[.99] rounded-2xl w-full`}
-                            onClick={() => handleJoinClan(clan._id)}
+                            onClick={() => handleJoin()}
                         >
                             Request Access
                         </button>
@@ -140,8 +145,20 @@ export default function PrivateGate() {
                         </span>
                     )}
 
-                    <button className="w-full mt-3 text-sm text-slate-500 hover:text-slate-800">
-                        {!requested ? "Maybe later " : "Cancel"}
+                    <button
+                        onClick={handleCancel}
+                        className="w-full mt-3 text-sm text-slate-500 hover:text-slate-800 p-2 rounded-2xl"
+                    >
+                        {!requested ? (
+                            <span>Maybe later</span>
+                        ) : (
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xs tracking-wider font-normal">
+                                    Your request is currently pending. Click to
+                                    here to cancel.
+                                </span>
+                            </div>
+                        )}
                     </button>
                 </div>
             </div>

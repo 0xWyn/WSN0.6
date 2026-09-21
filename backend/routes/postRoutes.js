@@ -13,7 +13,7 @@ import { protect } from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", getGlobalPosts);
-router.get("/:clanId", getClanPosts);
+router.get("/clan/:clanId", getClanPosts);
 router.post("/", protect, createPost);
 router.delete("/:postId", protect, deletePost);
 router.patch("/:postId/like", protect, toggleLike);

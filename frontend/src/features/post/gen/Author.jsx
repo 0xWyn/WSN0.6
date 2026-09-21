@@ -1,13 +1,16 @@
 import { formatDate } from "../../../utils/formatDate.js";
 
-export default function Author({ post }) {
+export default function Author({ post, type }) {
     const author = post?.author;
     return (
-        <div className="flex flex-col items-start leading-tight]">
-            <p className="text-slate-800 font-semibold text-[15px] tracking-tight">
-                @{author.username}
+        <div
+            className={`flex leading-tight] ${type === "comment" ? "flex items-center gap-1" : "flex-col items-start space-y-1"}`}
+        >
+            <p className="text-slate-700 font-semibold text-md tracking-tight">
+                {author.username}
             </p>
-            <p className="mt-1 text-xs text-slate-400">
+            {type === "comment" && <span className="text-slate-400">•</span>}
+            <p className="text-xs text-slate-400 truncate">
                 {formatDate(post?.createdAt)}
             </p>
         </div>

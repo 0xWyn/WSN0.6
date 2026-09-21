@@ -11,3 +11,7 @@ export const postComment = (comment) => {
 export const getReplies = (id) => {
     return API.get(`comments/${id}/replies`);
 };
+
+export const deleteComment = (commentId) => {
+    return API.delete(`comments/${commentId}`);
+};

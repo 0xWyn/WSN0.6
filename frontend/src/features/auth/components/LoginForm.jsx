@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider.jsx";
+import { useCurrentUser } from "../hooks/useCurrentUser.js";
 
 export default function LoginForm() {
-    const { login, user, loading } = useAuth();
+    const { login, loading } = useAuth();
+    const user = useCurrentUser();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (user) navigate("/");
-    }, [user, navigate]);
+    }, [user]);
 
     const [credentials, setCredentials] = useState({
         identifier: "",

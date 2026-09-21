@@ -1,5 +1,6 @@
 import express from "express";
 import {
+    editProfile,
     followUser,
     getPostsByUserId,
     getUserById,
@@ -12,5 +13,7 @@ router.get("/", getUsers);
 router.get("/:userId", protect, getUserById);
 router.get("/:userId/posts", getPostsByUserId);
 router.patch("/:targetId/follow", protect, followUser);
+
+router.patch("/profile", protect, editProfile);
 
 export default router;

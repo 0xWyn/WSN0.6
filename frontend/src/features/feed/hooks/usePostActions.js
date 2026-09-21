@@ -5,9 +5,11 @@ export const usePostActions = () => {
     const handleNewPost = async (post) => {
         try {
             const { text, clan } = post;
-            const media = await uploadAllFiles(post.media, { folder: "posts" });
+            const media = post.media
+                ? await uploadAllFiles(post.media, { folder: "posts" })
+                : [];
             const body = {
-                text: post.text,
+                text,
                 media,
                 clan,
             };

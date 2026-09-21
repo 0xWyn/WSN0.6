@@ -1,11 +1,11 @@
-import { useAuth } from "../../auth/context/AuthProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useEntities } from "../../global/EntityProvider";
 import LocNav from "../../navigation/components/LocNav";
 import { useChatContextLogic } from "../hooks/useChatContextLogic";
 import ChatCard from "./ChatCard";
 
 export default function ChatList() {
-    const { user } = useAuth();
+    const user = useCurrentUser();
     const { chatIds, loadingChats } = useChatContextLogic();
     const { entities } = useEntities();
 

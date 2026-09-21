@@ -3,36 +3,60 @@ const notificationSchema = new mongoose.Schema(
     {
         type: {
             type: String,
-            enum: ["message", "like", "comment", "reply", "follow"],
+            enum: [
+                "like",
+                "comment",
+                "reply",
+                "follow",
+
+                "clan_promotion",
+                "clan_demotion",
+                "clan_membership_approval",
+                "clan_kick",
+                "clan_ban",
+            ],
             required: true,
         },
-        sender: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
+
         receiver: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
         },
-        sourceModel: {
-            type: String,
-            enum: ["Chat", "Post", "Comment"],
-            required: true,
+
+        sender: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
         },
-        source: {
+
+        entity: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            refPath: "sourceModel",
+            refPath: "entityModel",
         },
-        read: {
-            type: Boolean,
-            default: false,
+
+        entityModel: {
+            type: String,
+            enum: ["Post", "Comment", "Clan", "Follow"],
+            required: true,
+        },
+
+        metadata: {
+            type: mongoose.SchemaTypes.Mixed,
+            default: {},
+        },
+        readAt: {
+            type: Date,
+            default: null,
         },
     },
     { timestamps: true }
 );
+
+notificationSchema.index({
+    receiver: 1,
+    readAt: 1,
+});
 
 const Notification = mongoose.model("Notification", notificationSchema);
 

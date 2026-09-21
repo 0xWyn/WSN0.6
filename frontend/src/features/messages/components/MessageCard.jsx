@@ -1,12 +1,12 @@
 import { ChevronDown } from "../../../components/icons/chevron-down.jsx";
 import { formatDate } from "../../../utils/formatDate.js";
-import { useAuth } from "../../auth/context/AuthProvider.jsx";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser.js";
 import { useMessageOptions } from "../hooks/useMessageOptions.js";
 import { RightBubble } from "./ChatBubbles.jsx";
 import MessageMenu from "./MessageMenu.jsx";
 
 export default function MessageCard({ message, position, startEditing }) {
-    const { user } = useAuth();
+    const user = useCurrentUser();
 
     const { showMenu, toggleMenu, wrapperRef } = useMessageOptions(message._id);
 

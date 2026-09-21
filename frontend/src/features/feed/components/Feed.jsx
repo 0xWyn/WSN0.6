@@ -8,6 +8,8 @@ import { useGlobalPosts } from "../hooks/useGlobalPosts.js";
 import { useParams } from "react-router-dom";
 
 export default function Feed() {
+    const { id } = useParams();
+
     useFeedSocket();
 
     const { handleNewPost, handleDeletePost } = usePostActions();

@@ -5,10 +5,7 @@ export const getNotifications = async (req, res) => {
         const user = req.user;
         const notifications = await Notification.find({
             receiver: user._id,
-        })
-            .sort({ createdAt: -1 })
-            .populate("sender", "username avatar")
-            .populate("source");
+        }).sort({ createdAt: -1 });
 
         res.status(200).json(notifications);
     } catch (error) {
@@ -31,20 +28,19 @@ export const readChatNotifications = async (req, res) => {
     }
 };
 
-export const readNotification = async (req, res) => {
+export const readNotifications = async (req, res) => {
     try {
-        const { notificationId } = req.params;
-        const notification = await Notification.findByIdAndUpdate(
-            notificationId,
-            { read: true },
-            { new: true }
+        const ids = req.body;
+        const userId = req.user._id;
+
+        const updated = await Notification.updateMany(
+            { _id: { $in: ids }, receiver: userId, readAt: null },
+            { $set: { readAt: new Date() } }
         );
 
-        if (!notification) {
-            return res.status(404).json({ msg: "Notification not found" });
-        }
-
-        res.status(200).json(notification);
+        res.status(202).json({
+            msg: `${updated.modifiedCount} notification(s) updated!`,
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

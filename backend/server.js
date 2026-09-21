@@ -14,6 +14,7 @@ import postRoutes from "./routes/postRoutes.js";
 import searchRouter from "./routes/searchRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import exploreRoutes from "./routes/exploreRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -38,6 +39,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/search", searchRouter);
 app.use("/api/clans", clanRoutes);
 app.use("/api/explore", exploreRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 const server = http.createServer(app);
 
@@ -79,6 +81,15 @@ io.on("connection", (socket) => {
         console.log(`Socket joined room: ${userId}`);
     });
 
+    socket.on("join_clan", (clanId) => {
+        socket.join(clanId);
+        console.log(`Socket joined clan: ${clanId}`);
+    });
+
+    socket.on("leave_clan", (clanId) => {
+        socket.leave(clanId);
+        console.log(`Socket left clan: ${clanId}`);
+    });
     // New event: send list of currently online users
     socket.on("get_online_users", () => {
         const onlineUserIds = Array.from(onlineUsers.keys());

@@ -1,38 +1,20 @@
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/context/AuthProvider";
-import { useClan } from "../../clans/context/ClanProvider";
-import { useState, useEffect, useRef } from "react";
-import { icons } from "../../../components/icons/slickNav-icons";
 import { ChevronDown } from "../../../components/icons/chevron-down";
-import ClanCreationModal from "../../clans/components/ClanCreationModal";
 import { ChevronLeft } from "../../../components/icons/chevron-left";
+import { icons } from "../../../components/icons/slickNav-icons";
+import { useAuth } from "../../auth/context/AuthProvider";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
+import { useClan } from "../../clans/context/ClanProvider";
+import { useEntities } from "../../global/EntityProvider";
+import { useNotification } from "../../notification/context/NotificationProvider";
 
-function BottomMenu() {
-    const { logout } = useAuth();
-
-    const actions = { Logout: () => logout(), "Add Account": () => {} };
-    const options = ["Logout", "Add Account"];
-
-    return (
-        <div className="p-2 rounded-[28px] backdrop-blur-xl border border-white/50 bg-white/70 flex min-w-32 flex-col gap-1 shadow-[0_20px_60px_rgba(15,23,42,0.10)]">
-            {options.map((option) => {
-                return (
-                    <button
-                        key={option}
-                        onClick={actions[option]}
-                        className={`!px-3 !py-2 !rounded-[28px] text-left text-sm font-semibold text-slate-700 transition-all active:text-slate-100 duration-300 ${option === "Logout" ? "hover:bg-red-50" : "hover:bg-blue-600/20 active:bg-blue-900/30"}`}
-                    >
-                        {option}
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
+function ClanMenu({ clan }) {}
 export default function SlickNav() {
-    const { user, logout } = useAuth();
-    const { loading, clans, setShowClanModal } = useClan();
+    const user = useCurrentUser();
+    const { myClanIds, setShowClanModal, activeClan } = useClan();
+    const { entities } = useEntities();
+    const { unreadCount } = useNotification();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -89,18 +71,9 @@ export default function SlickNav() {
         };
     }, []);
 
-    useEffect(() => {
-        const collapse = () => {
-            pathname.split("/")[1] === "c"
-                ? setCollapsed(true)
-                : setCollapsed(false);
-        };
-        collapse();
-    }, [pathname, collapsed]);
-
     return (
         <aside
-            className={`h-screen flex h-full  flex-col border-r border-white/40 bg-white/25 backdrop-blur-3xl relative transition-all duration-300 ${!collapsed ? "w-[280px]" : "w-[80px] overflow-hidden"}`}
+            className={`h-screen flex h-full flex-col border-r border-white/40 bg-white/25 backdrop-blur-3xl relative transition-all duration-300 ${!collapsed ? "w-1/4" : "w-[80px] overflow-hidden"}`}
         >
             <button
                 onClick={() => setCollapsed((state) => !state)}
@@ -110,13 +83,17 @@ export default function SlickNav() {
             </button>
             {/* Top */}
 
-            <div className="p-5">
+            <div className="p-4 w-full">
                 {/* Navigation */}
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-2 w-full">
                     {sections.map((section) => (
-                        <Link key={section.name} to={section.path}>
+                        <Link
+                            key={section.name}
+                            to={section.path}
+                            className="w-full"
+                        >
                             <div
-                                className={`group flex items-center gap-4 rounded-[24px] px-4 py-3 transition-all duration-300 ${
+                                className={`relative group flex items-center gap-4 rounded-[24px] px-4 py-3 transition-all duration-300 w-full  ${
                                     section.active
                                         ? "border border-white/80 bg-white/80 text-slate-900 shadow-[0_8px_30px_rgba(15,23,42,0.08)]"
                                         : "border border-transparent text-slate-600 hover:border-white/40 hover:bg-white/40 hover:text-slate-900"
@@ -135,6 +112,12 @@ export default function SlickNav() {
                                 <span className="font-medium">
                                     {section.name}
                                 </span>
+
+                                {section.name === "Notifications" && (
+                                    <span
+                                        className={`${unreadCount > 0 ? "opacity-100" : "opacity-0"} size-2 bg-amber-500 rounded-full absolute bottom-full top-2 right-4`}
+                                    ></span>
+                                )}
                             </div>
                         </Link>
                     ))}
@@ -150,29 +133,39 @@ export default function SlickNav() {
                         </h3>
 
                         <span className="rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-slate-600">
-                            {Object.keys(clans ?? {}).length}
+                            {myClanIds?.length ?? "0"}
                         </span>
                     </div>
-                    {/* Clans */}
-                    <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-                        {Object.values(clans ?? {}).map((clan) => {
-                            const isActive = pathname === `/c/${clan._id}`;
 
+                    {/* Clans */}
+                    <div className="flex-1 max-h-46 overflow-y-auto pr-1">
+                        {myClanIds?.map((id) => {
+                            const isActive = pathname.split("/").includes(id);
+
+                            const clan = entities?.clans?.[id] || null;
                             return (
-                                <Link key={clan._id} to={`/c/${clan._id}`}>
+                                <Link key={id} to={`/c/${id}`}>
                                     <div
-                                        className={`flex items-center gap-3 rounded-2xl px-3 py-2 transition-all duration-300 ${
+                                        className={`flex items-center gap-3 rounded-2xl px-3 py-2 transition-all duration-300 my-1 ${
                                             isActive
                                                 ? "bg-white/80 shadow-sm"
                                                 : "hover:bg-white/50"
                                         }`}
                                     >
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-sky-200 text-xs font-bold text-slate-800">
-                                            {clan.name.charAt(0)}
+                                        <div className="flex h-8 w-8 overflow-hidden items-center justify-center rounded-full shrink-0 bg-gradient-to-br from-amber-200 to-sky-200 text-xs font-bold text-slate-800">
+                                            {clan?.avatar ? (
+                                                <img
+                                                    src={clan.avatar.url}
+                                                    alt={clan.name}
+                                                    className="object-cover w-full h-full shrink-0 rounded-full"
+                                                />
+                                            ) : (
+                                                <p>{clan?.name?.charAt(0)}</p>
+                                            )}
                                         </div>
 
                                         <span className="truncate text-sm font-medium text-slate-700">
-                                            {clan.name}
+                                            {clan?.name}
                                         </span>
                                     </div>
                                 </Link>
@@ -198,10 +191,10 @@ export default function SlickNav() {
             </div>
 
             {/* Bottom */}
-            <div className="p-2 mt-2">
+            <div className="p-2">
                 <div ref={menuRef} className="relative">
                     <div
-                        className={`absolute bottom-[90px] left-0 right-0 z-20 transition-all duration-300 ${showBottomMenu ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"}`}
+                        className={`absolute bottom-[90px] left-0 right-0 z-20 transition-all duration-300 backdrop-blur-3xl bg-white/20 ${showBottomMenu ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none backdrop-blur-xl"}`}
                     >
                         <BottomMenu />
                     </div>
@@ -216,9 +209,19 @@ export default function SlickNav() {
                         }`}
                     >
                         <div className="flex items-center gap-4">
-                            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-amber-300 to-sky-300 text-xl font-black text-slate-900 shadow-lg">
-                                {user?.username?.charAt(0)?.toUpperCase() ||
-                                    "W"}
+                            <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-gradient-to-br from-amber-300 to-sky-300 text-xl font-black text-slate-900 shadow-lg overflow-hidden shrink-0">
+                                {user?.avatar?.url ? (
+                                    <div className="w-full h-full">
+                                        <img
+                                            src={user?.avatar?.url}
+                                            alt={user.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                ) : (
+                                    user?.username?.charAt(0)?.toUpperCase() ||
+                                    "G"
+                                )}
                             </div>
 
                             <div name="profile-link" className="min-w-0 flex-1">
@@ -240,5 +243,28 @@ export default function SlickNav() {
                 </div>
             </div>
         </aside>
+    );
+}
+
+function BottomMenu() {
+    const { logout } = useAuth();
+
+    const actions = { Logout: () => logout(), "Add Account": () => {} };
+    const options = ["Logout", "Add Account"];
+
+    return (
+        <div className="p-2 rounded-[28px] border border-white/80 bg-white/70 backdrop-blur-xl flex min-w-32 flex-col gap-1 shadow-[0_20px_60px_rgba(15,23,42,0.10)]">
+            {options.map((option) => {
+                return (
+                    <button
+                        key={option}
+                        onClick={actions[option]}
+                        className={`!px-3 !py-2 !rounded-[28px] text-left text-sm font-semibold text-slate-700 transition-all active:text-slate-100 duration-300 ${option === "Logout" ? "hover:bg-red-50" : "hover:bg-blue-600/20 active:bg-blue-900/30"}`}
+                    >
+                        {option}
+                    </button>
+                );
+            })}
+        </div>
     );
 }

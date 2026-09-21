@@ -5,22 +5,18 @@ const FeedContext = createContext();
 
 export const FeedProvider = ({ children }) => {
     const [queries, setQueries] = useState({
-        homeFeedIds: [],
-        clanPostsIds: {},
-        usersPostsIds: {},
+        postsByClan: {},
+        postsByUser: {},
         commentsByPost: {},
+        commentsByUser: {},
+        repliesByComment: {},
     });
-
-    const [loading, setLoading] = useState(true);
 
     return (
         <FeedContext.Provider
             value={{
                 queries,
                 setQueries,
-
-                loading,
-                setLoading,
             }}
         >
             {children}

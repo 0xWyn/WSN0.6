@@ -1,0 +1,17 @@
+const handleCropDone = async (croppedAreaPixels) => {
+        if (!croppedAreaPixels) {
+            setShowCrop(false);
+            return;
+        }
+        const croppedBlob = await getCroppedImg(preview, croppedAreaPixels);
+
+        const croppedFile = new File(
+            [croppedBlob],
+            "avatar.jpg", // 👈 IMPORTANT
+            { type: "image/jpeg" }
+        );
+        setForm((f) => ({ ...f, avatar: croppedFile }));
+
+        setPreview(URL.createObjectURL(croppedFile));
+        setShowCrop(false);
+    };
