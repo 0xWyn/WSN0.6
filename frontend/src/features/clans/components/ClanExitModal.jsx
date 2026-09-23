@@ -18,6 +18,7 @@ export default function ClanExitModal() {
         }
 
         handleLeaveClan();
+        setShowExitModal(false);
     };
 
     const onClickCancel = () => {
