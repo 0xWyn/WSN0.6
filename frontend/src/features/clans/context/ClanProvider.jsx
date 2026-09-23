@@ -20,6 +20,7 @@ export const ClanProvider = ({ children }) => {
 
     const [showClanModal, setShowClanModal] = useState(false);
     const [showPrivateGate, setShowPrivateGate] = useState(false);
+    const [showExitModal, setShowExitModal] = useState(false);
 
     const { setEntities } = useSetEntities();
 
@@ -109,6 +110,8 @@ export const ClanProvider = ({ children }) => {
                 setMyClanIds,
                 showPrivateGate,
                 setShowPrivateGate,
+                showExitModal,
+                setShowExitModal,
             }}
         >
             {children}

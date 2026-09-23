@@ -10,7 +10,8 @@ import { useClan } from "../context/ClanProvider.jsx";
 import { useClanAccess } from "../hooks/useClanAccess.js";
 import ClanMenu from "./ClanMenu.jsx";
 import { IdentityBadge } from "./IdentityBadge.jsx";
-
+import ChatBubble from "../../../components/icons/chatbubble.jsx";
+import ClanExitModal from "./ClanExitModal.jsx";
 export default function ClanContent() {
     const { id } = useParams();
 
@@ -18,7 +19,8 @@ export default function ClanContent() {
     const [showClanMenu, setShowClanMenu] = useState(false);
     const menuRef = useRef(null);
 
-    const { activeClan, loadingClans } = useClan();
+    const { activeClan, loadingClans, showExitModal, setShowExitModal } =
+        useClan();
     const { fetchClanPosts } = useFeedPosts();
 
     useEffect(() => {
@@ -69,7 +71,7 @@ export default function ClanContent() {
             )}
 
             {/* Nav */}
-            <div className="sticky top-0 z-30 flex items-center justify-between border-b border-white/60 bg-white/60 pr-4 backdrop-blur-xl">
+            <div className="sticky top-0 flex items-center z-30 justify-between border-b border-white/60 bg-white/60 pr-4 backdrop-blur-xl">
                 <div className="flex items-center">
                     <LocNav current={clan?.name} />
                     <IdentityBadge clan={clan} />
@@ -99,7 +101,7 @@ export default function ClanContent() {
             {/* Main */}
             <div className="px-6 py-4">
                 {/* Content */}
-                <div className="relative z-10 mx-auto flex w-full max-w-7xl px-8 py-8 sm:px-6 lg:py-8 flex-col gap-4">
+                <div className="relative mx-auto flex w-full max-w-7xl px-8 py-8 sm:px-6 lg:py-8 flex-col gap-4">
                     {/* Clan Identity */}
 
                     <header className="rounded-[32px] border border-white/90 bg-white/65 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)] space-y-2 overflow-hidden">
@@ -236,6 +238,12 @@ export default function ClanContent() {
                             </div>
                         </aside>
                     </div>
+
+                    {showExitModal && (
+                        <div className="fixed w-full h-full bg-slate-600/30 backdrop-blur-sm z-40 inset-0 flex items-center justify-center">
+                            <ClanExitModal />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

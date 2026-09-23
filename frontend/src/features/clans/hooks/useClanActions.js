@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { uploadToCloudinary } from "../../../utils/uploadToCloud";
-import { cancelRequest, createClan, joinClan } from "../api/clanApis";
+import { useSetEntities } from "../../global/EntityProvider";
+import {
+    cancelRequest,
+    createClan,
+    joinClan,
+    leaveClan,
+} from "../api/clanApis";
+import { useClan } from "../context/ClanProvider";
 
 export const useClanActions = (clanId) => {
     const [loadingClanActions, setLoadingClanActions] = useState({
@@ -53,6 +60,15 @@ export const useClanActions = (clanId) => {
         }
     };
 
+    const handleLeaveClan = async () => {
+        try {
+            const { data } = await leaveClan(clanId);
+            console.log(data);
+        } catch (error) {
+            console.log(error.response.data);
+        }
+    };
+
     const handleCancelRequest = async () => {
         try {
             const { data } = await cancelRequest(clanId);
@@ -67,5 +83,6 @@ export const useClanActions = (clanId) => {
         handleJoinClan,
         loadingClanActions,
         handleCancelRequest,
+        handleLeaveClan,
     };
 };

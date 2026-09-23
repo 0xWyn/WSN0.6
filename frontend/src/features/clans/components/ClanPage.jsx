@@ -4,6 +4,7 @@ import { useClanResolver } from "../hooks/useClanResolver";
 import { useClan } from "../context/ClanProvider";
 import { useEffect } from "react";
 import { useClanAccess } from "../hooks/useClanAccess";
+import ClanExitModal from "./ClanExitModal";
 
 export default function ClanPage() {
     const { id } = useParams();

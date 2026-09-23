@@ -41,7 +41,7 @@ export const useClanSocket = (clanId) => {
             setRequests((prev) => ({ ...prev, [req._id]: req }));
         };
 
-        const handleKickedMember = (membership) => {
+        const handleRemovedMembership = (membership) => {
             const { _id } = membership;
             console.log("Using removed member in clan Socket");
             setMembers((prev) => {
@@ -61,16 +61,18 @@ export const useClanSocket = (clanId) => {
 
         // Admin
         socket.on("deleted_request", handleDeletedRequest);
-        socket.on("kicked_member", handleKickedMember);
+        socket.on("kicked_member", handleRemovedMembership);
         socket.on("new_member", handleNewMember);
         socket.on("new_request", handleNewRequest);
+        socket.on("exited_member", handleRemovedMembership);
         return () => {
             socket.off("new_clan", handleNewClan);
             socket.off("updated_clan", handleClanUpdate);
             socket.off("deleted_request", handleDeletedRequest);
-            socket.off("kicked_member", handleKickedMember);
+            socket.off("kicked_member", handleRemovedMembership);
             socket.off("new_member", handleNewMember);
             socket.off("new_request", handleNewRequest);
+            socket.off("exited_member", handleRemovedMembership);
 
             socket.emit("leave_clan", clanId);
         };

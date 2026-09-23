@@ -45,8 +45,6 @@ export const RealtimeProvider = ({ children }) => {
         };
 
         const handleRevokedMembership = (clan) => {
-            console.log("Handling revoked membership for", auth.username);
-            console.log(clan);
             setEntities((prev) => upsertClans([clan], prev));
             setMyClanIds((prev) => prev.filter((id) => id !== clan._id));
         };
@@ -67,6 +65,7 @@ export const RealtimeProvider = ({ children }) => {
         socket.on("approved_request", handleApprovedRequest);
         socket.on("revoked_membership", handleRevokedMembership);
         socket.on("notification", handleNotification);
+        socket.on("exited_clan", handleRevokedMembership);
 
         return () => {
             socket.off("presence_update", handlePresence);
@@ -75,6 +74,7 @@ export const RealtimeProvider = ({ children }) => {
             socket.off("approved_request", handleApprovedRequest);
             socket.off("revoked_membership", handleRevokedMembership);
             socket.off("notification", handleNotification);
+            socket.off("exited_clan", handleRevokedMembership);
         };
     }, [socket]);
 

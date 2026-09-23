@@ -188,13 +188,15 @@ export const leaveClan = async (req, res) => {
     try {
         const userId = req.user._id;
         const { clanId } = req.params;
-        const clan = await Clan.findById(clanId);
+        const clan = await Clan.findById(clanId)
+            .populate("founder", "name username avatar")
+            .lean();
 
         if (!clan) {
             return res.status(404).json({ error: "Not found" });
         }
 
-        const clanMember = await ClanMember.find({
+        const clanMember = await ClanMember.findOne({
             user: userId,
             clan: clanId,
         });
@@ -206,6 +208,10 @@ export const leaveClan = async (req, res) => {
         }
 
         await clanMember.deleteOne();
+
+        io.to(clanId).emit("exited_member", clanMember);
+
+        io.to(userId.toString()).emit("exited_clan", { ...clan, role: null });
 
         res.status(202).json({
             msg: `You have successfully left ${clan.name}`,

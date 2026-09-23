@@ -28,7 +28,7 @@ router.get("/", protect, myClans);
 router.get("/requested", protect, myRequestedClans);
 router.get("/:clanId", protect, getClanById);
 router.put("/:clanId", protect, joinClan);
-router.patch("/:clanId/leave", protect, leaveClan);
+router.delete("/:clanId/membership", protect, leaveClan);
 router.delete("/:clanId/request", protect, cancelMyRequest);
 
 // Admin

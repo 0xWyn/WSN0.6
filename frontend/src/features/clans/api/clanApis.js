@@ -11,6 +11,8 @@ export const createClan = (clan) => API.post("/clans", clan);
 
 export const joinClan = (clanId) => API.put(`/clans/${clanId}`);
 
+export const leaveClan = (clanId) => API.delete(`/clans/${clanId}/membership`);
+
 export const cancelRequest = (clanId) => API.delete(`/clans/${clanId}/request`);
 
 // Management (Moderator Tier)

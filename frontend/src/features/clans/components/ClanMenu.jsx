@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function ClanMenu({ clan }) {
     const { isAuthority, isMember, role } = useClanAccess(clan);
+    const { setShowExitModal } = useClan();
     const notifications = clan.joinRequests?.length;
     const navigate = useNavigate();
 
@@ -20,7 +21,7 @@ export default function ClanMenu({ clan }) {
         "leave-clan": {
             title: "Leave Clan",
             design: "bg-slate-950 text-white",
-            function: () => console.log("Leaving clan"),
+            function: () => setShowExitModal(true),
             permitted: isMember,
         },
     };
