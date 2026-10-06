@@ -9,7 +9,7 @@ export default function ClanExitModal() {
     const { handleLeaveClan } = useClanActions(clan._id);
 
     const [showFounderWarning, setShowFounderWarning] = useState();
-    const isPrivate = clan.visibility === "private";
+    const isPrivate = clan.access === "private";
 
     const onClickLeave = () => {
         if (isFounder) {

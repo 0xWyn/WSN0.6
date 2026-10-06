@@ -1,8 +1,7 @@
-import { useAuth } from "../../auth/context/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { useUserActions } from "../hooks/useUserActions";
-import { useUser } from "../context/UserProvider";
 import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
+import { useUser } from "../context/UserProvider";
+import { useUserActions } from "../hooks/useUserActions";
 
 const ActionButton = ({ text, onClick, variant = "primary" }) => {
     const variants = {

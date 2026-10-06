@@ -1,33 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Bars3 } from "../../../components/icons/hamburger.jsx";
 import Pencil from "../../../components/icons/pencil.jsx";
 import ClanFeed from "../../feed/components/ClanFeed.jsx";
 import CreatePost from "../../feed/components/CreatePost.jsx";
-import { useFeedPosts } from "../../feed/hooks/useFeedPosts.js";
 import LocNav from "../../navigation/components/LocNav.jsx";
 import { useClan } from "../context/ClanProvider.jsx";
 import { useClanAccess } from "../hooks/useClanAccess.js";
+import ClanContentSkeleton from "./ClanContentSkeleton.jsx";
+import ClanExitModal from "./ClanExitModal.jsx";
 import ClanMenu from "./ClanMenu.jsx";
 import { IdentityBadge } from "./IdentityBadge.jsx";
-import ChatBubble from "../../../components/icons/chatbubble.jsx";
-import ClanExitModal from "./ClanExitModal.jsx";
-export default function ClanContent() {
-    const { id } = useParams();
 
+export default function ClanContent() {
     const [showCreationModal, setShowCreationModal] = useState(false);
     const [showClanMenu, setShowClanMenu] = useState(false);
     const menuRef = useRef(null);
 
     const { activeClan, loadingClans, showExitModal, setShowExitModal } =
         useClan();
-    const { fetchClanPosts } = useFeedPosts();
-
-    useEffect(() => {
-        if (!id) return;
-
-        fetchClanPosts("1", id);
-    }, [id]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -43,13 +33,11 @@ export default function ClanContent() {
         };
     }, []);
 
-    if (loadingClans.activeClan) return <div>Loading...</div>;
-
     const clan = activeClan;
 
     const { isMember } = useClanAccess(clan);
 
-    if (!clan) return <div>Clan not found</div>;
+    if (loadingClans.activeClan) return <ClanContentSkeleton />;
 
     return (
         <div className="min-h-0 bg-[#f8fafc] w-full">

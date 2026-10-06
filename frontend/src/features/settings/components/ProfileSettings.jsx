@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useAuth } from "../../auth/context/AuthProvider";
-import Pencil from "../../../components/icons/pencil";
 import AvatarCropper from "../../../utils/AvatarCropper";
 import { getCroppedImg } from "../../../utils/getCroppedImg";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 
 export default function ProfileSettings({ onEdit }) {
-    const { user, setUser } = useAuth();
+    const user = useCurrentUser();
     const [preview, setPreview] = useState(null);
     const [previewCover, setPreviewCover] = useState(null);
     const [showCrop, setShowCrop] = useState(null);

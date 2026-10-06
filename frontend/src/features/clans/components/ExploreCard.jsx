@@ -21,14 +21,12 @@ export default function ExploreCard({ clan }) {
 
     const isOwner = clan.founder._id === auth._id;
 
-    const actionLabel = clan?.visibility === "public" ? "Join" : "Request";
+    const actionLabel = clan?.access === "public" ? "Join" : "Request";
 
     return (
         <div
             onClick={
-                clan?.visibility === "private"
-                    ? handlePrivateClan
-                    : handleOpenClan
+                clan?.access === "private" ? handlePrivateClan : handleOpenClan
             }
             className="group relative rounded-3xl border border-white bg-white/60 backdrop-blur-2xl p-3 m-1 cursor-pointer shadow-[0px_2px_8px_rgba(15,23,100,0.05)] transition-all duration-300 hover:bg-white/80 hover:-translate-y-0.5 hover:shadow-[0px_2px_8px_rgba(15,23,100,0.09)]"
         >
@@ -68,14 +66,14 @@ export default function ExploreCard({ clan }) {
                 ) : (
                     <button
                         type="button"
-                        className={`flex items-end gap-1 shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition duration-300 ${clan?.visibility === "public" ? "text-slate-600 hover:bg-slate-200" : "hover:bg-violet-600 hover:bg-violet-500"} tracking-wide transition-all duration-200`}
+                        className={`flex items-end gap-1 shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition duration-300 ${clan?.access === "public" ? "text-slate-600 hover:bg-slate-200" : "hover:bg-violet-600 hover:bg-violet-500"} tracking-wide transition-all duration-200`}
                         onClick={(e) => {
                             e.stopPropagation();
                             handleJoinClan(clan?._id);
                         }}
                     >
                         <span className="">
-                            {clan?.visibility === "public" ? (
+                            {clan?.access === "public" ? (
                                 <Earth size={14} />
                             ) : (
                                 <LockKeyhole size={14} />

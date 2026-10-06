@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useCurrentUser } from "../auth/hooks/useCurrentUser";
 import { useClan } from "../clans/context/ClanProvider";
 import { upsertClans } from "../clans/helpers/updateClanEntities";

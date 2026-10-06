@@ -1,23 +1,17 @@
-import { useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import FullscreenLoader from "../../../components/ui/FullscreenLoader.jsx";
 import { useAuth } from "../context/AuthProvider.jsx";
-import { useCurrentUser } from "../hooks/useCurrentUser.js";
 
 export default function ProtectedRoute() {
     const location = useLocation();
 
-    const { loading } = useAuth();
-    const user = useCurrentUser();
+    const { loadingAuth, currentUser } = useAuth();
 
-    if (loading) {
-        return (
-            <div className="w-full h-full rounded-2xl border border-dashed border slate 300 p-10 text-center text-slate 500">
-                Loading...
-            </div>
-        );
+    if (loadingAuth) {
+        return <FullscreenLoader />;
     }
 
-    if (!loading && !user) {
+    if (!loadingAuth && !currentUser) {
         console.log("Redirecting from ProtectedRoute");
         return <Navigate to="/login" state={{ from: location }} />;
     }

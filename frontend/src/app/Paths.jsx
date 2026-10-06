@@ -58,15 +58,17 @@ const ClanModeratorSettings = lazy(
 const NotificationPage = lazy(
     () => import("../features/notification/components/NotificationPage.jsx")
 );
+import FullscreenLoader from "../components/ui/FullscreenLoader.jsx";
 
 export default function Paths() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<FullscreenLoader />}>
             <Routes>
                 <Route path="/register" element={<SignupForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<Layout />}>
+                        <Route path="my-clans" element={<Homepage />} />
                         <Route index element={<Homepage />} />
                         <Route path="home" element={<Homepage />}></Route>
 

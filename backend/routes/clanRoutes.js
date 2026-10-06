@@ -11,7 +11,6 @@ import {
     joinClan,
     leaveClan,
     myClans,
-    myRequestedClans,
     promoteMember,
     rejectRequest,
     removeMember,
@@ -25,7 +24,6 @@ router.post("/", protect, createClan);
 
 // Civilian
 router.get("/", protect, myClans);
-router.get("/requested", protect, myRequestedClans);
 router.get("/:clanId", protect, getClanById);
 router.put("/:clanId", protect, joinClan);
 router.delete("/:clanId/membership", protect, leaveClan);
@@ -43,6 +41,6 @@ router.patch("/:clanId/members/:membershipId/demote", protect, demoteMember);
 
 router.delete("/:clanId/members/:membershipId", protect, removeMember);
 
-router.delete("/:clanId", protect, deleteClan);
+router.patch("/:clanId/delete", protect, deleteClan);
 
 export default router;

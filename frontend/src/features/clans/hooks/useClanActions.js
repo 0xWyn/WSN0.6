@@ -18,7 +18,7 @@ export const useClanActions = (clanId) => {
     const handleCreateClan = async (details) => {
         try {
             setLoadingClanActions((prev) => ({ ...prev, create: true }));
-            const { name, description, domain, tags, visibility } = details;
+            const { name, description, domain, tags, access } = details;
             const avatar = details.avatar
                 ? await uploadToCloudinary(details?.avatar, {
                       folder: "clans",
@@ -38,7 +38,7 @@ export const useClanActions = (clanId) => {
                 description,
                 domain,
                 tags,
-                visibility,
+                access,
             };
 
             const res = await createClan(body);

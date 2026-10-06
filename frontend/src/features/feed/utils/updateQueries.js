@@ -4,7 +4,11 @@ export const updatePostsQuery = (posts, prev) => {
     const map = { ...prev };
 
     posts.forEach((post) => {
-        const { _id, clan, author } = post;
+        const {
+            _id,
+            clan: { _id: clan },
+            author,
+        } = post;
 
         map.postsByClan = {
             ...map.postsByClan,

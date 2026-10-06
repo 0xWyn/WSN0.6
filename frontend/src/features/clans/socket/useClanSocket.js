@@ -13,7 +13,6 @@ export const useClanSocket = (clanId) => {
     useEffect(() => {
         console.log("Using clan socket");
         if (!socket || !clanId) {
-            console.log("Returning early");
             return;
         }
 

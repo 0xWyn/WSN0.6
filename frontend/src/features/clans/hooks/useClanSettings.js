@@ -5,6 +5,7 @@ import {
     getClanRequests,
     getMembers,
     rejectRequest,
+    toggleClanDelete,
 } from "../api/clanApis";
 import { useClanManagement } from "../context/ClanManagementProvider";
 import { upsertMembers } from "../helpers/upsertMembers";
@@ -104,11 +105,22 @@ export const useClanSettings = (clanId) => {
         }
     };
 
+    const handleClanDeletion = async () => {
+        try {
+            console.log("Triggered clan deletion");
+            const { data } = await toggleClanDelete(clanId);
+            console.log(data);
+        } catch (error) {
+            console.log(error.response.data);
+        }
+    };
+
     return {
         fetchClanMembers,
         fetchClanRequests,
         loadingClanSettings,
         handleAcceptRequest,
         handleRejectRequest,
+        handleClanDeletion,
     };
 };

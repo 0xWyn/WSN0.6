@@ -4,6 +4,7 @@ import ClanContainer from "../features/clans/components/ClanContainer.jsx";
 
 import { useClan } from "../features/clans/context/ClanProvider.jsx";
 import { useState } from "react";
+import { useEntities } from "../features/global/EntityProvider.jsx";
 
 // Simple skeleton loader for better UX
 function SkeletonLoader() {
@@ -38,12 +39,12 @@ function OverviewPanel({
                         {authoredClans}
                     </span>
                 </div>
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                     <span className="text-slate-500">Requested </span>
                     <span className="font-semibold text-slate-900">
                         {requestedClans}
                     </span>
-                </div>
+                </div> */}
             </div>
         </div>
     );
@@ -66,13 +67,9 @@ function DiscoverPanel() {
 }
 
 export default function HomePage() {
-    const {
-        loading,
-        myClanIds,
-        authoredClans,
-        setShowClanModal,
-        requestedIds,
-    } = useClan();
+    const { loading, authoredClans, setShowClanModal } = useClan();
+
+    const { myClanIds } = useEntities();
 
     const [viewing, setViewing] = useState("my-clans");
 
@@ -119,9 +116,13 @@ export default function HomePage() {
                         <div className="grid flex-1 min-h-0 gap-6 min-[1200px]:grid-cols-[1fr_320px]">
                             {/* Clan list */}
                             <section className="min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white/35 backdrop-blur-2xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
-                                <h2 className="mb-4 text-lg font-semibold text-slate-900">
-                                    My Clans
+                                <h2 className="mb-4 text-lg font-semibold text-slate-900 flex w-full justify-between">
+                                    My Clans{" "}
+                                    <span className="font-medium text-sm text-slate-500">
+                                        {myClanIds.length}
+                                    </span>
                                 </h2>
+
                                 {/* Enable filter for created, joined and requested */}
                                 {loading ? (
                                     <SkeletonLoader />
@@ -132,11 +133,6 @@ export default function HomePage() {
 
                             {/* Sidebar */}
                             <aside className="flex flex-col gap-6">
-                                <OverviewPanel
-                                    clansCount={myClanIds?.length ?? "0"}
-                                    authoredClans={authoredClans.length}
-                                    requestedClans={requestedIds.length}
-                                />
                                 <DiscoverPanel />
                             </aside>
                         </div>

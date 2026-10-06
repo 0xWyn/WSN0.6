@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { upsertNotifications } from "../helpers/updateNotificationsEntity";
 import { getNotifications } from "../apis/notificationApis";
 import { useSetEntities } from "../../global/EntityProvider";
@@ -7,18 +7,16 @@ const NotificationContext = createContext(null);
 
 export const NotificationProvider = ({ children }) => {
     const [unread, setUnread] = useState(0);
-    const [loadingNotifications, setLoadingNotifications] = useState(false);
+    const [loadingNotifications, setLoadingNotifications] = useState(true);
     const { setEntities } = useSetEntities();
-    const user = useCurrentUser();
 
+    const user = useCurrentUser();
     // paginate fetching, limit 20, but how do we do like tiktok and get multiple notifications into the same batch?
 
     useEffect(() => {
         async function fetchNotifications() {
             if (!user) return;
-            console.log("fetchingNotifications");
             try {
-                setLoadingNotifications(true);
                 const { data } = await getNotifications();
                 const unread = data.filter((notif) => !notif.readAt);
                 setUnread(unread);
@@ -33,6 +31,7 @@ export const NotificationProvider = ({ children }) => {
 
         fetchNotifications();
     }, [user]);
+
     return (
         <NotificationContext.Provider
             value={{

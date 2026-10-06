@@ -3,8 +3,6 @@ import API from "../../../utils/axiosInterceptor";
 // User
 export const getMyClans = () => API.get(`/clans`);
 
-export const getMyRequestedClans = () => API.get("/clans/requested");
-
 export const getClanById = (clanId) => API.get(`/clans/${clanId}`);
 
 export const createClan = (clan) => API.post("/clans", clan);
@@ -42,3 +40,5 @@ export const kickMember = (clanId, membershipId) =>
 
 export const banMember = (clanId, membershipId) =>
     API.put(`clans/${clanId}/ban/${membershipId}`);
+
+export const toggleClanDelete = (clanId) => API.patch(`clans/${clanId}/delete`);

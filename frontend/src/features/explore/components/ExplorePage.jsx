@@ -9,11 +9,16 @@ import PrivateGate from "./PrivateGate.jsx";
 import ResultsContainer from "./ResultsContainer.jsx";
 import SearchBar from "./SearchBar.jsx";
 import { useClan } from "../../clans/context/ClanProvider.jsx";
+import { useEntities } from "../../global/EntityProvider.jsx";
+import { updateClanDomain } from "../../clans/helpers/updateClanEntities.js";
 
 export default function ExplorePage() {
     const [selectedDomain, setSelectedDomain] = useState("all");
+    const { results, loadingExplore } = useExplore();
 
-    const { results, loadingExplore, clansByDomain } = useExplore();
+    const { entities } = useEntities();
+
+    const clansByDomain = updateClanDomain(Object.values(entities.clans), {});
 
     const { showPrivateGate } = useClan();
 
@@ -100,6 +105,7 @@ export default function ExplorePage() {
                                     key={domain.name}
                                     domain={domain}
                                     type={selectedDomain}
+                                    clanIds={clansByDomain?.[domain.name] ?? []}
                                 />
                             ))
                         )}

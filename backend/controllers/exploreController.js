@@ -5,29 +5,22 @@ import Clan from "../models/clanModel.js";
 export const explore = async (req, res) => {
     try {
         const userId = req.user._id;
-
-        const [clans, memberships, joinRequests] = await Promise.all([
-            Clan.find({}).populate("founder", "name avatar username").lean(),
-            ClanMember.find({ user: userId }).lean(),
-            ClanJoinRequest.find({ user: userId }).lean(),
-        ]);
-
-        const membershipMap = new Map(
-            memberships.map((membership) => [
-                membership.clan.toString(),
-                membership.role,
-            ])
+        const userMemberships = await ClanMember.find({ user: userId }).select(
+            "clan"
         );
 
-        const requestMap = joinRequests.map(({ clan }) => clan.toString());
+        const membershipMap = userMemberships.map(({ clan }) => clan);
 
-        const clansAuth = clans.map((clan) => ({
-            ...clan,
-            role: membershipMap.get(clan._id.toString()) ?? null,
-            requested: requestMap.includes(clan._id.toString()),
+        const notJoined = await Clan.find({
+            _id: { $nin: membershipMap },
+        }).populate("founder", "name username avatar");
+
+        const result = notJoined.map((clan) => ({
+            ...clan.toObject(),
+            role: null,
         }));
 
-        res.status(200).json(clansAuth);
+        res.status(200).json(result);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });

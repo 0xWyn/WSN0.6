@@ -40,10 +40,7 @@ export default function Media({ media }) {
     const RenderObject = ({ src, type }) => {
         if (type === "image") {
             return (
-                <div
-                    className="relative w-full h-full flex items-center justify-center pointer-events-auto"
-                    onClick={() => navigate(src)}
-                >
+                <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
                     <img
                         src={src}
                         alt="Post media"

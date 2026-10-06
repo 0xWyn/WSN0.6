@@ -4,6 +4,7 @@ import { useClanManagement } from "../../context/ClanManagementProvider";
 import { useClan } from "../../context/ClanProvider";
 import { useClanAccess } from "../../hooks/useClanAccess";
 import { IdentityBadge } from "../IdentityBadge";
+import { useEffect } from "react";
 
 export default function ClanManagement() {
     const location = useLocation();
@@ -29,7 +30,7 @@ export default function ClanManagement() {
         },
         requests: {
             title: `Requests (${requests.length})`,
-            permission: isAuthority && clan.visibility === "private",
+            permission: isAuthority && clan.access === "private",
             function: () => {
                 navigate("requests");
             },
@@ -51,7 +52,7 @@ export default function ClanManagement() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-[#f8fafc]">
+        <div className="flex flex-col h-screen bg-[#f8fafc]">
             {/* Ambient background */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70">
                 <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
@@ -67,8 +68,8 @@ export default function ClanManagement() {
             </div>
 
             {/* Main */}
-            <div className="relative min-h-0 px-4 py-6">
-                <div className="mx-auto h-full min-h-0 w-full max-w-6xl flex flex-col gap-5">
+            <div className="relative flex flex-1 min-h-0 px-4 py-10">
+                <div className="mx-auto flex-1 min-h-0 w-full max-w-6xl flex flex-col gap-5">
                     {/* Header */}
                     <header className="rounded-[36px] border border-white/60 bg-white/35 p-8 backdrop-blur-2xl shadow-[0_10px_40px_rgba(15,23,42,0.05)] w-full">
                         <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
@@ -82,9 +83,9 @@ export default function ClanManagement() {
                     </header>
 
                     {/* Panels */}
-                    <div className="w-full flex gap-6 items-center justify-center h-[30rem]">
+                    <div className="w-full flex flex-1 gap-6 items-stretch justify-center min-h-0">
                         {/* Left Panel */}
-                        <div className="w-1/4 shrink-0 h-full space-y-4 p-8 border border-white/70 bg-white/35 backdrop-blur-3xl shadow-[0_20px_30px_rgba(10,15,20,0.03)] rounded-[24px]">
+                        <div className="w-1/4 shrink-0 space-y-4 p-8 overflow-y-auto border border-white/70 bg-white/35 backdrop-blur-3xl shadow-[0_20px_30px_rgba(10,15,20,0.03)] rounded-[24px]">
                             {Object.values(sections).map(
                                 (section) =>
                                     section.permission && (
@@ -101,13 +102,13 @@ export default function ClanManagement() {
 
                         {/* Right Panel */}
                         {section && (
-                            <div className="flex flex-col flex-1 h-full space-y-4 p-8 border border-white/60 bg-white/35 backdrop-blur-3xl shadow-[0_20px_30px_rgba(10,15,20,0.03)] rounded-[24px]">
-                                <h3 className="text-lg sm:text-2xl font-bold text-slate-800">
+                            <div className="flex min-h-0 flex-1 overflow-hidden flex-col flex-1 space-y-4 p-8 border border-white/60 bg-white/35 backdrop-blur-3xl shadow-[0_20px_30px_rgba(10,15,20,0.03)] rounded-[24px]">
+                                <h3 className="shrink-0 text-lg sm:text-2xl font-bold text-slate-800">
                                     {sections[section].title}
                                 </h3>
 
                                 {/* Component */}
-                                <div className="flex-1 min-h-0 overflow-hidden rounded-[24px] p-2">
+                                <div className="flex-1 min-h-0 rounded-[24px]">
                                     <Outlet />
                                 </div>
                             </div>

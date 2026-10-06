@@ -4,6 +4,7 @@ import ClanMember from "../models/clanMemberModel.js";
 import ClanJoinRequest from "../models/clanJoinRequestModel.js";
 import { io } from "../server.js";
 import { clanNotificationService } from "../helpers/notificationService.js";
+import updatePostMeta from "../scripts/updatePostMeta.js";
 
 // General
 
@@ -34,7 +35,7 @@ export const getClanById = async (req, res) => {
 export const createClan = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { avatar, banner, name, description, domain, tags, visibility } =
+        const { avatar, banner, name, description, domain, tags, access } =
             req.body;
 
         const newClan = await Clan.create({
@@ -45,7 +46,7 @@ export const createClan = async (req, res) => {
             domain,
             tags,
             founder: userId,
-            visibility: visibility.toLowerCase(),
+            access: access.toLowerCase(),
         });
 
         const newMembership = await ClanMember.create({
@@ -71,41 +72,26 @@ export const myClans = async (req, res) => {
 
         const memberships = await ClanMember.find({ user: userId });
 
+        const joinRequests = await ClanJoinRequest.find({ user: userId });
+
         for (const { clan, role } of memberships) {
-            const result = await Clan.findById(clan).populate(
-                "founder",
-                "name username avatar"
-            );
-            clans.push({ ...result.toObject(), role: role });
+            const result = await Clan.findById(clan)
+                .populate("founder", "name username avatar")
+                .lean();
+            clans.push({ ...result, role: role });
         }
+
+        for (const { clan } of joinRequests) {
+            const clan = await Clan.findById(clan)
+                .populate("founder", "name user avatar")
+                .lean();
+            clans.push({ ...clan, requested: true });
+        }
+
         res.status(200).json(clans);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
-    }
-};
-
-export const myRequestedClans = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const results = await ClanJoinRequest.find({
-            user: userId,
-        }).populate({
-            path: "clan",
-            populate: {
-                path: "founder",
-                select: "username name avatar",
-            },
-        });
-
-        const joinRequests = results.map(({ clan, ...rest }) => ({
-            ...clan.toObject(),
-            requested: true,
-        }));
-        return res.status(200).json(joinRequests);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error });
     }
 };
 
@@ -138,7 +124,7 @@ export const joinClan = async (req, res) => {
             return res.status(400).json({ error: "Already a member" });
         }
 
-        if (clan.visibility === "public") {
+        if (clan.access === "public") {
             const newMembership = await ClanMember.create({
                 user: userId,
                 clan: clanId,
@@ -156,7 +142,7 @@ export const joinClan = async (req, res) => {
                 .json({ msg: `You have joined ${clan.name}` });
         }
 
-        if (clan.visibility === "private") {
+        if (clan.access === "private") {
             const existingRequest = await ClanJoinRequest.findOne({
                 user: userId,
                 clan: clanId,
@@ -450,21 +436,77 @@ export const deleteClan = async (req, res) => {
     try {
         const userId = req.user._id;
         const { clanId } = req.params;
+        const clan = await Clan.findById(clanId).populate(
+            "founder",
+            "name username avatar"
+        );
 
-        const clan = await Clan.findById(clanId);
+        if (!clan) return res.status(404).json({ msg: "Clan not found" });
 
-        if (!clan) return res.status(404).json({ error: "Not found" });
+        if (!clan.founder._id.equals(userId))
+            return res.status(403).json({ msg: "Unauthorized access denied." });
 
-        if (
-            !(
-                clan.creator.toString() === userId.toString() ||
-                clan.moderators.includes(userId)
-            )
-        )
-            return res.status(403).json({ error: "Unauthorized" });
+        const members = await ClanMember.find({ clan: clanId });
 
-        await Clan.findByIdAndDelete(clanId);
-        res.status(202).json({ msg: "Clan deleted" });
+        if (clan.deletionScheduledAt) {
+            clan.deletionScheduledAt = null;
+            clan.status = "active";
+
+            await clan.save();
+
+            io.to(clanId).emit("updated_clan", clan.toObject());
+
+            await Promise.all([
+                ...members.map(async ({ user }) => {
+                    const notification = await clanNotificationService(
+                        "clan_deletion_cancelled",
+                        clan,
+                        user,
+                        {
+                            clanName: clan.name,
+                            clanAvatar: clan.avatar.url,
+                            deletionCancelledAt: clan.updatedAt,
+                        }
+                    );
+
+                    io.to(user.toString()).emit("notification", notification);
+                }),
+
+                updatePostMeta(clanId),
+            ]);
+
+            return res
+                .status(202)
+                .json({ msg: `Clan deletion successfully aborted` });
+        }
+
+        if (!clan.deletionScheduledAt) {
+            clan.deletionScheduledAt = new Date();
+            clan.status = "deactivated";
+
+            await clan.save();
+
+            // Some script to actually delete the clan after 30 days.
+
+            io.to(clanId).emit("updated_clan", clan.toObject());
+
+            await Promise.all([
+                ...members.map(async ({ user }) => {
+                    const notification = await clanNotificationService(
+                        "clan_deletion",
+                        clan,
+                        user
+                    );
+
+                    io.to(user.toString()).emit("notification", notification);
+                }),
+                updatePostMeta(clanId),
+            ]);
+
+            return res.status(202).json({
+                msg: "Your clan has successfully been scheduled for deletion.",
+            });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -516,7 +558,7 @@ export const promoteMember = async (req, res) => {
             "clan_promotion",
             clan,
             memberId,
-            "leader"
+            { rank: "leader" }
         );
 
         io.to(memberId.toString()).emit("notification", notification);
@@ -575,7 +617,7 @@ export const demoteMember = async (req, res) => {
             "clan_demotion",
             clan,
             memberId,
-            "member"
+            { rank: "member" }
         );
 
         io.to(memberId).emit("updated_clan", clanUpdate);

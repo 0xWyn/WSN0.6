@@ -3,15 +3,11 @@ import { useEntities } from "../../global/EntityProvider";
 import { useExplore } from "../context/ExploreProvider";
 import { EmptyDomain } from "./EmptyDomain";
 
-export default function CategorySection({ domain, type = "all" }) {
-    if (!domain) return;
-
+export default function CategorySection({ domain, type = "all", clanIds }) {
+    if (!domain) return null;
     const { name, icon, description } = domain;
 
-    const { clansByDomain } = useExplore();
     const { entities } = useEntities();
-
-    const clanIds = clansByDomain[name] || [];
 
     return clanIds.length > 0 ? (
         <section className="rounded-[28px] border border-white/60 bg-white/50 backdrop-blur-2xl p-6 px-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] min-w-xs">
@@ -20,7 +16,7 @@ export default function CategorySection({ domain, type = "all" }) {
                 <div className="flex flex-col items-start mb-4 px-2">
                     <div className="min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 shrink-0">
                                 {icon}
                             </span>
                             <h2 className="text-2xl font-semibold text-slate-900">

@@ -10,20 +10,10 @@ export const useAuthLogic = (
 ) => {
     const from = location.state?.from?.pathname || "/";
 
-    const upsertAuth = (user) => {
-        setAuthId(user._id);
-        setCurrentUser(user);
-
-        setEntities((prev) => ({
-            ...prev,
-            users: { ...prev.users, [user._id]: user },
-        }));
-    };
-
     const register = async (credentials) => {
         try {
             const { data } = await API.post("auth/register", credentials);
-            upsertAuth(data);
+            setCurrentUser(data);
             navigate("/");
         } catch (error) {
             console.error(error.response.data);
@@ -34,23 +24,10 @@ export const useAuthLogic = (
         try {
             setLoading(true);
             const { data } = await API.post("auth/login", credentials);
-            upsertAuth(data);
+            setCurrentUser(data);
             navigate(from);
         } catch (error) {
             console.error(error.response);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchUser = async () => {
-        try {
-            setLoading(true);
-            const res = await API.get("auth/idme");
-            upsertAuth(res.data.user);
-        } catch (error) {
-            setAuthId(null);
-            setCurrentUser(null);
         } finally {
             setLoading(false);
         }
@@ -71,11 +48,10 @@ export const useAuthLogic = (
                 posts: {},
                 clans: {},
             }));
-            setAuthId(null);
             setCurrentUser(null);
             navigate("/login");
         }
     };
 
-    return { register, login, fetchUser, logout };
+    return { register, login, logout };
 };

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 import { useFeedSocket } from "../socket/useFeedSocket";
 import { useEntities } from "../../global/EntityProvider";
 const FeedContext = createContext();
@@ -12,11 +12,19 @@ export const FeedProvider = ({ children }) => {
         repliesByComment: {},
     });
 
+    const [feedLoad, setFeedLoad] = useState({
+        clan: true,
+        user: true,
+        single: true,
+    });
+
     return (
         <FeedContext.Provider
             value={{
                 queries,
                 setQueries,
+                feedLoad,
+                setFeedLoad,
             }}
         >
             {children}

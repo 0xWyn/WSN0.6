@@ -6,7 +6,9 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
+
         text: String,
+
         media: [
             {
                 type: {
@@ -17,11 +19,22 @@ const postSchema = new mongoose.Schema(
                 url: { type: String, required: true },
             },
         ],
-        likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-        replies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+
+        likes: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+
         clan: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Clan",
+        },
+
+        metadata: {
+            type: mongoose.SchemaTypes.Mixed,
+            default: {},
         },
     },
     { timestamps: true }

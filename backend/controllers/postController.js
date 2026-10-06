@@ -17,6 +17,7 @@ export const getClanPosts = async (req, res) => {
         const { clanId } = req.params;
         const posts = await Post.find({ clan: clanId })
             .populate("author", "username avatar")
+            .populate("clan", "name")
             .sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (error) {

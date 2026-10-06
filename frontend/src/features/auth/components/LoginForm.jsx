@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthProvider.jsx";
 import { useCurrentUser } from "../hooks/useCurrentUser.js";
 
 export default function LoginForm() {
-    const { login, loading } = useAuth();
+    const { login, loadingAuth } = useAuth();
     const user = useCurrentUser();
     const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ export default function LoginForm() {
 
     return (
         <div className="w-screen h-max-screen h-full overflow-x-auto flex flex-col items-center p-2">
-            {!loading ? (
+            {!loadingAuth ? (
                 <>
                     <h1 className="m-5 font-medium">Login Form</h1>
                     <form

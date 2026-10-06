@@ -41,14 +41,26 @@ const clanSchema = new mongoose.Schema(
         },
         domain: String,
         tags: [String],
-        visibility: {
+        access: {
             type: String,
             enum: ["public", "private"],
             default: "public",
         },
+        privateSettings: {
+            allowJoinRequests: { type: Boolean, default: true },
+        },
         maxMembers: {
             type: Number,
             default: 12,
+        },
+        status: {
+            type: String,
+            enum: ["active", "deactivated"],
+            default: "active",
+        },
+        deletionScheduledAt: {
+            type: Date,
+            default: null,
         },
     },
     { timestamps: true }

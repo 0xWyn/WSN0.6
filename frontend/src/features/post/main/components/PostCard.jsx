@@ -10,6 +10,8 @@ import Text from "../../gen/Text.jsx";
 import PostMenu from "./PostMenu.jsx";
 
 export default function PostCard({ post }) {
+    if (!post) return null;
+
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
@@ -28,8 +30,6 @@ export default function PostCard({ post }) {
         };
     }, []);
 
-    if (!post) return null;
-
     const { author, media, text } = post;
 
     const handleOpenPost = () => {
@@ -44,15 +44,7 @@ export default function PostCard({ post }) {
     const { handleDeletePost } = usePostActions();
 
     return (
-        <article
-            // onKeyDown={(e) => {
-            //     if (e.key === "Enter" || e.key === " ") {
-            //         handleOpenPost();
-            //     }
-            // }}
-            // onClick={handleOpenPost}
-            className="group relative w-full overflow-hidden rounded-[24px] bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100"
-        >
+        <article className="group relative w-full overflow-hidden rounded-[24px] bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100">
             <div className="p-5 sm:p-6">
                 {/* Header */}
                 <header className="flex items-center justify-between gap-3">

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 const EntityStateContext = createContext(null);
 const EntityActionsContext = createContext(null);
@@ -14,9 +14,15 @@ export const EntityProvider = ({ children }) => {
         notifications: {},
     });
 
+    const [myClanIds, setMyClanIds] = useState([]);
+
+    const myClans = myClanIds.map((id) => entities.clans[id]);
+
     return (
-        <EntityStateContext.Provider value={{ entities }}>
-            <EntityActionsContext.Provider value={{ setEntities }}>
+        <EntityStateContext.Provider value={{ entities, myClanIds, myClans }}>
+            <EntityActionsContext.Provider
+                value={{ setEntities, setMyClanIds }}
+            >
                 {children}
             </EntityActionsContext.Provider>
         </EntityStateContext.Provider>

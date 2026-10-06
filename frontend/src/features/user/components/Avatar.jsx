@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../auth/context/AuthProvider";
-import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 const sizes = {
     8: "size-8",
     10: "size-10",
@@ -16,9 +14,6 @@ const sizes = {
     30: "size-30",
 };
 export default function Avatar({ size = 12, user = { username: "G" } }) {
-    const { loading } = useAuth();
-    const currentUser = useCurrentUser();
-    if (loading) return <div>Loading...</div>;
     const avatarUrl = user?.avatar?.url;
 
     return (

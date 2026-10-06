@@ -27,17 +27,17 @@ export default function ClanCreationModal() {
         description: "",
         domain: "",
         tags: [],
-        visibility: "Public",
+        access: "public",
     });
     const [error, setError] = useState({});
 
-    const visibility = [
+    const access = [
         {
-            name: "Public",
+            name: "public",
             icon: <Earth />,
         },
         {
-            name: "Private",
+            name: "private",
             icon: <LockKeyhole />,
         },
     ];
@@ -79,7 +79,7 @@ export default function ClanCreationModal() {
                 description: "",
                 domain: "",
                 tags: [],
-                visibility: "Public",
+                access: "Public",
             });
 
             // navigate(`/c/${response.newClan._id}`);
@@ -417,25 +417,23 @@ export default function ClanCreationModal() {
                                 </div>
                             </div>
                         </div>
-                        {/* Visibility */}
+                        {/* Access */}
                         <div className="flex flex-col space-y-2">
-                            <p className="text-sm font-medium ml-1">
-                                Visibility
-                            </p>
+                            <p className="text-sm font-medium ml-1">Access</p>
                             <div className="flex w-full space-x-2">
-                                {visibility.map((option) => (
+                                {access.map((option) => (
                                     <div
-                                        className={`rounded-xl w-full flex items-center cursor-pointer transition-all duration-300 p-4 bg-white/30 backdrop-blur-2xl border hover:ring-2 hover:ring-amber-500 text-sm ${form.visibility === option.name ? "ring-2 ring-blue-700/30 border-indigo-500 text-slate-900" : "border-white/50 text-slate-500"}`}
+                                        className={`rounded-xl w-full flex items-center cursor-pointer transition-all duration-300 p-4 bg-white/30 backdrop-blur-2xl border hover:ring-2 hover:ring-amber-500 text-sm ${form.access === option.name ? "ring-2 ring-blue-700/30 border-indigo-500 text-slate-900" : "border-white/50 text-slate-500"}`}
                                         onClick={() => {
                                             setForm((prev) => ({
                                                 ...prev,
-                                                visibility: option.name,
+                                                access: option.name,
                                             }));
                                         }}
                                     >
                                         <div className="flex gap-1 items-end">
                                             {option.icon}
-                                            <p className=" font-medium">
+                                            <p className=" font-medium uppercase">
                                                 {option.name}
                                             </p>
                                         </div>
@@ -443,7 +441,7 @@ export default function ClanCreationModal() {
                                 ))}
                             </div>
                             <p className="text-slate-700 text-sm ml-1">
-                                {form.visibility === "Public"
+                                {form.access === "Public"
                                     ? "Your clan will be publicly visibile, and anyone can join."
                                     : "Users have to request permission to join your clan."}
                             </p>

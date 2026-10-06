@@ -23,18 +23,6 @@ export const ExploreProvider = ({ children }) => {
                 const { data } = await getExploreSections();
 
                 setEntities((prev) => upsertClans(data, prev));
-
-                setClansByDomain((prev) => {
-                    const map = { ...prev };
-
-                    data.forEach((clan) => {
-                        map[clan.domain] = [
-                            ...new Set([...(map[clan.domain] || []), clan._id]),
-                        ];
-                    });
-
-                    return map;
-                });
             } catch (error) {
                 console.error(error);
             } finally {
@@ -53,6 +41,7 @@ export const ExploreProvider = ({ children }) => {
                 searching,
                 setSearching,
                 clansByDomain,
+                setClansByDomain,
                 loadingExplore,
             }}
         >

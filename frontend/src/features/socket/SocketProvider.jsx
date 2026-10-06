@@ -10,73 +10,81 @@ export function SocketProvider({ children }) {
     const user = useCurrentUser();
 
     const userId = user?._id;
-    useEffect(() => {
-        if (!userId) {
-            // Disconnect if user logs out
-            if (socketRef.current) {
-                socketRef.current.disconnect();
-                socketRef.current = null;
-            }
-            return;
-        }
 
-        // Prevent duplicate socket connections
-        if (socketRef.current) {
-            return;
-        }
+    // useEffect(() => {
+    //     console.log("SocketProvider MOUNT");
 
-        // Create socket connection with better configuration
-        const newSocket = io("http://localhost:5000", {
-            reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            reconnectionAttempts: 5,
-            transports: ["websocket", "polling"],
-        });
+    //     return () => {
+    //         console.log("SocketProvider UNMOUNT");
+    //     };
+    // }, []);
+    // const renderCount = useRef(0);
+    // renderCount.current++;
 
-        socketRef.current = newSocket;
+    // console.log("SocketProvider render:", renderCount.current);
 
-        setSocket(newSocket);
+    // useEffect(() => {
+    //     if (!userId) {
+    //         // Disconnect if user logs out
+    //         if (socketRef.current) {
+    //             socketRef.current.disconnect();
+    //             socketRef.current = null;
+    //         }
+    //         return;
+    //     }
 
-        // Emit join event on connection
-        const handleConnect = () => {
-            newSocket.emit("join", userId);
-        };
+    //     // Prevent duplicate socket connections
+    //     if (socketRef.current) {
+    //         return;
+    //     }
 
-        // Handle connection errors
-        const handleConnectError = (error) => {
-            console.error("Socket connection error:", error);
-        };
+    //     // Create socket connection with better configuration
+    //     const newSocket = io("http://localhost:5000", {
+    //         reconnection: true,
+    //         reconnectionDelay: 1000,
+    //         reconnectionDelayMax: 5000,
+    //         reconnectionAttempts: 5,
+    //         transports: ["websocket", "polling"],
+    //     });
 
-        // Handle disconnect
-        const handleDisconnect = (reason) => {
-            console.warn("Socket disconnected:", reason);
-        };
+    //     socketRef.current = newSocket;
 
-        newSocket.on("connect", handleConnect);
-        newSocket.on("connect_error", handleConnectError);
-        newSocket.on("disconnect", handleDisconnect);
+    //     setSocket(newSocket);
 
-        // Cleanup function
-        return () => {
-            if (socketRef.current) {
-                newSocket.off("connect", handleConnect);
-                newSocket.off("connect_error", handleConnectError);
-                newSocket.off("disconnect", handleDisconnect);
+    //     // Emit join event on connection
+    //     const handleConnect = () => {
+    //         newSocket.emit("join", userId);
+    //     };
 
-                newSocket.disconnect();
+    //     // Handle connection errors
+    //     const handleConnectError = (error) => {
+    //         console.error("Socket connection error:", error);
+    //     };
 
-                if (socketRef.current === newSocket) {
-                    socketRef.current = null;
-                }
-            }
-        };
-    }, [userId]);
+    //     // Handle disconnect
+    //     const handleDisconnect = (reason) => {
+    //         console.warn("Socket disconnected:", reason);
+    //     };
 
-    useEffect(() => {
-        if (!socket) return;
-        console.log("socket changed", socket);
-    }, [socket]);
+    //     newSocket.on("connect", handleConnect);
+    //     newSocket.on("connect_error", handleConnectError);
+    //     newSocket.on("disconnect", handleDisconnect);
+
+    //     // Cleanup function
+    //     return () => {
+    //         if (socketRef.current) {
+    //             newSocket.off("connect", handleConnect);
+    //             newSocket.off("connect_error", handleConnectError);
+    //             newSocket.off("disconnect", handleDisconnect);
+
+    //             newSocket.disconnect();
+
+    //             if (socketRef.current === newSocket) {
+    //                 socketRef.current = null;
+    //             }
+    //         }
+    //     };
+    // }, [userId]);
 
     return (
         <SocketContext.Provider value={{ socket }}>

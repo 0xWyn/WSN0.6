@@ -3,8 +3,8 @@ import { useClan } from "../context/ClanProvider";
 import ClanCard from "./ClanCard";
 
 export default function ClanContainer({ viewing }) {
-    const { myClanIds, loadingClans } = useClan();
-    const { entities } = useEntities();
+    const { loadingClans } = useClan();
+    const { entities, myClanIds } = useEntities();
 
     if (myClanIds === null) {
         return (
@@ -36,7 +36,7 @@ export default function ClanContainer({ viewing }) {
     });
 
     return (
-        <section className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 p-4">
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:p-4">
             {mappedClans}
         </section>
     );

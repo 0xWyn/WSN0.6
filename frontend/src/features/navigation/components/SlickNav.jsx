@@ -12,11 +12,10 @@ import { useNotification } from "../../notification/context/NotificationProvider
 function ClanMenu({ clan }) {}
 export default function SlickNav() {
     const user = useCurrentUser();
-    const { myClanIds, setShowClanModal, activeClan } = useClan();
-    const { entities } = useEntities();
+    const { setShowClanModal, activeClan } = useClan();
+    const { entities, myClanIds } = useEntities();
     const { unreadCount } = useNotification();
 
-    const navigate = useNavigate();
     const location = useLocation();
     const [showBottomMenu, setShowBottomMenu] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
@@ -128,9 +127,11 @@ export default function SlickNav() {
             <div className="px-4">
                 <div className="flex flex-col rounded-[32px] border border-white/60 bg-white/40 p-4 shadow-[0_10px_40px_rgba(15,23,42,0.05)]">
                     <div className="mb-4 flex items-center justify-between">
-                        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                            My Clans
-                        </h3>
+                        <Link to={"/my-clans"}>
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 hover:underline transition-all duration-300">
+                                My Clans
+                            </h3>
+                        </Link>
 
                         <span className="rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-slate-600">
                             {myClanIds?.length ?? "0"}

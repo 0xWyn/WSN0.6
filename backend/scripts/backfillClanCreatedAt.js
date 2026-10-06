@@ -7,25 +7,20 @@ dotenv.config();
 async function run() {
     await mongoose.connect(process.env.MONGO_URI);
 
-    const clans = await Clan.find({ createdAt: { $exists: false } })
-        .select("_id")
-        .lean();
+    const update = await Clan.updateMany(
+        { visibility: "public" },
+        {
+            $set: {
+                access: "public",
+            },
+            $unset: { visibility: "" },
+        }
+    );
 
-    console.log(`Found ${clans.length} clans without createdAt`);
-
-    for (const clan of clans) {
-        await Clan.collection.updateOne(
-            { _id: clan._id },
-            {
-                $set: {
-                    createdAt: clan._id.getTimestamp(),
-                    updatedAt: clan._id.getTimestamp(),
-                },
-            }
-        );
-    }
-
-    console.log(`Updated ${clans.length} clans`);
+    console.log(
+        `Updated Count:" ${update.matchedCount} clans`,
+        `Modified Count:" ${update.modifiedCount} clans`
+    );
     await mongoose.disconnect();
 }
 

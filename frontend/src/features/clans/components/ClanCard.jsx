@@ -43,12 +43,12 @@ export default function ClanCard({ clan }) {
 
                     <span
                         className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
-                            clan.visibility === "Private"
+                            clan.access === "Private"
                                 ? "bg-amber-100 text-amber-700"
                                 : "bg-emerald-100 text-emerald-700"
                         }`}
                     >
-                        {clan.visibility || "Public"}
+                        {clan.access || "Public"}
                     </span>
                 </div>
 

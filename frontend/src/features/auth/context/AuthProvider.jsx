@@ -1,7 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEntities, useSetEntities } from "../../global/EntityProvider";
 import { useAuthLogic } from "../hooks/useAuthLogic";
+import { getMe } from "../apis/authApis";
+import { upsertClans } from "../../clans/helpers/updateClanEntities";
+import { getMyClans } from "../../clans/api/clanApis";
 
 const AuthContext = createContext(null);
 
@@ -9,37 +12,48 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { entities } = useEntities();
-    const { setEntities } = useSetEntities();
+    const { setEntities, setMyClanIds } = useSetEntities();
 
     const [authId, setAuthId] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingAuth, setLoadingAuth] = useState(true);
 
-    const { register, login, logout, fetchUser } = useAuthLogic(
+    const { register, login, logout } = useAuthLogic(
         setAuthId,
         setCurrentUser,
-        setLoading,
+        setLoadingAuth,
         setEntities,
         navigate,
         location
     );
 
     useEffect(() => {
-        if (!authId) {
-            setCurrentUser(null);
-            return;
-        }
+        const fetchAuth = async () => {
+            console.log("FETCHING USER");
 
-        const nextUser = entities.users[authId] ?? null;
-        setCurrentUser((prev) => {
-            if (prev?._id === nextUser?._id) return prev;
-            return nextUser;
-        });
-    }, [authId, entities.users]);
+            try {
+                const {
+                    data: { user },
+                } = await getMe();
 
-    useEffect(() => {
-        fetchUser();
+                setCurrentUser(user);
+
+                const { data } = await getMyClans();
+                const myIds = data
+                    .filter((clan) => clan.role)
+                    .map((clan) => clan._id);
+
+                setMyClanIds(myIds);
+
+                setEntities((prev) => upsertClans(data, prev));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoadingAuth(false);
+            }
+        };
+
+        fetchAuth();
     }, []);
 
     return (
@@ -51,7 +65,7 @@ export const AuthProvider = ({ children }) => {
                 register,
                 login,
                 logout,
-                loading,
+                loadingAuth,
             }}
         >
             {children}

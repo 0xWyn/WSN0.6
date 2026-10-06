@@ -107,7 +107,7 @@ const MemberCard = ({ member }) => {
                             </span>
                         )}
                     </div>
-                    <div className="mt-0 5 flex items-center gap-2">
+                    <div className="mt-0.5 flex items-center gap-2">
                         <span className="truncate text-xs text-slate-500">
                             @{user.username}
                         </span>
