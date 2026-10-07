@@ -1,5 +1,4 @@
 export const normalisePosts = (posts, prev) => {
-    console.log("MAPPING POSTS");
     const map = { ...prev };
 
     posts.forEach((post) => {

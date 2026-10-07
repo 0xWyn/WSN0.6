@@ -11,13 +11,8 @@ export const useFeedPosts = () => {
 
     const fetchClanPosts = async (page = 1, clanId) => {
         try {
-            console.trace("CALLING FETCH CLAN POSTS");
-
-            console.log("fetching clan posts");
             setFeedLoad((prev) => ({ ...prev, clan: true }));
             const { data } = await getClanPosts(page, clanId);
-
-            console.log(data);
             setEntities((prev) => normalisePosts(data, prev));
 
             setQueries((prev) => updatePostsQuery(data, prev));

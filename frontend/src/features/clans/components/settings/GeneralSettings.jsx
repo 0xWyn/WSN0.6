@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useClan } from "../../context/ClanProvider";
 import { useClanAccess } from "../../hooks/useClanAccess";
 import ClanAccess from "./general-settings/ClanAccess";
@@ -12,23 +12,27 @@ import ClanTags from "./general-settings/ClanTags";
 
 export default function General() {
     const { activeClan: clan, loadingClans } = useClan();
+    const { isFounder, isAuthority } = useClanAccess(clan);
+
+    const [form, setForm] = useState({});
+    const [abort, setAbort] = useState(false);
 
     if (loadingClans.activeClan) return <div>Loading...</div>;
 
-    const { isFounder, isAuthority } = useClanAccess(clan);
     const isPrivate = clan.access === "private";
 
-    const [form, setForm] = useState({});
+    const buttons = [
+        { name: "save", title: "Save Changes" },
+        { name: "cancel", title: "Cancel" },
+    ];
     const isEditing = Object.values(form)?.length > 0;
     const permitted = {
-        "clan appearance": isAuthority,
         "clan discoverability": isAuthority,
         "ownership & leadership": isAuthority,
         "danger zone": isFounder,
     };
 
     const sections = {
-        // "clan appearance": ["avatar", "banner", "name", "description"],
         "clan discoverability": ["access", "join requests", "domain", "tags"],
         "ownership & leadership": ["ownership"],
         "danger zone": ["status", "deletion"],
@@ -65,36 +69,38 @@ export default function General() {
     // Add save button
 
     const updateClanState = (field, update) => {
+        setAbort(false);
         setForm((prev) => ({ ...(prev || {}), [field]: update }));
     };
-
-    useEffect(() => console.log(form), [form]);
-
+    // Work on this next
     const handleSubmit = () => {
         console.log(form);
         return;
     };
+
+    const handleCancel = () => {
+        setAbort(true);
+        setForm({});
+    };
+
     return (
         <div className="flex flex-col gap-6 overflow-y-auto h-full relative p-2">
-            {isEditing && (
-                <button className="z-30 px-4 py-2 rounded-[14px] fixed top-8 right-12 bg-white/60 backdrop-blur-3xl border border-white/40 shadow-[0px_4px_20px_rgba(60,80,82,0.05)] text-slate-800 flex !font-medium transition-all duration-300 hover:shadow-[0px_8px_20px_rgba(90,120,92,0.2)]">
-                    Done
-                </button>
-            )}
-            <ClanProfile clan={clan} const onEdit={updateClanState} />
-            <div className="mt-2 flex flex-col gap-6">
+            <ClanProfile clan={clan} onEdit={updateClanState} abort={abort} />
+            <div className="flex flex-col gap-3">
                 {Object.entries(sections).map(
                     ([key, value]) =>
                         permitted[key] && (
                             <div
                                 key={key}
-                                className="py-4 border-b border-slate-200"
+                                className="pb-7 border-b border-slate-200/60"
                             >
-                                <p className="text-slate-600 text-md uppercase tracking-wide font-bold">
-                                    {key}
-                                </p>
+                                <div className="mb-4">
+                                    <h2 className="text-slate-500 text-xs uppercase tracking-[0.14em] font-medium">
+                                        {key}
+                                    </h2>
+                                </div>
 
-                                <div className="flex flex-col gap-4 mt-3">
+                                <div className="flex flex-col gap-3">
                                     {value.map((param) => {
                                         const Component = components[param];
 
@@ -103,6 +109,7 @@ export default function General() {
                                                 {Component && (
                                                     <Component
                                                         onEdit={updateClanState}
+                                                        abort={abort}
                                                     />
                                                 )}
                                             </div>
@@ -113,6 +120,21 @@ export default function General() {
                         )
                 )}
             </div>
+
+            {isEditing && (
+                <div className="flex justify-between w-full gap-6 px-4">
+                    {buttons.map(({ name, title }) => (
+                        <button
+                            onClick={
+                                name === "save" ? handleSubmit : handleCancel
+                            }
+                            className={`z-30 px-4 py-2 w-full flex justify-center backdrop-blur-3xl border shadow-[0px_4px_20px_rgba(60,80,82,0.02)] text-sm text-slate-500 rounded-[14px] hover:text-slate-800 !font-medium transition-all duration-300 hover:shadow-[0px_5px_30px_rgba(90,120,92,0.05)] ${name === "save" ? "bg-white/40 border-white/70 hover:bg-white/70" : "border-slate-200/40 bg-slate-200/60 hover:bg-slate-300/50"}`}
+                        >
+                            {title}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

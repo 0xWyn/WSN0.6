@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Write from "../../../../../components/icons/write";
-export default function ClanProfile({ clan, onEdit }) {
+export default function ClanProfile({ clan, onEdit, abort }) {
     const [editing, setEditing] = useState({
         avatar: false,
         cover: false,
@@ -16,6 +16,10 @@ export default function ClanProfile({ clan, onEdit }) {
         banner: clan.banner,
         description: clan.description,
     });
+
+    const changed = Object.entries(details).some(
+        ([key, value]) => clan[key] !== value
+    );
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,6 +49,16 @@ export default function ClanProfile({ clan, onEdit }) {
         };
     }, [avatarPreview]);
 
+    useEffect(() => {
+        changed &&
+            abort &&
+            setDetails({
+                avatar: clan.avatar,
+                name: clan.name,
+                banner: clan.banner,
+                description: clan.description,
+            });
+    }, [changed, abort]);
     return (
         <div>
             <div className="overflow-hidden relative rounded-[26px] bg-white/35 backdrop-blur-2xl p-5 border border-white/60 shadow-[0_6px_30px_rgba(80,90,100,0.02)]">
@@ -72,7 +86,7 @@ export default function ClanProfile({ clan, onEdit }) {
                             onChange={handleAvatarChange}
                             className="hidden"
                         />
-                        <div className="relative size-28 overflow-hidden rounded-[28px] border-4 border-white/70 bg-gradient-to-br from-amber-200 to-sky-200 shadow transition-transform duration-300 group-hover:scale-[1.025] overflow-hidden">
+                        <div className="relative size-28 overflow-hidden rounded-[28px] border-4 border-white/70 bg-gradient-to-br from-sky-100 to-sky-200 shadow transition-transform duration-300 group-hover:scale-[1.025] overflow-hidden">
                             {displayAvatar ? (
                                 <img
                                     src={displayAvatar}
@@ -93,7 +107,7 @@ export default function ClanProfile({ clan, onEdit }) {
                         </div>
 
                         <span className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border-2 border-white/80 bg-white/75 text-slate-600 shadow-sm backdrop-blur-xl">
-                            <Write />
+                            <Write size="4" />
                         </span>
                     </label>
 
@@ -125,12 +139,12 @@ export default function ClanProfile({ clan, onEdit }) {
                                 }
                                 className="group/name relative mx-auto block max-w-full"
                             >
-                                <span className="text-2xl font-semibold tracking-tight text-slate-800">
+                                <span className="text-2xl font-semibold tracking-tight text-slate-800 cursor-text">
                                     {clan.name}
                                 </span>
 
-                                <span className="absolute ml-2 bottom-0 text-slate-400 opacity-0 transition-opacity group-hover/name:opacity-100 p-1 border border-white/70 rounded-xl bg-white/80">
-                                    <Write />
+                                <span className="absolute ml-1 bottom-0 text-slate-400 opacity-0 transition-opacity group-hover/name:opacity-100 p-1 border border-white/70 rounded-xl bg-white/80">
+                                    <Write size="4" />
                                 </span>
                             </button>
                         )}
@@ -159,15 +173,15 @@ export default function ClanProfile({ clan, onEdit }) {
                                         description: true,
                                     }))
                                 }
-                                className="group/description mx-auto mt-1 block max-w-xl text-center relative"
+                                className="group/description mx-auto mt-1 block max-w-xl text-center relative cursor-text"
                             >
-                                <span className="text-sm leading-6 text-slate-500">
+                                <span className="text-sm leading-6 text-slate-500 cursor-text">
                                     {clan.description ||
                                         "A place for members to connect, share ideas, and participate in discussions."}
                                 </span>
 
-                                <span className="absolute ml-2 bottom-0 text-slate-400 opacity-0 transition-opacity group-hover/description:opacity-100 p-1 border border-white/70 rounded-xl bg-white/80">
-                                    <Write />
+                                <span className="absolute ml-1 bottom-0 text-slate-400 opacity-0 transition-opacity group-hover/description:opacity-100 p-1 border border-white/70 rounded-xl bg-white/80">
+                                    <Write size="4" />
                                 </span>
                             </button>
                         )}
@@ -178,14 +192,14 @@ export default function ClanProfile({ clan, onEdit }) {
                                 className={`inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] ${
                                     clan.access?.toLowerCase() === "private"
                                         ? "text-amber-600"
-                                        : "text-emerald-600"
+                                        : "text-teal-600"
                                 }`}
                             >
                                 <span
                                     className={`size-1.5 rounded-full ${
                                         clan.access?.toLowerCase() === "private"
                                             ? "bg-amber-400"
-                                            : "bg-emerald-400"
+                                            : "bg-teal-400"
                                     }`}
                                 />
                                 {clan.access || "Public"}

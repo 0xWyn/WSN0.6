@@ -34,7 +34,7 @@ export default function EngagementBar({ object, type, onCommentClick }) {
             {buttons.map(({ title, icon, onClick, value }) => (
                 <button
                     key={title}
-                    className={`group flex items-center gap-2 rounded-full ${type === "post" && "border border-white/70  px-3.5 py-2 backdrop-blur-md shadow-[0_4px_14px_rgba(15,23,42,0.06)] hover:bg-white/80 hover:shadow-[0_8px_24px_rgba(15,23,42,0.10)]"} hover:scale-[1.03] transition-all duration-200 `}
+                    className={`group flex items-center gap-2 rounded-full ${type === "post" && "border border-white/70 px-3.5 py-2 backdrop-blur-md shadow-[0_4px_14px_rgba(15,23,42,0.02)] hover:bg-white/80 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)]"} transition-all duration-200 `}
                     onClick={onClick}
                 >
                     {icon}

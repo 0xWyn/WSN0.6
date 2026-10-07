@@ -101,7 +101,7 @@ export default function ClanContent() {
 
                         <div className="relative px-6 pb-6 sm:px-8">
                             <div className="-mt-12 flex items-end justify-between">
-                                <div className="flex size-24 items-center justify-center overflow-hidden rounded-[28px] border-4 border-white bg-slate-100 text-3xl font-medium text-slate-700 shadow-lg">
+                                <div className="flex size-24 items-center justify-center overflow-hidden rounded-[28px] border-4 border-white bg-gradient-to-br from-sky-100 to-sky-200 text-3xl font-medium text-slate-700 shadow-lg">
                                     {clan.avatar ? (
                                         <img
                                             src={clan.avatar.url}

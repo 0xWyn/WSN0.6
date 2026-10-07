@@ -1,4 +1,5 @@
-import { useActiveClan, useClan } from "../../../context/ClanProvider";
+import { useEffect } from "react";
+import { useClan } from "../../../context/ClanProvider";
 import { useClanSettings } from "../../../hooks/useClanSettings";
 
 export default function ClanDeletion() {
@@ -7,22 +8,33 @@ export default function ClanDeletion() {
     if (!clan) return null;
 
     const { handleClanDeletion } = useClanSettings(clan._id);
+    const scheduled = Boolean(clan.deletionScheduledAt);
 
+    // Add countdown to deletion
     return (
-        <div className="bg-slate-50/20 border border-white/60 backdrop-blur-2xl rounded-[22px] shadow-[0_4px_24px_rgba(80,90,100,0.02)] p-4">
-            <h3 className="text-slate-700 text-sm font-medium">Deletion</h3>
-            <p className="text-sm text-slate-500">
-                {clan.deletionScheduledAt ? (
-                    "Your clan is deactivated and will be permanently deleted after so and so days."
-                ) : (
-                    <>Delete your clan after 30 days.</>
-                )}
-            </p>
+        <div className="rounded-[20px] border border-rose-200/50 bg-rose-50/20 p-4 backdrop-blur-2xl">
+            <div>
+                <h3 className="text-sm font-medium text-rose-700">
+                    Delete clan
+                </h3>
+
+                <p className="mt-1 text-xs leading-5 text-rose-600/60">
+                    {scheduled
+                        ? "Your clan is scheduled for permanent deletion."
+                        : "Deleting your clan starts a 30-day deletion period."}
+                </p>
+            </div>
+
             <button
+                type="button"
                 onClick={handleClanDeletion}
-                className={`${clan.deletionScheduledAt ? "bg-slate-400 text-white" : "bg-red-400 text-white border border-red-300"} w-full py-2 rounded-[16px] my-4 transtion-all duration-300`}
+                className={`mt-4 w-full rounded-[13px] py-2 text-xs tracking-wide font-medium transition ${
+                    scheduled
+                        ? "bg-white/60 text-slate-600 hover:bg-white/90"
+                        : "bg-rose-500/80 text-white shadow-sm hover:bg-rose-500"
+                }`}
             >
-                {clan.deletionScheduledAt ? "Abort Deletion" : "Delete Clan"}
+                {scheduled ? "Cancel deletion" : "Schedule clan deletion"}
             </button>
         </div>
     );

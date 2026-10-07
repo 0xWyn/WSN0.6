@@ -107,7 +107,6 @@ export const useClanSettings = (clanId) => {
 
     const handleClanDeletion = async () => {
         try {
-            console.log("Triggered clan deletion");
             const { data } = await toggleClanDelete(clanId);
             console.log(data);
         } catch (error) {

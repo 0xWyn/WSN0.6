@@ -8,9 +8,9 @@ export const IdentityBadge = ({ clan }) => {
     const status = clan.role;
 
     const colors = {
-        founder: "bg-purple-400",
-        leader: "bg-yellow-400",
-        member: "bg-green-400",
+        founder: "text-sky-600",
+        leader: "text-sky-600",
+        member: "text-sky-600",
     };
 
     const icons = {
@@ -21,7 +21,7 @@ export const IdentityBadge = ({ clan }) => {
 
     return (
         <div
-            className={`flex items-center justify-center size-8 p-2 rounded-md ${colors[status]}`}
+            className={`flex items-center justify-center size-6 p-1 rounded-full ${colors[status]} bg-sky-100/80`}
         >
             {icons[status]}
         </div>

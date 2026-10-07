@@ -1,84 +1,101 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "../../../../../components/icons/chevron-down";
 import { INTEREST_DOMAINS } from "../../../../../config/interestDomains";
 import { useClan } from "../../../context/ClanProvider";
-export default function ClanDomain({ onEdit }) {
+
+export default function ClanDomain({ onEdit, abort }) {
     const { activeClan: clan } = useClan();
+
     const [selectedDomain, setSelectedDomain] = useState(clan.domain);
     const [showDropdown, setShowDropdown] = useState(false);
 
+    const changed = selectedDomain !== clan.domain;
     const domainDetails = INTEREST_DOMAINS.find(
         (domain) => domain.name === selectedDomain
     );
 
-    const handleChange = (option) => {
-        setSelectedDomain(option);
+    const handleChange = (name) => {
+        setSelectedDomain(name);
         setShowDropdown(false);
-        onEdit("domain", option);
+        onEdit("domain", name);
     };
+
+    useEffect(() => {
+        changed && abort && setSelectedDomain(clan.domain);
+    }, [changed, abort]);
+
     return (
-        <div className="bg-slate-50/20 border border-white/60 backdrop-blur-2xl rounded-[22px] shadow-[0_4px_24px_rgba(80,90,100,0.02)] p-4">
-            {" "}
-            <div className="flex flex-col space-y-1 relative">
-                {/* Write Up */}
-                <h3 className="text-slate-700 text-sm font-medium">
-                    Clan Domain
-                </h3>
-                <div className="flex justify-between">
-                    <p className="text-xs leading-relaxed text-slate-500 ">
-                        Pick a topic to help other users find your clan.
+        <div className="bg-white/30 border border-white/60 backdrop-blur-2xl rounded-[20px] p-4">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h3 className="text-slate-700 text-sm font-medium">
+                        Domain
+                    </h3>
+                    <p className="mt-1 text-xs tracking-wide leading-5 text-slate-500">
+                        Helps people discover what your clan is about.
                     </p>
-                    <button
-                        type="button"
-                        className="flex items-center justify-centerbg-slate-10 !text-slate-500 !transition duration-200 hover:bg-white/90 hover:scale-[1.1] size-5 rounded-full"
-                        onClick={() => setShowDropdown((prev) => !prev)}
-                    >
-                        <ChevronDown />
-                    </button>
                 </div>
 
-                <div className="mt-3 pt-3 border-3 border-t border-white/40">
+                <button
+                    type="button"
+                    className={`flex items-center justify-center !text-slate-400 !transition-all duration-600 hover:bg-white/60 hover:scale-[1.1] hover:text-slate-600 size-8 rounded-full ${
+                        showDropdown ? "rotate-180" : ""
+                    }`}
+                    onClick={() => setShowDropdown((prev) => !prev)}
+                >
+                    <ChevronDown />
+                </button>
+            </div>
+
+            <div
+                tabIndex={-1}
+                onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                        setShowDropdown(false);
+                    }
+                }}
+                className="transition-all duration-300"
+            >
+                <button
+                    type="button"
+                    onClick={() => setShowDropdown((prev) => !prev)}
+                    className="mt-4 flex w-full items-center gap-3 rounded-[15px] border border-white/60 py-2.5 text-left transition hover:bg-white/60"
+                >
                     {domainDetails && (
-                        <span
-                            className={`flex shrink-0 whitespace-nowrap justify-center items-end gap-2 !px-3 !py-1 !rounded-full text-sm text-slate-800 bg-white/10 backdrop-blur-xl shadow-md hover:scale-[1.01] active:scale-[0.99] hover:bg-slate-100 transition-all duration-200 border font-medium cursor-pointer uppercase`}
-                            onClick={() => setShowDropdown((prev) => !prev)}
-                        >
-                            <span className="border flex items-center justify-center rounded-md bg-slate-100 border-white/20">
+                        <span className="w-full flex justify-start gap-2 items-center rounded-[15px] p-2 bg-white/80 border border-slate-50 hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:shadow-none active:scale-[0.99] shadow-slate-200/30 transition-all duration-200">
+                            <span className="flex size-8 items-center justify-center rounded-[10px] bg-white/70 text-base shadow-[0_2px_10px_rgba(120,120,120,0.1)]">
                                 {domainDetails.icon}
                             </span>
-                            {domainDetails.name}
+
+                            <span className="text-sm font-medium text-slate-700">
+                                {domainDetails.name}
+                            </span>
                         </span>
                     )}
-                    {/* TopicMenu */}
-                    {showDropdown && (
-                        <div className="h-80 items-start bg-white/80 border border-white/80 z-100 p-6 px-6 rounded-3xl shadow-[0px_10px_30px_rgba(120,120,120,0.06)] backdrop-blur-md space-y-3 space-x-2 overflow-y-auto no-scrollbar top-12">
-                            {/* Ambience */}
-                            <div className="pointer-events-none fixed inset-0 opacity-70 min-h-0">
-                                <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl border" />
-                                <div className="absolute left-1/4 top-0 size-[36rem] rounded-full bg-amber-100/40 blur-3xl" />
-                            </div>
+                </button>
 
-                            <div className="flex gap-2 flex-wrap sm:gap-6">
-                                {INTEREST_DOMAINS.map(({ icon, name }) => (
+                {showDropdown && (
+                    <div className="mt-2 max-h-64 overflow-y-auto rounded-[16px] border border-white/70 bg-white/40 p-2 shadow-[0_12px_30px_rgba(50,60,70,0.08)] backdrop-blur-2xl overflow-hidden">
+                        <div className="grid grid-cols-2 gap-1.5">
+                            {INTEREST_DOMAINS.map(({ icon, name }) => {
+                                const active = selectedDomain === name;
+
+                                return (
                                     <button
                                         type="button"
                                         key={name}
                                         name="domain"
-                                        value={name}
-                                        className={`z-10 shrink-0 !flex  !gap-2 whitespace-nowrap bg-white/60 backdrop-blur-xl !items-end !px-3 !py-1 !rounded-full text-sm text-slate-800 active:scale-98  hover:scale-[1.01] hover:ring hover:ring-sky-500 transition-all duration-200 border ${selectedDomain === name ? "font-medium border border-indigo-700" : "!font-normal border border-white"}`}
                                         onClick={() => handleChange(name)}
+                                        className={`flex items-center gap-2 rounded-[12px] px-3 py-2 text-left text-[0.8rem] tracking-wide transition transition-colors duration-200 ${active ? "bg-sky-100/60 font-medium text-slate-800" : "hover:text-slate-800 text-slate-600 hover:bg-white/80 !font-normal"}`}
                                     >
-                                        {selectedDomain === name && (
-                                            <div className="absolute size-2 bg-emerald-400/90 top-0 right-0 rounded-full"></div>
-                                        )}
-                                        <span>{icon}</span>
+                                        <span> {icon}</span>
                                         <span>{name}</span>
                                     </button>
-                                ))}
-                            </div>
+                                );
+                            })}
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     );

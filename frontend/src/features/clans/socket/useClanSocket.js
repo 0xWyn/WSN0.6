@@ -11,11 +11,20 @@ export const useClanSocket = (clanId) => {
     const { setRequests, setMembers } = useClanManagement();
 
     useEffect(() => {
-        console.log("Using clan socket");
+        console.log("Using clan socket", {
+            socket,
+            clanId,
+            hasSocket: !!socket,
+            hasClanId: !!clanId,
+        });
+
         if (!socket || !clanId) {
+            console.log("Not joining clan:", {
+                noSocket: !socket,
+                noClanId: !clanId,
+            });
             return;
         }
-
         console.log("Emitting join");
         socket.emit("join_clan", clanId);
 
@@ -24,6 +33,7 @@ export const useClanSocket = (clanId) => {
         };
 
         const handleClanUpdate = (clan) => {
+            console.log(clan);
             console.log("Handling updated clan");
             setEntities((prev) => upsertClans([clan], prev));
         };

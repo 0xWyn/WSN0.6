@@ -50,7 +50,6 @@ export const RealtimeProvider = ({ children }) => {
         };
 
         const handleNotification = (notification) => {
-            console.log(notification);
             setEntities((prev) => upsertNotifications([notification], prev));
             setUnread((prev) => {
                 const map = [...prev];

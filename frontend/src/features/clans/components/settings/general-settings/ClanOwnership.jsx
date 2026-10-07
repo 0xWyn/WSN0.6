@@ -9,69 +9,63 @@ export default function ClanOwnership() {
 
     const { founder } = clan;
     const { isFounder } = useClanAccess(clan);
+
     return (
-        <div className="bg-slate-50/20 border border-white/60 backdrop-blur-2xl rounded-[22px] shadow-[0_4px_24px_rgba(80,90,100,0.02)] p-4">
-            {" "}
-            <div className="flex flex-col px-2">
-                {/* Write Up */}
+        <div className="border border-white/60 bg-white/30 backdrop-blur-2xl rounded-[20px] p-4">
+            <div>
                 <h3 className="text-slate-700 text-sm font-medium">
-                    Clan Ownership
+                    Ownership
                 </h3>
 
-                <div className="flex flex-col gap-2 mt-3">
-                    <div className="w-full p-2 border border-slate-200 rounded-2xl flex items-center gap-2">
-                        {/* Avatar */}
-                        <div className="h-12 w-12 rounded-full shrink-0 overflow-hidden">
-                            {founder.avatar ? (
-                                <img
-                                    src={founder.avatar.url}
-                                    alt="User profile picture"
-                                    className="w-full h-full rounded-full object-cover"
-                                />
-                            ) : (
-                                <div className="bg-purple-500 text-white font-bold flex items-center justify-center rounded-full">
-                                    <p>
-                                        {founder.name.charAt(0).toUpperCase()}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                        {/* Name */}
-                        <div className="flex flex-col w-full">
-                            <div className="flex items-center gap-2 min-w-0">
-                                <span className="truncate text-sm font-medium text-slate-800">
-                                    {founder.name}
-                                </span>
+                <p className="mt-1 text-xs tracking-wide leading-5 text-slate-500">
+                    The founder currently owns this clan.
+                </p>
+            </div>
 
-                                {isFounder && (
-                                    <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
-                                        You
-                                    </span>
-                                )}
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-slate-500">
-                                    @{founder.username}
-                                </span>
-                                <span className="text-slate-300">•</span>
-                                <span className="text-[9px] font-medium uppercase text-purple-400">
-                                    Founder
-                                </span>
-                            </div>
+            <div className="mt-4 flex items-center gap-3 rounded-[16px] border border-white/60 bg-white/40 p-3">
+                {/* Avatar */}
+                <div className="size-11 rounded-full shrink-0 overflow-hidden bg-gradient-to-br from-amber-200 to-sky-200">
+                    {founder.avatar?.url ? (
+                        <img
+                            src={founder.avatar.url}
+                            alt={founder.name}
+                            className="size-full object-cover"
+                        />
+                    ) : (
+                        <div className="flex size-full items-center justify-center font-center font-mediun text-slate-700">
+                            {founder.name.charAt(0).toUpperCase()}
                         </div>
-                    </div>
-                    {/* Actions */}
-
-                    {isFounder && (
-                        <button className="flex gap-2 items-center justify-center w-full border border-dashed border-slate-400 text-sm rounded-md py-1 !font-medium text-slate-500 transition duration-300 hover:bg-slate-700 hover:text-white hover:border-white hover:border-solid active:-translate-y-0.5">
-                            <span className="">Transfer Ownership</span>
-                            <div className="">
-                                <SendHorizontal size="12" />
-                            </div>
-                        </button>
                     )}
                 </div>
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                        <span className="truncate text-sm font-medium text-slate-800">
+                            {founder.name}
+                        </span>
+
+                        {isFounder && (
+                            <span className="bg-sky-100/60 shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-sky-600">
+                                You
+                            </span>
+                        )}
+                    </div>
+
+                    <p className="mt-0.5 text-xs text-slate-500">
+                        @{founder.username} • Founder
+                    </p>
+                </div>
             </div>
+            {/* Actions */}
+
+            {isFounder && (
+                <button
+                    type="button"
+                    className="mt-3 flex gap-2 items-center justify-center w-full border border-white/70 bg-white/40 text-xs rounded-[13px] py-2 !font-medium text-slate-500 transition duration-300 hover:bg-white/70 hover:text-slate-700"
+                >
+                    Transfer Ownership
+                    <SendHorizontal size="12" />
+                </button>
+            )}
         </div>
     );
 }

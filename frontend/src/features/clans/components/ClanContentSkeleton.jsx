@@ -1,5 +1,5 @@
 export default function ClanContentSkeleton() {
-    const count = ["a", "b", "c", "c", "e", "f", "g", "h"];
+    const count = ["a", "b", "c", "d", "e", "f", "g", "h"];
     return (
         <div className="min-h-0 bg-[#f8fafc] min-w-0">
             {/* Ambience */}
@@ -48,7 +48,10 @@ export default function ClanContentSkeleton() {
                                 {/* <ClanFeed /> */}
                                 <div className="flex flex-col gap-4">
                                     {count.map((c) => (
-                                        <div className=" p-5 sm:p-6 bg-white/80 border border-white rounded-[32px]">
+                                        <div
+                                            key={c}
+                                            className=" p-5 sm:p-6 bg-white/80 border border-white rounded-[32px]"
+                                        >
                                             <div className="flex items-center gap-3">
                                                 <div className="size-10 rounded-full bg-slate-200 shrink-0" />
                                                 <div className="space-y-2">

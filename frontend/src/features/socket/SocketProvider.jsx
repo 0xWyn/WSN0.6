@@ -11,80 +11,68 @@ export function SocketProvider({ children }) {
 
     const userId = user?._id;
 
-    // useEffect(() => {
-    //     console.log("SocketProvider MOUNT");
+    useEffect(() => {
+        if (!userId) {
+            // Disconnect if user logs out
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+                socketRef.current = null;
+            }
+            return;
+        }
 
-    //     return () => {
-    //         console.log("SocketProvider UNMOUNT");
-    //     };
-    // }, []);
-    // const renderCount = useRef(0);
-    // renderCount.current++;
+        // Prevent duplicate socket connections
+        if (socketRef.current) {
+            return;
+        }
 
-    // console.log("SocketProvider render:", renderCount.current);
+        // Create socket connection with better configuration
+        const newSocket = io("http://localhost:5000", {
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: 5,
+            transports: ["websocket", "polling"],
+        });
 
-    // useEffect(() => {
-    //     if (!userId) {
-    //         // Disconnect if user logs out
-    //         if (socketRef.current) {
-    //             socketRef.current.disconnect();
-    //             socketRef.current = null;
-    //         }
-    //         return;
-    //     }
+        socketRef.current = newSocket;
 
-    //     // Prevent duplicate socket connections
-    //     if (socketRef.current) {
-    //         return;
-    //     }
+        setSocket(newSocket);
 
-    //     // Create socket connection with better configuration
-    //     const newSocket = io("http://localhost:5000", {
-    //         reconnection: true,
-    //         reconnectionDelay: 1000,
-    //         reconnectionDelayMax: 5000,
-    //         reconnectionAttempts: 5,
-    //         transports: ["websocket", "polling"],
-    //     });
+        // Emit join event on connection
+        const handleConnect = () => {
+            newSocket.emit("join", userId);
+        };
 
-    //     socketRef.current = newSocket;
+        // Handle connection errors
+        const handleConnectError = (error) => {
+            console.error("Socket connection error:", error);
+        };
 
-    //     setSocket(newSocket);
+        // Handle disconnect
+        const handleDisconnect = (reason) => {
+            console.warn("Socket disconnected:", reason);
+        };
 
-    //     // Emit join event on connection
-    //     const handleConnect = () => {
-    //         newSocket.emit("join", userId);
-    //     };
+        newSocket.on("connect", handleConnect);
+        newSocket.on("connect_error", handleConnectError);
+        newSocket.on("disconnect", handleDisconnect);
 
-    //     // Handle connection errors
-    //     const handleConnectError = (error) => {
-    //         console.error("Socket connection error:", error);
-    //     };
+        // Cleanup function
+        return () => {
+            if (socketRef.current) {
+                newSocket.off("connect", handleConnect);
+                newSocket.off("connect_error", handleConnectError);
+                newSocket.off("disconnect", handleDisconnect);
 
-    //     // Handle disconnect
-    //     const handleDisconnect = (reason) => {
-    //         console.warn("Socket disconnected:", reason);
-    //     };
+                newSocket.disconnect();
 
-    //     newSocket.on("connect", handleConnect);
-    //     newSocket.on("connect_error", handleConnectError);
-    //     newSocket.on("disconnect", handleDisconnect);
-
-    //     // Cleanup function
-    //     return () => {
-    //         if (socketRef.current) {
-    //             newSocket.off("connect", handleConnect);
-    //             newSocket.off("connect_error", handleConnectError);
-    //             newSocket.off("disconnect", handleDisconnect);
-
-    //             newSocket.disconnect();
-
-    //             if (socketRef.current === newSocket) {
-    //                 socketRef.current = null;
-    //             }
-    //         }
-    //     };
-    // }, [userId]);
+                if (socketRef.current === newSocket) {
+                    socketRef.current = null;
+                }
+            }
+        };
+    }, [userId]);
 
     return (
         <SocketContext.Provider value={{ socket }}>
