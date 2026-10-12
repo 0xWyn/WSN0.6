@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import Write from "../../../../../components/icons/write";
+import { AssetCropper } from "../../../../user/components/AssetCropper";
+import { getCroppedImg } from "../../../../../utils/getCroppedImg";
+
 export default function ClanProfile({ clan, onEdit, abort }) {
     const [editing, setEditing] = useState({
         avatar: false,
@@ -8,7 +11,10 @@ export default function ClanProfile({ clan, onEdit, abort }) {
         description: false,
     });
 
-    const [avatarPreview, setAvatarPreview] = useState(null);
+    const [previews, setPreviews] = useState({
+        avatar: null,
+        banner: null,
+    });
 
     const [details, setDetails] = useState({
         avatar: clan.avatar,
@@ -29,47 +35,96 @@ export default function ClanProfile({ clan, onEdit, abort }) {
         onEdit(name, value);
     };
 
-    const handleAvatarChange = (e) => {
+    const handleMediaChange = (e, target) => {
         const file = e.target.files[0];
 
         if (!file) return;
 
-        setAvatarPreview(URL.createObjectURL(file));
+        setDetails((prev) => ({ ...prev, [target]: file }));
+        setEditing((prev) => ({ ...prev, [target]: true }));
 
-        setDetails((prev) => ({ ...prev, avatar: file }));
-
-        onEdit("avatar", file);
+        e.target.value = "";
     };
 
-    const displayAvatar = avatarPreview || clan.avatar?.url || null;
+    const handleCropComplete = async (field, pixels, filename) => {
+        if (!pixels) {
+            setEditing((prev) => ({ ...prev, [field]: false }));
+            return;
+        }
+
+        const croppedBlob = await getCroppedImg(
+            URL.createObjectURL(details[field]),
+            pixels
+        );
+
+        const croppedFile = new File([croppedBlob], filename, {
+            type: "image/jpeg",
+        });
+
+        setPreviews((prev) => ({
+            ...prev,
+            [field]: URL.createObjectURL(croppedBlob),
+        }));
+
+        setEditing((prev) => ({ ...prev, [field]: false }));
+
+        onEdit(field, croppedFile);
+    };
+
+    const displayAvatar = previews?.avatar || clan.avatar?.url || null;
 
     useEffect(() => {
         return () => {
-            avatarPreview ? URL.revokeObjectURL(avatarPreview) : null;
+            Object.values(previews).forEach((url) => {
+                url ? URL.revokeObjectURL(url) : null;
+            });
         };
-    }, [avatarPreview]);
+    }, [previews]);
 
     useEffect(() => {
-        changed &&
-            abort &&
+        if (changed && abort) {
             setDetails({
                 avatar: clan.avatar,
                 name: clan.name,
                 banner: clan.banner,
                 description: clan.description,
             });
+            setPreviews({
+                avatar: null,
+                banner: null,
+            });
+        }
     }, [changed, abort]);
+
     return (
         <div>
+            {editing.avatar && (
+                <AssetCropper
+                    image={details.avatar}
+                    field={"avatar"}
+                    onComplete={handleCropComplete}
+                    onCancel={() =>
+                        setEditing((prev) => ({ ...prev, avatar: false }))
+                    }
+                />
+            )}
+            {editing.banner && (
+                <AssetCropper
+                    image={details.banner}
+                    field={"banner"}
+                    onComplete={handleCropComplete}
+                    onCancel={() =>
+                        setEditing((prev) => ({ ...prev, banner: false }))
+                    }
+                />
+            )}
+
             <div className="overflow-hidden relative rounded-[26px] bg-white/35 backdrop-blur-2xl p-5 border border-white/60 shadow-[0_6px_30px_rgba(80,90,100,0.02)]">
                 {/* Background accents */}
                 <div className="pointer-events-none absolute inset-0">
                     <div className="absolute -top-20 -right-20 size-48 rounded-full bg-sky-200/25 blur-3xl" />
                     <div className="absolute -bottom-20 -left-16 size-44 rounded-full bg-amber-200/25 blur-3xl" />
                 </div>
-
-                {/* Inner glass highlight */}
-                <div className="pointer-events-none absolute inset-px rounded-[25px] border border-white/40" />
 
                 {/* Header */}
                 <div className="relative flex flex-col items-center gap-4">
@@ -83,7 +138,7 @@ export default function ClanProfile({ clan, onEdit, abort }) {
                             name="avatar"
                             id="avatar"
                             accept="image/*"
-                            onChange={handleAvatarChange}
+                            onChange={(e) => handleMediaChange(e, "avatar")}
                             className="hidden"
                         />
                         <div className="relative size-28 overflow-hidden rounded-[28px] border-4 border-white/70 bg-gradient-to-br from-sky-100 to-sky-200 shadow transition-transform duration-300 group-hover:scale-[1.025] overflow-hidden">
@@ -140,7 +195,7 @@ export default function ClanProfile({ clan, onEdit, abort }) {
                                 className="group/name relative mx-auto block max-w-full"
                             >
                                 <span className="text-2xl font-semibold tracking-tight text-slate-800 cursor-text">
-                                    {clan.name}
+                                    {details.name}
                                 </span>
 
                                 <span className="absolute ml-1 bottom-0 text-slate-400 opacity-0 transition-opacity group-hover/name:opacity-100 p-1 border border-white/70 rounded-xl bg-white/80">
@@ -176,7 +231,7 @@ export default function ClanProfile({ clan, onEdit, abort }) {
                                 className="group/description mx-auto mt-1 block max-w-xl text-center relative cursor-text"
                             >
                                 <span className="text-sm leading-6 text-slate-500 cursor-text">
-                                    {clan.description ||
+                                    {details.description ||
                                         "A place for members to connect, share ideas, and participate in discussions."}
                                 </span>
 

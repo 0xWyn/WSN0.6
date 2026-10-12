@@ -7,6 +7,9 @@ export const getClanById = (clanId) => API.get(`/clans/${clanId}`);
 
 export const createClan = (clan) => API.post("/clans", clan);
 
+export const editClan = (clanId, body) =>
+    API.patch(`/clans/${clanId}/edit`, body);
+
 export const joinClan = (clanId) => API.put(`/clans/${clanId}`);
 
 export const leaveClan = (clanId) => API.delete(`/clans/${clanId}/membership`);
@@ -42,3 +45,8 @@ export const banMember = (clanId, membershipId) =>
     API.put(`clans/${clanId}/ban/${membershipId}`);
 
 export const toggleClanDelete = (clanId) => API.patch(`clans/${clanId}/delete`);
+
+export const requestOwnershipTransfer = (clanId, userId) =>
+    API.patch(`clans/${clanId}/transfer/${userId}`);
+
+export const getClanLeaders = (clanId) => API.get(`clans/${clanId}/leaders`);

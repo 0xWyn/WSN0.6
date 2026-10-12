@@ -5,6 +5,8 @@ import ClanJoinRequest from "../models/clanJoinRequestModel.js";
 import { io } from "../server.js";
 import { clanNotificationService } from "../helpers/notificationService.js";
 import updatePostMeta from "../scripts/updatePostMeta.js";
+import { deleteCloudinaryAsset } from "../utils/deleteCloudinaryAsset.js";
+import ClanOwnershipTransfer from "../models/clanOwnershipTransferModel.js";
 
 // General
 
@@ -119,8 +121,6 @@ export const joinClan = async (req, res) => {
         }
 
         if (clanMembers.some((member) => member.user.equals(userId))) {
-            console.log("Returning at line 121");
-
             return res.status(400).json({ error: "Already a member" });
         }
 
@@ -134,7 +134,7 @@ export const joinClan = async (req, res) => {
 
             await newMembership.populate("user", "name username avatar");
 
-            io.to(userId).emit("updated_clan", clanUpdate);
+            io.to(userId.toString()).emit("updated_clan", clanUpdate);
             io.to(clanId).emit("new_member", newMembership);
 
             return res
@@ -243,6 +243,101 @@ export const cancelMyRequest = async (req, res) => {
     }
 };
 
+export const editClan = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { clanId } = req.params;
+
+        const body = req.body;
+
+        const clan = await Clan.findById(clanId).populate(
+            "founder",
+            "name username avatar"
+        );
+
+        if (!clan) return res.status(404).json({ msg: "Clan not found" });
+
+        if (!clan.founder._id.equals(userId))
+            return res.status(403).json({ msg: "Unauthorized access denied." });
+
+        const { avatar, banner } = clan;
+
+        const oldBannerId = banner?.publicId;
+        const oldAvatarId = avatar?.publicId;
+
+        Object.entries(body).forEach(([key, value]) => {
+            clan[key] = value;
+        });
+
+        if (oldBannerId && body.banner?.publicId) {
+            await deleteCloudinaryAsset(oldBannerId);
+        }
+
+        if (oldAvatarId && body.avatar?.publicId) {
+            await deleteCloudinaryAsset(oldAvatarId);
+        }
+
+        await clan.save();
+
+        io.to(clanId).emit("updated_clan", clan);
+        return res.status(200).json({ msg: "Clan successfully edited" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+export const requestOwnershipTransfer = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { clanId, targetId } = req.params;
+
+        const clan = await Clan.findById(clanId);
+
+        const targetMember = await ClanMember.findOne({
+            clan: clanId,
+            user: targetId,
+            role: "leader",
+        });
+
+        if (!clan) return res.status(404).json({ msg: "Clan not foundd" });
+
+        if (!clan.founder.equals(userId))
+            return res.status(403).json({ msg: "Unauthorized access denied" });
+
+        if (!targetMember) {
+            return res.status(400).json({ msg: "Invalid successor selection" });
+        }
+
+        const existingTransferRequest = await ClanOwnershipTransfer.findOne({
+            clan: clanId,
+        });
+
+        if (existingTransferRequest) {
+            await existingTransferRequest.deleteOne();
+        }
+
+        const newRequest = await ClanOwnershipTransfer.create({
+            clan: clanId,
+            targetUser: targetId,
+        });
+
+        const notification = await clanNotificationService(
+            "clan_ownership_transfer_request",
+            clanId,
+            targetId
+        );
+
+        io.to(targetId).emit("clan_ownership_transfer_request", notification);
+
+        return res
+            .status(201)
+            .json({ msg: "Transfer request created successfully" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message });
+    }
+};
 // Clan Management
 
 export const approveRequest = async (req, res) => {
@@ -426,6 +521,31 @@ export const getClanMembers = async (req, res) => {
         return res
             .status(200)
             .json({ members, hasMore: skip + members.length < total });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error });
+    }
+};
+
+export const getClanLeaders = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { clanId } = req.params;
+
+        const clan = await Clan.findById(clanId);
+
+        if (!clan)
+            return res.status(404).json({ msg: "Requested entity not found." });
+
+        if (!clan.founder.equals(userId))
+            return res.status(403).json({ msg: "Unauthorized access denied" });
+
+        const leaders = await ClanMember.find({
+            clan: clanId,
+            role: "leader",
+        }).populate("user", "name username avatar");
+
+        return res.status(200).json(leaders);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: error });

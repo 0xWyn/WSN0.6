@@ -17,12 +17,12 @@ export default function Members() {
 
         fetchedFor.current = id;
         fetchClanMembers(1);
+        fe;
     }, [id]);
 
     const { members, hasMore } = useClanManagement();
     if (loadingClanSettings.fetchMembers) return <div>Loading...</div>;
 
-    console.log(members);
     return (
         <div className="flex flex-col gap-2 overflow-y-auto h-full">
             {Object.values(members).map((membership) => (
@@ -114,13 +114,12 @@ const MemberCard = ({ member }) => {
 
                         {role && (
                             <>
-                                <span className="text-slate-300">•</span>
-                                <span
+                                <p className="text-slate-300 -mt-1">{"•"}</p>
+                                <p
                                     className={`truncate text-[9px] font-semibold uppercase ${roleColors[role]}`}
                                 >
-                                    {" "}
                                     {role}
-                                </span>
+                                </p>
                             </>
                         )}
                     </div>

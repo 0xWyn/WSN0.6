@@ -18,6 +18,8 @@ const notificationSchema = new mongoose.Schema(
                 "clan_deletion_cancelled",
                 "clan_activation",
                 "clan_deactivation",
+                "clan_ownership_tranfer",
+                "clan_ownership_transfer_request",
             ],
             required: true,
         },

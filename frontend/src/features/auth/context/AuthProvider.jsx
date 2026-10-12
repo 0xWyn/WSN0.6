@@ -1,10 +1,10 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEntities, useSetEntities } from "../../global/EntityProvider";
-import { useAuthLogic } from "../hooks/useAuthLogic";
-import { getMe } from "../apis/authApis";
-import { upsertClans } from "../../clans/helpers/updateClanEntities";
 import { getMyClans } from "../../clans/api/clanApis";
+import { upsertClans } from "../../clans/helpers/updateClanEntities";
+import { useSetEntities } from "../../global/EntityProvider";
+import { getMe } from "../apis/authApis";
+import { useAuthLogic } from "../hooks/useAuthLogic";
 
 const AuthContext = createContext(null);
 
@@ -14,15 +14,14 @@ export const AuthProvider = ({ children }) => {
 
     const { setEntities, setMyClanIds } = useSetEntities();
 
-    const [authId, setAuthId] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
 
     const { register, login, logout } = useAuthLogic(
-        setAuthId,
         setCurrentUser,
         setLoadingAuth,
         setEntities,
+        setMyClanIds,
         navigate,
         location
     );
@@ -56,12 +55,33 @@ export const AuthProvider = ({ children }) => {
         fetchAuth();
     }, []);
 
+    useEffect(() => {
+        if (!currentUser) return;
+        const fetchClans = async () => {
+            try {
+                setLoadingAuth(true);
+                const { data } = await getMyClans();
+                const myIds = data
+                    .filter((clan) => clan.role)
+                    .map((clan) => clan._id);
+
+                setMyClanIds(myIds);
+
+                setEntities((prev) => upsertClans(data, prev));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoadingAuth(false);
+            }
+        };
+
+        fetchClans();
+    }, [currentUser]);
+
     return (
         <AuthContext.Provider
             value={{
-                authId,
                 currentUser,
-                setAuthId,
                 register,
                 login,
                 logout,

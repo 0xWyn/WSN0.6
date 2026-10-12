@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useClan } from "../context/ClanProvider";
 
 export default function ClanCard({ clan }) {
+    if (!clan) return null;
     const navigate = useNavigate();
 
     const handleOpenClan = () => navigate(`/c/${clan._id}`);

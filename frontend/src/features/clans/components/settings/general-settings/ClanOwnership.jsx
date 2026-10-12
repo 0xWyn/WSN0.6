@@ -2,7 +2,7 @@ import { useClan } from "../../../context/ClanProvider";
 import { useClanAccess } from "../../../hooks/useClanAccess";
 import { SendHorizontal } from "../../../../../components/icons/send-horizontal";
 
-export default function ClanOwnership() {
+export default function ClanOwnership({ onTransfer }) {
     const { activeClan: clan } = useClan();
 
     if (!clan) return null;
@@ -10,6 +10,7 @@ export default function ClanOwnership() {
     const { founder } = clan;
     const { isFounder } = useClanAccess(clan);
 
+    // Fetch pending ownership transfer on launching modal;
     return (
         <div className="border border-white/60 bg-white/30 backdrop-blur-2xl rounded-[20px] p-4">
             <div>
@@ -50,8 +51,12 @@ export default function ClanOwnership() {
                         )}
                     </div>
 
-                    <p className="mt-0.5 text-xs text-slate-500">
-                        @{founder.username} • Founder
+                    <p className="mt-0.5 text-xs text-slate-500 flex items-center gap-1">
+                        <span>@{founder.username} </span>
+                        <span>•</span>
+                        <span className="uppercase text-[9px] tracking-wider">
+                            Founder
+                        </span>
                     </p>
                 </div>
             </div>
@@ -59,6 +64,7 @@ export default function ClanOwnership() {
 
             {isFounder && (
                 <button
+                    onClick={onTransfer}
                     type="button"
                     className="mt-3 flex gap-2 items-center justify-center w-full border border-white/70 bg-white/40 text-xs rounded-[13px] py-2 !font-medium text-slate-500 transition duration-300 hover:bg-white/70 hover:text-slate-700"
                 >

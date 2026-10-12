@@ -2,13 +2,13 @@ import Notification from "../models/notificationModel.js";
 
 export const clanNotificationService = async (
     type,
-    clan,
+    clanId,
     receiver,
     metadata
 ) => {
     return Notification.create({
         type,
-        entity: clan._id,
+        entity: clanId,
         entityModel: "Clan",
         receiver,
         metadata,

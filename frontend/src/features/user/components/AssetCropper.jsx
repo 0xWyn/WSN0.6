@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Cropper from "react-easy-crop";
+import { createPortal } from "react-dom";
 
 export const AssetCropper = ({ image, field, onComplete, onCancel }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -28,10 +29,11 @@ export const AssetCropper = ({ image, field, onComplete, onCancel }) => {
         setImageUrl(url);
 
         return () => {
-            URL.revokeObjectURL(imageUrl);
+            URL.revokeObjectURL(url);
         };
     }, [image]);
-    return (
+
+    return createPortal(
         <div className="fixed z-101 inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-xs">
             <div className="bg-white/80 border border-white/70 backdrop-blur-3xl rounded-[28px] px-10 py-6 space-y-2 overflow-hidden">
                 <div className="">
@@ -81,6 +83,7 @@ export const AssetCropper = ({ image, field, onComplete, onCancel }) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };

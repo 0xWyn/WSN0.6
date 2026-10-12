@@ -10,7 +10,7 @@ export default function ClanManagement() {
     const location = useLocation();
 
     const { activeClan: clan } = useClan();
-    const { requests } = useClanManagement();
+    const { requests, setMembers } = useClanManagement();
 
     const { isAuthority, isFounder } = useClanAccess(clan);
     const navigate = useNavigate();
@@ -50,6 +50,13 @@ export default function ClanManagement() {
             },
         },
     };
+
+    useEffect(() => {
+        if (!clan) return;
+        return () => {
+            setMembers([]);
+        };
+    }, [clan?._id]);
 
     return (
         <div className="flex flex-col h-screen bg-[#f8fafc]">

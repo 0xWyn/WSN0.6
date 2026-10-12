@@ -1,23 +1,13 @@
 import { useEffect } from "react";
-import { useSetEntities } from "../../global/EntityProvider";
 import { useSocket } from "../../socket/SocketProvider";
-import { upsertClans } from "../helpers/updateClanEntities";
 import { useClanManagement } from "../context/ClanManagementProvider";
 import { upsertMembers } from "../helpers/upsertMembers";
 
 export const useClanSocket = (clanId) => {
     const { socket } = useSocket();
-    const { setEntities } = useSetEntities();
     const { setRequests, setMembers } = useClanManagement();
 
     useEffect(() => {
-        console.log("Using clan socket", {
-            socket,
-            clanId,
-            hasSocket: !!socket,
-            hasClanId: !!clanId,
-        });
-
         if (!socket || !clanId) {
             console.log("Not joining clan:", {
                 noSocket: !socket,
@@ -27,16 +17,6 @@ export const useClanSocket = (clanId) => {
         }
         console.log("Emitting join");
         socket.emit("join_clan", clanId);
-
-        const handleNewClan = (clan) => {
-            setEntities((prev) => upsertClans([clan], prev));
-        };
-
-        const handleClanUpdate = (clan) => {
-            console.log(clan);
-            console.log("Handling updated clan");
-            setEntities((prev) => upsertClans([clan], prev));
-        };
 
         // Admin
         const handleDeletedRequest = (req) => {
@@ -65,9 +45,6 @@ export const useClanSocket = (clanId) => {
             setMembers((prev) => upsertMembers([membership], prev));
         };
 
-        socket.on("new_clan", handleNewClan);
-        socket.on("updated_clan", handleClanUpdate);
-
         // Admin
         socket.on("deleted_request", handleDeletedRequest);
         socket.on("kicked_member", handleRemovedMembership);
@@ -75,8 +52,6 @@ export const useClanSocket = (clanId) => {
         socket.on("new_request", handleNewRequest);
         socket.on("exited_member", handleRemovedMembership);
         return () => {
-            socket.off("new_clan", handleNewClan);
-            socket.off("updated_clan", handleClanUpdate);
             socket.off("deleted_request", handleDeletedRequest);
             socket.off("kicked_member", handleRemovedMembership);
             socket.off("new_member", handleNewMember);

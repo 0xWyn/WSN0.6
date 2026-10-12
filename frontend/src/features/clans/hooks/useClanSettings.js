@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useEntityActions } from "../../global/useEntityActions";
 import {
     acceptRequest,
+    getClanLeaders,
     getClanRequests,
     getMembers,
     rejectRequest,
@@ -12,10 +13,12 @@ import { upsertMembers } from "../helpers/upsertMembers";
 
 export const useClanSettings = (clanId) => {
     const { mergeUsers } = useEntityActions();
-    const { setMembers, setHasMore, setRequests } = useClanManagement();
+    const { setMembers, setHasMore, setRequests, setLeaders } =
+        useClanManagement();
 
     const [loadingClanSettings, setLoadingClanSettings] = useState({
         fetchMembers: true,
+        fetchLeaders: false,
         fetchRequests: true,
         handleRequests: true,
     });
@@ -60,6 +63,22 @@ export const useClanSettings = (clanId) => {
             setLoadingClanSettings((prev) => ({
                 ...prev,
                 fetchRequests: false,
+            }));
+        }
+    };
+
+    const fetchClanLeaders = async () => {
+        try {
+            setLoadingClanSettings((prev) => ({ ...prev, fetchLeaders: true }));
+            const { data } = await getClanLeaders(clanId);
+            const users = data.map(({ user }) => user);
+            setLeaders((prev) => upsertMembers(users, prev));
+        } catch (error) {
+            console.error(error?.response?.data);
+        } finally {
+            setLoadingClanSettings((prev) => ({
+                ...prev,
+                fetchLeaders: false,
             }));
         }
     };
@@ -117,6 +136,7 @@ export const useClanSettings = (clanId) => {
     return {
         fetchClanMembers,
         fetchClanRequests,
+        fetchClanLeaders,
         loadingClanSettings,
         handleAcceptRequest,
         handleRejectRequest,

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { uploadToCloudinary } from "../../../utils/uploadToCloud";
-import { useSetEntities } from "../../global/EntityProvider";
 import {
     cancelRequest,
     createClan,
+    editClan,
     joinClan,
     leaveClan,
+    requestOwnershipTransfer,
 } from "../api/clanApis";
-import { useClan } from "../context/ClanProvider";
 
 export const useClanActions = (clanId) => {
     const [loadingClanActions, setLoadingClanActions] = useState({
@@ -78,11 +78,49 @@ export const useClanActions = (clanId) => {
         }
     };
 
+    const handleEditClan = async (form) => {
+        try {
+            const body = { ...form };
+            if (form.avatar instanceof File) {
+                body.avatar = await uploadToCloudinary(form.avatar, {
+                    folder: "clans",
+                });
+            }
+
+            if (form.banner instanceof File) {
+                body.banner = await uploadToCloudinary(form.banner, {
+                    folder: "clans",
+                });
+            }
+
+            const res = await editClan(clanId, body);
+
+            return res;
+        } catch (error) {
+            console.error(error);
+            console.error(error.response.data);
+        }
+    };
+
+    const handleOwnershipTransfer = async (targetId) => {
+        try {
+            const res = await requestOwnershipTransfer(clanId, targetId);
+            console.log(res);
+
+            return res.status === 201 ? "success" : "failure";
+        } catch (error) {
+            console.error(error);
+            console.error(error.response.data);
+        }
+    };
+
     return {
         handleCreateClan,
         handleJoinClan,
         loadingClanActions,
         handleCancelRequest,
         handleLeaveClan,
+        handleEditClan,
+        handleOwnershipTransfer,
     };
 };

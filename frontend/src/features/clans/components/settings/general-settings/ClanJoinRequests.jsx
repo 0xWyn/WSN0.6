@@ -8,7 +8,6 @@ export default function ClanJoinRequests() {
     const { isFounder } = useClanAccess(clan);
 
     const joinRequestStatus = clan.privateSettings;
-    console.log(clan);
 
     const jrStatus = true;
     return (

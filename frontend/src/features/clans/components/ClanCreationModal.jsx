@@ -1,21 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { useClan } from "../context/ClanProvider";
-import { toSentenceCase } from "../../../utils/toSentenceCase";
 import Camera from "../../../components/icons/camera";
+import { ChevronDown } from "../../../components/icons/chevron-down";
 import Earth from "../../../components/icons/earth";
+import ExclamationCircle from "../../../components/icons/exclamation-circle";
 import LockKeyhole from "../../../components/icons/lock-keyhole";
 import { Pickaxe } from "../../../components/icons/pickaxe";
-import { useClanActions } from "../hooks/useClanActions";
-import ExclamationCircle from "../../../components/icons/exclamation-circle";
-import { useNavigate } from "react-router-dom";
 import { INTEREST_DOMAINS } from "../../../config/interestDomains";
-import { ChevronDoubleRight } from "../../../components/icons/chevron-double-right";
-import { ChevronDown } from "../../../components/icons/chevron-down";
+import { toSentenceCase } from "../../../utils/toSentenceCase";
+import { useClan } from "../context/ClanProvider";
+import { useClanActions } from "../hooks/useClanActions";
 
 export default function ClanCreationModal() {
     const { handleCreateClan, creatingClan } = useClanActions();
     const { setShowClanModal } = useClan();
-    const navigate = useNavigate();
     const inputRef = useRef();
     const [tagInput, setTagInput] = useState("");
     const [showTopicMenu, setShowTopicMenu] = useState(false);

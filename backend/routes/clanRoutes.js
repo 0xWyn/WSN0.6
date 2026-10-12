@@ -5,6 +5,7 @@ import {
     createClan,
     deleteClan,
     demoteMember,
+    editClan,
     getClanById,
     getClanMembers,
     getJoinRequests,
@@ -14,6 +15,8 @@ import {
     promoteMember,
     rejectRequest,
     removeMember,
+    requestOwnershipTransfer,
+    getClanLeaders,
 } from "../controllers/clanController.js";
 import { protect } from "../middleware/auth.js";
 
@@ -21,6 +24,7 @@ const router = express.Router();
 
 // General
 router.post("/", protect, createClan);
+router.patch("/:clanId/edit", protect, editClan);
 
 // Civilian
 router.get("/", protect, myClans);
@@ -42,5 +46,8 @@ router.patch("/:clanId/members/:membershipId/demote", protect, demoteMember);
 router.delete("/:clanId/members/:membershipId", protect, removeMember);
 
 router.patch("/:clanId/delete", protect, deleteClan);
+router.patch("/:clanId/transfer/:targetId", protect, requestOwnershipTransfer);
+
+router.get("/:clanId/leaders", protect, getClanLeaders);
 
 export default router;

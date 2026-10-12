@@ -9,6 +9,7 @@ import { useMediaLogic } from "../hooks/useMediaLogic";
 import { AssetCropper } from "./AssetCropper";
 
 export default function EditProfile() {
+    console.log("Editing profile");
     const { setIsEditing } = useUser();
     const user = useCurrentUser();
     const { editProfile, loading } = useUserActions();

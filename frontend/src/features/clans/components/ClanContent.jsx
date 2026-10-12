@@ -228,7 +228,7 @@ export default function ClanContent() {
                     </div>
 
                     {showExitModal && (
-                        <div className="fixed w-full h-full bg-slate-600/30 backdrop-blur-sm z-40 inset-0 flex items-center justify-center">
+                        <div className="fixed w-full h-full bg-black/50 backdrop-blur-sm z-40 inset-0 flex items-center justify-center">
                             <ClanExitModal />
                         </div>
                     )}

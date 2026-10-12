@@ -59,7 +59,7 @@ export default function ClanDomain({ onEdit, abort }) {
                 <button
                     type="button"
                     onClick={() => setShowDropdown((prev) => !prev)}
-                    className="mt-4 flex w-full items-center gap-3 rounded-[15px] border border-white/60 py-2.5 text-left transition hover:bg-white/60"
+                    className="mt-4 w-full rounded-[15px] py-2.5 text-left transition duration-300 Chover:bg-white/60"
                 >
                     {domainDetails && (
                         <span className="w-full flex justify-start gap-2 items-center rounded-[15px] p-2 bg-white/80 border border-slate-50 hover:shadow-[0_4px_10px_rgba(0,0,0,0.2)] active:shadow-none active:scale-[0.99] shadow-slate-200/30 transition-all duration-200">

@@ -6,6 +6,7 @@ const ClanManagementContext = createContext(null);
 export const ClanManagementProvider = ({ children }) => {
     const [requests, setRequests] = useState([]);
     const [members, setMembers] = useState([]);
+    const [leaders, setLeaders] = useState([]);
     const [hasMore, setHasMore] = useState(false);
 
     return (
@@ -17,6 +18,8 @@ export const ClanManagementProvider = ({ children }) => {
                 setMembers,
                 hasMore,
                 setHasMore,
+                leaders,
+                setLeaders,
             }}
         >
             {children}

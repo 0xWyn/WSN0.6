@@ -1,11 +1,9 @@
+import { useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import { useClanSocket } from "../socket/useClanSocket";
-import { useClanResolver } from "../hooks/useClanResolver";
-import { useActiveClan, useClan } from "../context/ClanProvider";
-import { useEffect, useRef } from "react";
+import { useClan } from "../context/ClanProvider";
 import { useClanAccess } from "../hooks/useClanAccess";
-import ClanExitModal from "./ClanExitModal";
-import { useFeed } from "../../feed/context/FeedProvider";
+import { useClanResolver } from "../hooks/useClanResolver";
+import { useClanSocket } from "../socket/useClanSocket";
 
 export default function ClanPage() {
     const { id } = useParams();

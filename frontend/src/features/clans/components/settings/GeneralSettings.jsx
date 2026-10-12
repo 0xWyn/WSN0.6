@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useClan } from "../../context/ClanProvider";
 import { useClanAccess } from "../../hooks/useClanAccess";
 import ClanAccess from "./general-settings/ClanAccess";
@@ -9,13 +9,21 @@ import ClanOwnership from "./general-settings/ClanOwnership";
 import ClanProfile from "./general-settings/ClanProfile";
 import ClanStatus from "./general-settings/ClanStatus";
 import ClanTags from "./general-settings/ClanTags";
+import { useClanActions } from "../../hooks/useClanActions";
+import ModeratorList from "./general-settings/ModeratorList";
+import TransferWarningModal from "./general-settings/TransferWarningModal";
 
 export default function General() {
     const { activeClan: clan, loadingClans } = useClan();
     const { isFounder, isAuthority } = useClanAccess(clan);
 
+    const { handleEditClan } = useClanActions(clan?._id);
+
     const [form, setForm] = useState({});
     const [abort, setAbort] = useState(false);
+
+    const [showTransferWarning, setShowTransferWarning] = useState(false);
+    const [showModeratorList, setShowModeratorList] = useState(false);
 
     if (loadingClans.activeClan) return <div>Loading...</div>;
 
@@ -73,9 +81,19 @@ export default function General() {
         setForm((prev) => ({ ...(prev || {}), [field]: update }));
     };
     // Work on this next
-    const handleSubmit = () => {
-        console.log(form);
-        return;
+    const handleSubmit = async () => {
+        const hasLength = Object.values(form).length > 0;
+        const isChanged = Object.entries(form).some(
+            ([key, value]) => clan[key] !== value
+        );
+
+        if (!hasLength || !isChanged) return;
+
+        const res = await handleEditClan(form);
+
+        console.log(res.data);
+        setAbort(true);
+        setForm({});
     };
 
     const handleCancel = () => {
@@ -83,59 +101,96 @@ export default function General() {
         setForm({});
     };
 
+    const onBack = () => {
+        setShowModeratorList(false);
+        setShowTransferWarning(true);
+    };
+
     return (
-        <div className="flex flex-col gap-6 overflow-y-auto h-full relative p-2">
-            <ClanProfile clan={clan} onEdit={updateClanState} abort={abort} />
-            <div className="flex flex-col gap-3">
-                {Object.entries(sections).map(
-                    ([key, value]) =>
-                        permitted[key] && (
-                            <div
-                                key={key}
-                                className="pb-7 border-b border-slate-200/60"
+        <>
+            {showModeratorList && (
+                <ModeratorList
+                    onCancel={() => setShowModeratorList(false)}
+                    onBack={onBack}
+                />
+            )}
+            {showTransferWarning && (
+                <TransferWarningModal
+                    onCancel={() => setShowTransferWarning(false)}
+                    onAccept={() => {
+                        setShowTransferWarning(false);
+                        setShowModeratorList(true);
+                    }}
+                />
+            )}
+
+            <div className="flex flex-col gap-6 overflow-y-auto h-full relative p-2">
+                <ClanProfile
+                    clan={clan}
+                    onEdit={updateClanState}
+                    abort={abort}
+                />
+                <div className="flex flex-col gap-3">
+                    {Object.entries(sections).map(
+                        ([key, value]) =>
+                            permitted[key] && (
+                                <div
+                                    key={key}
+                                    className="pb-7 border-b border-slate-200/60"
+                                >
+                                    <div className="mb-4">
+                                        <h2 className="text-slate-500 text-xs uppercase tracking-[0.14em] font-medium">
+                                            {key}
+                                        </h2>
+                                    </div>
+
+                                    <div className="flex flex-col gap-3">
+                                        {value.map((param) => {
+                                            const Component = components[param];
+
+                                            return permitPath[param] ? (
+                                                <div key={param}>
+                                                    {Component && (
+                                                        <Component
+                                                            onEdit={
+                                                                updateClanState
+                                                            }
+                                                            abort={abort}
+                                                            onTransfer={() =>
+                                                                setShowTransferWarning(
+                                                                    true
+                                                                )
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
+                                            ) : null;
+                                        })}
+                                    </div>
+                                </div>
+                            )
+                    )}
+                </div>
+
+                {isEditing && (
+                    <div className="flex justify-between w-full gap-6 px-4">
+                        {buttons.map(({ name, title }) => (
+                            <button
+                                key={name}
+                                onClick={
+                                    name === "save"
+                                        ? handleSubmit
+                                        : handleCancel
+                                }
+                                className={`z-30 px-4 py-2 w-full flex justify-center backdrop-blur-3xl border shadow-[0px_4px_20px_rgba(60,80,82,0.02)] text-sm text-slate-500 rounded-[14px] hover:text-slate-800 !font-medium transition-all duration-300 hover:shadow-[0px_5px_30px_rgba(90,120,92,0.05)] ${name === "save" ? "bg-white/40 border-white/70 hover:bg-white/70" : "border-slate-200/40 bg-slate-200/60 hover:bg-slate-300/50"}`}
                             >
-                                <div className="mb-4">
-                                    <h2 className="text-slate-500 text-xs uppercase tracking-[0.14em] font-medium">
-                                        {key}
-                                    </h2>
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-                                    {value.map((param) => {
-                                        const Component = components[param];
-
-                                        return permitPath[param] ? (
-                                            <div key={param}>
-                                                {Component && (
-                                                    <Component
-                                                        onEdit={updateClanState}
-                                                        abort={abort}
-                                                    />
-                                                )}
-                                            </div>
-                                        ) : null;
-                                    })}
-                                </div>
-                            </div>
-                        )
+                                {title}
+                            </button>
+                        ))}
+                    </div>
                 )}
             </div>
-
-            {isEditing && (
-                <div className="flex justify-between w-full gap-6 px-4">
-                    {buttons.map(({ name, title }) => (
-                        <button
-                            onClick={
-                                name === "save" ? handleSubmit : handleCancel
-                            }
-                            className={`z-30 px-4 py-2 w-full flex justify-center backdrop-blur-3xl border shadow-[0px_4px_20px_rgba(60,80,82,0.02)] text-sm text-slate-500 rounded-[14px] hover:text-slate-800 !font-medium transition-all duration-300 hover:shadow-[0px_5px_30px_rgba(90,120,92,0.05)] ${name === "save" ? "bg-white/40 border-white/70 hover:bg-white/70" : "border-slate-200/40 bg-slate-200/60 hover:bg-slate-300/50"}`}
-                        >
-                            {title}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
+        </>
     );
 }
 

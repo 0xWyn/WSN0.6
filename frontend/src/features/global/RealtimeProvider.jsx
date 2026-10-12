@@ -12,8 +12,7 @@ const RealtimeContext = createContext(null);
 export const RealtimeProvider = ({ children }) => {
     const { socket } = useSocket();
     const auth = useCurrentUser();
-    const { setEntities } = useSetEntities();
-    const { setMyClanIds } = useClan();
+    const { setEntities, setMyClanIds } = useSetEntities();
 
     const [presenceById, setPresenceById] = useState({});
 
@@ -22,6 +21,7 @@ export const RealtimeProvider = ({ children }) => {
     useEffect(() => {
         if (!socket) return;
 
+        console.log("USING REALTIME");
         // Request initial presence data
         socket.emit("get_online_users");
 
@@ -58,18 +58,32 @@ export const RealtimeProvider = ({ children }) => {
             });
         };
 
+        const handleNewClan = (clan) => {
+            setEntities((prev) => upsertClans([clan], prev));
+        };
+
+        const handleClanUpdate = (clan) => {
+            console.log(clan);
+            console.log("Handling updated clan");
+            setEntities((prev) => upsertClans([clan], prev));
+        };
+
         socket.on("presence_update", handlePresence);
         socket.on("online_users_list", handleOnlineUsers);
 
+        socket.on("new_clan", handleNewClan);
         socket.on("approved_request", handleApprovedRequest);
         socket.on("revoked_membership", handleRevokedMembership);
         socket.on("notification", handleNotification);
         socket.on("exited_clan", handleRevokedMembership);
+        socket.on("updated_clan", handleClanUpdate);
 
         return () => {
             socket.off("presence_update", handlePresence);
             socket.off("online_users_list", handleOnlineUsers);
 
+            socket.off("new_clan", handleNewClan);
+            socket.off("updated_clan", handleClanUpdate);
             socket.off("approved_request", handleApprovedRequest);
             socket.off("revoked_membership", handleRevokedMembership);
             socket.off("notification", handleNotification);

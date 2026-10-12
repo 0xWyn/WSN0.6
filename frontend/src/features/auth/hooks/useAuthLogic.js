@@ -1,10 +1,10 @@
 import API from "../../../utils/axiosInterceptor";
 
 export const useAuthLogic = (
-    setAuthId,
     setCurrentUser,
-    setLoading,
+    setLoadingAuth,
     setEntities,
+    setMyClanIds,
     navigate,
     location
 ) => {
@@ -22,14 +22,14 @@ export const useAuthLogic = (
 
     const login = async (credentials) => {
         try {
-            setLoading(true);
-            const { data } = await API.post("auth/login", credentials);
-            setCurrentUser(data);
+            setLoadingAuth(true);
+            const { data: user } = await API.post("auth/login", credentials);
+            setCurrentUser(user);
             navigate(from);
         } catch (error) {
             console.error(error.response);
         } finally {
-            setLoading(false);
+            setLoadingAuth(false);
         }
     };
 
@@ -49,6 +49,7 @@ export const useAuthLogic = (
                 clans: {},
             }));
             setCurrentUser(null);
+            setMyClanIds([]);
             navigate("/login");
         }
     };

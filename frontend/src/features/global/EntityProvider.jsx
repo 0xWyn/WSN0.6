@@ -16,7 +16,7 @@ export const EntityProvider = ({ children }) => {
 
     const [myClanIds, setMyClanIds] = useState([]);
 
-    const myClans = myClanIds.map((id) => entities.clans[id]);
+    const myClans = myClanIds?.map((id) => entities?.clans[id]) || {};
 
     return (
         <EntityStateContext.Provider value={{ entities, myClanIds, myClans }}>

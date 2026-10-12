@@ -122,8 +122,6 @@ export const editProfile = async (req, res) => {
             await deleteCloudinaryAsset(oldCoverId);
         }
 
-        console.log("I did this shit yo");
-
         io.emit("profile_update", updatedUser);
 
         res.status(200).json({
