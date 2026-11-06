@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback } from "react";
 import { useSetEntities } from "../../global/EntityProvider";
 import { fetchPost, getClanPosts, getUserPosts } from "../api/feedApis";
 import { useFeed } from "../context/FeedProvider";
@@ -9,48 +9,56 @@ export const useFeedPosts = () => {
     const { setEntities } = useSetEntities();
     const { setQueries, setFeedLoad } = useFeed();
 
-    const fetchClanPosts = async (page = 1, clanId) => {
-        try {
-            setFeedLoad((prev) => ({ ...prev, clan: true }));
-            const { data } = await getClanPosts(page, clanId);
-            setEntities((prev) => normalisePosts(data, prev));
+    const fetchClanPosts = useCallback(
+        async (page = 1, clanId) => {
+            try {
+                setFeedLoad((prev) => ({ ...prev, clan: true }));
+                const { data } = await getClanPosts(page, clanId);
+                setEntities((prev) => normalisePosts(data, prev));
 
-            setQueries((prev) => updatePostsQuery(data, prev));
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setFeedLoad((prev) => ({ ...prev, clan: false }));
-        }
-    };
+                setQueries((prev) => updatePostsQuery(data, prev));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setFeedLoad((prev) => ({ ...prev, clan: false }));
+            }
+        },
+        [setEntities, setQueries, setFeedLoad]
+    );
 
-    const fetchUserPosts = async (page = 1, userId) => {
-        try {
-            setFeedLoad((prev) => ({ ...prev, user: true }));
-            const { data } = await getUserPosts(userId, page);
+    const fetchUserPosts = useCallback(
+        async (page = 1, userId) => {
+            try {
+                setFeedLoad((prev) => ({ ...prev, user: true }));
+                const { data } = await getUserPosts(userId, page);
 
-            setQueries((prev) => updatePostsQuery(data, prev));
+                setQueries((prev) => updatePostsQuery(data, prev));
 
-            setEntities((prev) => normalisePosts(data, prev));
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setFeedLoad((prev) => ({ ...prev, user: false }));
-        }
-    };
+                setEntities((prev) => normalisePosts(data, prev));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setFeedLoad((prev) => ({ ...prev, user: false }));
+            }
+        },
+        [setEntities, setQueries, setFeedLoad]
+    );
 
-    const fetchSinglePost = async (postId) => {
-        try {
-            setFeedLoad((prev) => ({ ...prev, single: true }));
-
-            const { data } = await fetchPost(postId);
-
-            setEntities((prev) => normalisePosts([data], prev));
-        } catch (error) {
-            console.error(error.response);
-        } finally {
-            setFeedLoad((prev) => ({ ...prev, single: false }));
-        }
-    };
+    const fetchSinglePost = useCallback(
+        async (postId) => {
+            try {
+                setFeedLoad((prev) => ({ ...prev, single: true }));
+                const { data } = await fetchPost(postId);
+                console.log(data);
+                setEntities((prev) => normalisePosts([data], prev));
+            } catch (error) {
+                console.error(error.response);
+            } finally {
+                setFeedLoad((prev) => ({ ...prev, single: false }));
+            }
+        },
+        [setEntities, setFeedLoad]
+    );
 
     return {
         fetchClanPosts,

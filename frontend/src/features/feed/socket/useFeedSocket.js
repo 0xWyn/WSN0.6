@@ -5,9 +5,8 @@ import { useFeed } from "../context/FeedProvider";
 import { normaliseComments, normalisePosts } from "../utils/normaliseEntities";
 import { updateCommentsQuery, updatePostsQuery } from "../utils/updateQueries";
 
-export const useFeedSocket = (clanId) => {
+export const useFeedSocket = () => {
     const { socket } = useSocket();
-
     const { setEntities } = useSetEntities();
     const { setQueries } = useFeed();
 

@@ -10,7 +10,7 @@ import ClanProfile from "./general-settings/ClanProfile";
 import ClanStatus from "./general-settings/ClanStatus";
 import ClanTags from "./general-settings/ClanTags";
 import { useClanActions } from "../../hooks/useClanActions";
-import ModeratorList from "./general-settings/ModeratorList";
+import TransferScreen from "./general-settings/TransferScreen";
 import TransferWarningModal from "./general-settings/TransferWarningModal";
 
 export default function General() {
@@ -23,7 +23,7 @@ export default function General() {
     const [abort, setAbort] = useState(false);
 
     const [showTransferWarning, setShowTransferWarning] = useState(false);
-    const [showModeratorList, setShowModeratorList] = useState(false);
+    const [showTransferScreen, setShowTransferScreen] = useState(false);
 
     if (loadingClans.activeClan) return <div>Loading...</div>;
 
@@ -102,15 +102,15 @@ export default function General() {
     };
 
     const onBack = () => {
-        setShowModeratorList(false);
+        setShowTransferScreen(false);
         setShowTransferWarning(true);
     };
 
     return (
         <>
-            {showModeratorList && (
-                <ModeratorList
-                    onCancel={() => setShowModeratorList(false)}
+            {showTransferScreen && (
+                <TransferScreen
+                    onCancel={() => setShowTransferScreen(false)}
                     onBack={onBack}
                 />
             )}
@@ -119,7 +119,7 @@ export default function General() {
                     onCancel={() => setShowTransferWarning(false)}
                     onAccept={() => {
                         setShowTransferWarning(false);
-                        setShowModeratorList(true);
+                        setShowTransferScreen(true);
                     }}
                 />
             )}

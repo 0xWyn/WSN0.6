@@ -18,7 +18,7 @@ export default function ClanOwnership({ onTransfer }) {
                     Ownership
                 </h3>
 
-                <p className="mt-1 text-xs tracking-wide leading-5 text-slate-500">
+                <p className="mt-1 text-sm text-slate-500">
                     The founder currently owns this clan.
                 </p>
             </div>

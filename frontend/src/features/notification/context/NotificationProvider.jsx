@@ -6,7 +6,7 @@ import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 const NotificationContext = createContext(null);
 
 export const NotificationProvider = ({ children }) => {
-    const [unread, setUnread] = useState(0);
+    const [unread, setUnread] = useState([]);
     const [loadingNotifications, setLoadingNotifications] = useState(true);
     const { setEntities } = useSetEntities();
 
@@ -18,8 +18,8 @@ export const NotificationProvider = ({ children }) => {
             if (!user) return;
             try {
                 const { data } = await getNotifications();
-                const unread = data.filter((notif) => !notif.readAt);
-                setUnread(unread);
+                const newNotifs = data.filter((notif) => !notif.readAt);
+                setUnread(newNotifs);
 
                 setEntities((prev) => upsertNotifications(data, prev));
             } catch (error) {
@@ -35,7 +35,6 @@ export const NotificationProvider = ({ children }) => {
     return (
         <NotificationContext.Provider
             value={{
-                unreadCount: unread.length ?? "0",
                 unread,
                 setUnread,
                 loadingNotifications,

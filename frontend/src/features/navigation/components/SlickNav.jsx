@@ -14,7 +14,9 @@ export default function SlickNav() {
     const user = useCurrentUser();
     const { setShowClanModal, activeClan } = useClan();
     const { entities, myClanIds } = useEntities();
-    const { unreadCount } = useNotification();
+    const { unread } = useNotification();
+
+    const unreadCount = unread.length;
 
     const location = useLocation();
     const [showBottomMenu, setShowBottomMenu] = useState(false);

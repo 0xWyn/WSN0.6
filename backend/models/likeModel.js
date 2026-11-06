@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const likeSchema = new mongoose.schema(
+const likeSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.SchemaTypes.ObjectId,
@@ -14,7 +14,7 @@ const likeSchema = new mongoose.schema(
             required: true,
         },
 
-        entityType: {
+        entityModel: {
             type: String,
             required: true,
             enum: ["Post", "Comment"],

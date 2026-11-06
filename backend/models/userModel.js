@@ -46,18 +46,20 @@ const userSchema = new mongoose.Schema(
             publicId: { type: String, default: null },
             _id: false,
         },
-        followers: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
-        following: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
+        followerCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        followingCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        isPrivate: {
+            type: Boolean,
+            default: false,
+        },
         refreshToken: {
             type: String,
             default: null,
@@ -78,7 +80,7 @@ userSchema.index(
     {
         weights: {
             username: 10,
-            displayName: 5,
+            name: 5,
             bio: 1,
         },
     }

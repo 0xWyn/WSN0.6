@@ -6,11 +6,11 @@ import { useFeedPosts } from "../../feed/hooks/useFeedPosts";
 
 export const useProfile = (userId) => {
     const { mergeUsers } = useEntityActions();
-    const { fetchUserPosts } = useFeedPosts();
     const { entities } = useEntities();
 
-    const user = entities.users[userId];
+    const user = entities.users?.[userId];
 
+    console.log(user);
     useEffect(() => {
         if (!userId) return;
 

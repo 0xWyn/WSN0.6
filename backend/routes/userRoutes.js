@@ -1,18 +1,20 @@
 import express from "express";
 import {
+    addFollow,
     editProfile,
-    followUser,
     getPostsByUserId,
     getUserById,
     getUsers,
+    removeFollow,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", getUsers);
-router.get("/:userId", protect, getUserById);
+router.get("/:targetId", protect, getUserById);
 router.get("/:userId/posts", getPostsByUserId);
-router.patch("/:targetId/follow", protect, followUser);
+router.put("/:targetId/follow", protect, addFollow);
+router.delete("/:targetId/follow", protect, removeFollow);
 
 router.patch("/profile", protect, editProfile);
 

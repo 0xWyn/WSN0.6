@@ -37,7 +37,7 @@ export default function ClanStatus({ onEdit, abort }) {
                         </h3>
                     </div>
 
-                    <p className="mt-2 text-xs tracking-wide leading-5 text-slate-500">
+                    <p className="mt-2 text-sm text-slate-500">
                         {isActive
                             ? "The clan is active and available to members."
                             : "The clan is currently inactive."}

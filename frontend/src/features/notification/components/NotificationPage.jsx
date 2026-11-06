@@ -6,15 +6,17 @@ import { useNotificationActions } from "../hooks/useNotificationActions";
 import NotificationContainer from "./NotificationContainer";
 
 export default function NotificationPage() {
-    const { unreadCount } = useNotification();
+    const { unread, setUnread } = useNotification();
     const { markNotificationsRead } = useNotificationActions();
 
     useEffect(() => {
-        if (!unreadCount > 0) return;
+        if (!unread.length > 0) return;
         return () => {
             markNotificationsRead();
+            setUnread([]);
         };
-    }, [unreadCount]);
+    }, [unread.length]);
+
     return (
         <div className="bg-[#f8fafc] min-h-screen w-full flex flex-col">
             {/* Decorative background */}

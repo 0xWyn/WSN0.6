@@ -12,9 +12,9 @@ export default function CreateComment({
 }) {
     const [text, setText] = useState("");
 
-    const { sendComment, loadingComments, fetchReplying } = useComments();
+    const { sendComment, loadingComments, fetchMention } = useComments();
 
-    const replying = replyTo ? fetchReplying(replyTo) : "";
+    const mention = replyTo ? fetchMention(replyTo) : null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,7 +50,7 @@ export default function CreateComment({
                 >
                     {type === "sub" && (
                         <span className="text-slate-400 text-sm bg-slate-200   rounded-[4px] p-1">
-                            @{replying?.username}
+                            @{mention?.username}
                         </span>
                     )}
 

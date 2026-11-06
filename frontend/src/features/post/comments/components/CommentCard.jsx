@@ -107,7 +107,7 @@ export default function CommentCard({ comment }) {
                             postId={comment.parentPost}
                             parentComment={comment._id}
                             type="sub"
-                            replyTo={comment._id}
+                            replyTo={comment.id}
                         />
                         {loadingComments.sub && <div>Loading...</div>}
 

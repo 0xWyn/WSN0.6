@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema(
     {
@@ -18,11 +18,19 @@ const commentSchema = new mongoose.Schema(
         },
         replyTo: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Comment",
+            ref: "User",
             default: null,
         },
-        likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-        replies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+        likeCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        replyCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
     },
     { timestamps: true }
 );

@@ -105,7 +105,7 @@ export const useClanActions = (clanId) => {
     const handleOwnershipTransfer = async (targetId) => {
         try {
             const res = await requestOwnershipTransfer(clanId, targetId);
-            console.log(res);
+            console.log(res.data);
 
             return res.status === 201 ? "success" : "failure";
         } catch (error) {

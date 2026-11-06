@@ -8,24 +8,30 @@ import LocNav from "../../../navigation/components/LocNav";
 import CommentSection from "../../comments/components/CommentSection";
 import PostCard from "./PostCard";
 import PostFocus from "./PostFocus";
+import { useFeed } from "../../../feed/context/FeedProvider";
+import FullscreenLoader from "../../../../components/ui/FullscreenLoader";
 
 export default function PostPage() {
     const { id } = useParams();
     const { entities } = useEntities();
-    const { fetchSinglePost, loadingFeedPosts } = useFeedPosts();
+    const { fetchSinglePost } = useFeedPosts();
     const { hydratePost } = useHydratePost();
-
+    const { feedLoad } = useFeed();
     useFeedSocket();
 
     useEffect(() => {
         fetchSinglePost(id);
-    }, []);
+    }, [id]);
 
-    const post = entities.posts[id];
+    if (feedLoad.single)
+        return (
+            <div className="inset-0 absolute">
+                <FullscreenLoader />
+            </div>
+        );
+    const post = entities.posts?.[id];
 
-    if (loadingFeedPosts.singlePost || !post) return <div>Loading...</div>;
-
-    const clan = entities.clans[post.clan];
+    const clan = entities.clans?.[post?.clan];
 
     return (
         <div className="min-h-screen bg-[#f8fafc] w-full relative">

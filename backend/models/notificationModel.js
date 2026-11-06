@@ -1,24 +1,30 @@
 import mongoose from "mongoose";
 const notificationSchema = new mongoose.Schema(
     {
-        type: {
+        event: {
             type: String,
             enum: [
-                "like",
-                "comment",
-                "reply",
                 "follow",
 
+                "post_like",
+                "post_comment",
+
+                "comment_like",
+                "comment_reply",
+
+                "join_request",
+                "new_clan_member",
                 "clan_promotion",
                 "clan_demotion",
                 "clan_membership_approval",
                 "clan_kick",
                 "clan_ban",
                 "clan_deletion",
+                "clan_deletion_scheduled",
                 "clan_deletion_cancelled",
                 "clan_activation",
                 "clan_deactivation",
-                "clan_ownership_tranfer",
+                "clan_ownership_transfer",
                 "clan_ownership_transfer_request",
             ],
             required: true,

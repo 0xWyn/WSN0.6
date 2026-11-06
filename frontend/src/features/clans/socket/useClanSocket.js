@@ -15,7 +15,7 @@ export const useClanSocket = (clanId) => {
             });
             return;
         }
-        console.log("Emitting join");
+        console.log("Using clan socket");
         socket.emit("join_clan", clanId);
 
         // Admin
@@ -30,9 +30,10 @@ export const useClanSocket = (clanId) => {
             setRequests((prev) => ({ ...prev, [req._id]: req }));
         };
 
-        const handleRemovedMembership = (membership) => {
+        const handleRemovedMember = (membership) => {
+            console.log("Handling removed member");
+
             const { _id } = membership;
-            console.log("Using removed member in clan Socket");
             setMembers((prev) => {
                 const map = { ...prev };
                 delete map[_id];
@@ -47,16 +48,16 @@ export const useClanSocket = (clanId) => {
 
         // Admin
         socket.on("deleted_request", handleDeletedRequest);
-        socket.on("kicked_member", handleRemovedMembership);
+        socket.on("kicked_member", handleRemovedMember);
         socket.on("new_member", handleNewMember);
         socket.on("new_request", handleNewRequest);
-        socket.on("exited_member", handleRemovedMembership);
+        socket.on("exited_member", handleRemovedMember);
         return () => {
             socket.off("deleted_request", handleDeletedRequest);
-            socket.off("kicked_member", handleRemovedMembership);
+            socket.off("kicked_member", handleRemovedMember);
             socket.off("new_member", handleNewMember);
             socket.off("new_request", handleNewRequest);
-            socket.off("exited_member", handleRemovedMembership);
+            socket.off("exited_member", handleRemovedMember);
 
             socket.emit("leave_clan", clanId);
         };

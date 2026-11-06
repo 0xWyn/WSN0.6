@@ -4,7 +4,15 @@ import Identity from "./Identity";
 import ProfilePicture from "./ProfilePicture";
 
 export default function ProfileView({ user }) {
-    const { name, username, bio, avatar, cover, following, followers } = user;
+    const {
+        name,
+        username,
+        bio,
+        avatar,
+        cover,
+        followingCount,
+        followerCount,
+    } = user;
 
     return (
         <div className="w-full">
@@ -23,11 +31,11 @@ export default function ProfileView({ user }) {
                         <div className="min-w-0 pb-1">
                             <Identity user={user} />
                             <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
-                                <span>{followers?.length ?? 0} followers</span>
+                                <span>{followerCount} followers</span>
 
                                 <span className="text-slate-300">•</span>
 
-                                <span>{following?.length ?? 0} following</span>
+                                <span>{followingCount} following</span>
                             </div>
                         </div>
                     </div>

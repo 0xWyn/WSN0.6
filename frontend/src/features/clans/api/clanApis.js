@@ -21,8 +21,7 @@ export const cancelRequest = (clanId) => API.delete(`/clans/${clanId}/request`);
 export const getClanRequests = (clanId) =>
     API.get(`/clans/${clanId}/joinrequests`);
 
-export const acceptRequest = (clanId, reqId) =>
-    API.put(`/clans/${clanId}/request/${reqId}`);
+export const acceptJoinRequest = (reqId) => API.put(`/clans/request/${reqId}`);
 
 export const rejectRequest = (clanId, reqId) =>
     API.delete(`/clans/${clanId}/request/${reqId}`);
@@ -38,8 +37,8 @@ export const promoteMember = (clanId, membershipId) =>
 export const demoteMember = (clanId, membershipId) =>
     API.patch(`clans/${clanId}/members/${membershipId}/demote`);
 
-export const kickMember = (clanId, membershipId) =>
-    API.delete(`clans/${clanId}/members/${membershipId}`);
+export const kickMember = (membershipId) =>
+    API.delete(`clans/membership/${membershipId}`);
 
 export const banMember = (clanId, membershipId) =>
     API.put(`clans/${clanId}/ban/${membershipId}`);
@@ -50,3 +49,12 @@ export const requestOwnershipTransfer = (clanId, userId) =>
     API.patch(`clans/${clanId}/transfer/${userId}`);
 
 export const getClanLeaders = (clanId) => API.get(`clans/${clanId}/leaders`);
+
+export const getTransferRequest = (clanId) =>
+    API.get(`clans/${clanId}/transferRequest`);
+
+export const acceptOwnershipTransferRequest = (reqId) =>
+    API.patch(`clans/transfer/${reqId}`);
+
+export const rejvokeOwnershipTransferRequest = (reqId) =>
+    API.delete(`clans/transfer/${reqId}`);

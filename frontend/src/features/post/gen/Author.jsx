@@ -6,7 +6,7 @@ export default function Author({ post, type }) {
         <div
             className={`flex leading-tight] ${type === "comment" ? "flex items-center gap-1" : "flex-col items-start space-y-1"}`}
         >
-            <p className="text-slate-700 font-semibold text-md tracking-tight">
+            <p className="text-slate-700 font-semibold text-sm tracking-tight">
                 {author.username}
             </p>
             {type === "comment" && <span className="text-slate-400">•</span>}

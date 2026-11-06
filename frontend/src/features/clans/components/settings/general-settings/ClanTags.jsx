@@ -41,7 +41,7 @@ export default function ClanTags({ onEdit, abort }) {
                 {/* Write Up */}
                 <h3 className="text-slate-700 text-sm font-medium">Tags</h3>
 
-                <p className="mt-1 text-xs tracking-wide leading-5 text-slate-500">
+                <p className="mt-1 text-sm text-slate-500">
                     Add a few words that describe your clan.
                 </p>
             </div>

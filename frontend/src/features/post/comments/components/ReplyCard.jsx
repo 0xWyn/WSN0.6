@@ -10,13 +10,12 @@ import { useRef } from "react";
 
 export default function ReplyCard({ reply }) {
     if (!reply) return;
-    const { author, text, likes } = reply;
+    const { author, text } = reply;
 
     const [replying, setReplying] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
 
     const menuRef = useRef(null);
-
     return (
         <div className="flex flex-col w-full rounded-[20px] p-2 border border-slate-100">
             <div className="flex items-start gap-3 w-full p-2">
@@ -48,7 +47,7 @@ export default function ReplyCard({ reply }) {
                         </div>
                     </div>
 
-                    <div className="text-sm">{reply.text}</div>
+                    <div className="text-sm">{text}</div>
                     <div className="mt-3">
                         <EngagementBar
                             object={reply}

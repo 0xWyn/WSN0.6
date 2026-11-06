@@ -2,18 +2,32 @@ export const normalisePosts = (posts, prev) => {
     const map = { ...prev };
 
     posts.forEach((post) => {
+        const existingPost = map.posts[post._id] || {};
+
+        const author = post.author
+            ? post.author._id || post.author
+            : existingPost.author;
+
         map.posts = {
             ...map.posts,
-            [post._id]: { ...post, author: post.author._id },
-        };
-
-        map.users = {
-            ...map.users,
-            [post.author._id]: {
-                ...map.users[post.author._id],
-                ...post.author,
+            [post._id]: {
+                ...existingPost,
+                ...post,
+                author,
             },
         };
+
+        if (post.author && typeof post.author === "object") {
+            const authorId = post.author._id;
+
+            map.users = {
+                ...map.users,
+                [authorId]: {
+                    ...map.users[authorId],
+                    ...post.author,
+                },
+            };
+        }
     });
 
     return map;

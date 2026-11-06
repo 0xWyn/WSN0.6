@@ -9,7 +9,7 @@ export default function TransferWarningModal({ onCancel, onAccept }) {
     ];
     return createPortal(
         <div
-            className="fixed inset-0 z-[101] flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-md"
+            className="fixed inset-0 z-[101] flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-xs"
             onMouseDown={(e) => {
                 if (e.target === e.currentTarget) onCancel();
             }}

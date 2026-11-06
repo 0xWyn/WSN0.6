@@ -10,14 +10,23 @@ import ClanContentSkeleton from "./ClanContentSkeleton.jsx";
 import ClanExitModal from "./ClanExitModal.jsx";
 import ClanMenu from "./ClanMenu.jsx";
 import { IdentityBadge } from "./IdentityBadge.jsx";
+import { useClanSettings } from "../hooks/useClanSettings.js";
+import LeadershipRequest from "./LeadershipRequest.jsx";
+import { useCurrentUser } from "../../auth/hooks/useCurrentUser.js";
+import { useClanManagement } from "../context/ClanManagementProvider.jsx";
 
 export default function ClanContent() {
-    const [showCreationModal, setShowCreationModal] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
     const [showClanMenu, setShowClanMenu] = useState(false);
     const menuRef = useRef(null);
 
-    const { activeClan, loadingClans, showExitModal, setShowExitModal } =
-        useClan();
+    const { activeClan: clan, loadingClans, showExitModal } = useClan();
+    const { clanTransferRequest } = useClanManagement();
+    const auth = useCurrentUser();
+
+    const { fetchPendingTransfer, loadingClanSettings } = useClanSettings(
+        clan?._id
+    );
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -25,19 +34,37 @@ export default function ClanContent() {
                 setShowClanMenu(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
-    const clan = activeClan;
+    useEffect(() => {
+        if (!clan?._id) return;
+        fetchPendingTransfer(auth?._id);
+    }, [clan?._id, auth?._id]);
 
     const { isMember } = useClanAccess(clan);
 
-    if (loadingClans.activeClan) return <ClanContentSkeleton />;
+    const [showClanTransfer, setShowClanTransfer] = useState(false);
+
+    useEffect(() => {
+        setShowClanTransfer(
+            Boolean(
+                clanTransferRequest &&
+                clanTransferRequest.clan._id === clan._id &&
+                clanTransferRequest.targetUser._id === auth._id
+            )
+        );
+    }, [clanTransferRequest]);
+
+    useEffect(() => {
+        console.log(showClanTransfer);
+    }, [showClanTransfer]);
+
+    if (loadingClans.activeClan || loadingClanSettings.fetchPendingTransfer)
+        return <ClanContentSkeleton />;
 
     return (
         <div className="min-h-0 bg-[#f8fafc] w-full">
@@ -47,42 +74,61 @@ export default function ClanContent() {
                 <div className="absolute bottom-0 right-0 size-[32rem] rounded-full bg-sky-100/30 blur-3xl" />
             </div>
 
-            {showCreationModal && (
+            {showAddModal && (
                 <div className="fixed w-full h-full bg-slate-950/50 backdrop-blur-xs z-50 inset-0 flex items-center justify-center">
                     <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200">
                         <CreatePost
-                            closeModal={() => setShowCreationModal(false)}
+                            closeModal={() => setShowAddModal(false)}
                             clan={clan}
                         />
                     </div>
                 </div>
             )}
 
+            {showClanTransfer && (
+                <LeadershipRequest onClose={() => setShowClanTransfer(false)} />
+            )}
             {/* Nav */}
             <div className="sticky top-0 flex items-center z-30 justify-between border-b border-white/60 bg-white/60 pr-4 backdrop-blur-xl">
                 <div className="flex items-center">
                     <LocNav current={clan?.name} />
                     <IdentityBadge clan={clan} />
                 </div>
+                <div className="flex items-center gap-2">
+                    {isMember && (
+                        <button
+                            type="button"
+                            onClick={() => setShowAddModal((prev) => !prev)}
+                            className="relative group size-10 rounded-2xl flex items-center gap-2 justify-center bg-slate-100 hover:bg-slate-50 transition duration-300 group"
+                        >
+                            <div className="size-4 flex items-center justify-center group-hover:scale-105 group-hover:text-slate-800 transition-all duration-300">
+                                <Pencil />
+                            </div>
 
-                <div ref={menuRef} className="flex gap-2">
-                    {/* Clan Menu */}
-                    {showClanMenu && (
-                        <div className="absolute right-4 top-15 rounded-[14px]">
-                            <ClanMenu clan={clan} />
-                        </div>
+                            <span className="absolute w-20 top-11 opacity-0 sm:block group-hover:opacity-100 transition-all duration-300 text-xs bg-white/50 border-white rounded-[20px] p-2 shadow-md text-slate-500 z-100">
+                                Create post
+                            </span>
+                        </button>
                     )}
+                    <div ref={menuRef} className="flex gap-2">
+                        {/* Clan Menu */}
+                        {showClanMenu && (
+                            <div className="absolute right-4 top-15 rounded-[14px]">
+                                <ClanMenu clan={clan} />
+                            </div>
+                        )}
 
-                    <button
-                        disabled={!isMember}
-                        type="button"
-                        onClick={() => setShowClanMenu((prev) => !prev)}
-                        className="group flex items-center gap-2"
-                    >
-                        <div className="p-2 rounded-[14px] bg-slate-50 hover:bg-slate-100/70  text-slate-600  group-hover:scale-105 group-hover:text-slate-800 transition-all duration-300">
-                            <Bars3 />
-                        </div>
-                    </button>
+                        <button
+                            disabled={!isMember}
+                            type="button"
+                            onClick={() => setShowClanMenu((prev) => !prev)}
+                            className="group flex items-center gap-2"
+                        >
+                            <div className="p-2 rounded-[14px] bg-slate-50 hover:bg-slate-100/70 text-slate-600 group-hover:scale-105 group-hover:text-slate-800 transition-all duration-300">
+                                <Bars3 />
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -167,36 +213,7 @@ export default function ClanContent() {
                     <div className="mt-6 grid px-4 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
                         <main className="min-w-0">
                             {/* Composer */}
-                            {isMember && (
-                                <div className="mb-5 flex w-full items-center gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            setShowCreationModal(
-                                                (prev) => !prev
-                                            )
-                                        }
-                                        className="relative group h-10 w-10 p-2 rounded-2xl flex items-center gap-2 justify-center bg-slate-100  border border-slate-200 bg-white text-sm font-medium shadow-sm hover:border-slate-300 hover:shadow-md transition duration-300 mr-2"
-                                    >
-                                        <div className="size-4 transition-transform group-hover:-rotate-6 flex items-center justify-center">
-                                            <Pencil />
-                                        </div>
 
-                                        <span className="absolute w-20 top-11 opacity-0 sm:block group-hover:opacity-100 transition-all duration-300 text-xs bg-white/50 border-white rounded-[20px] p-2 shadow-md text-slate-500 z-100">
-                                            Create post
-                                        </span>
-                                    </button>
-
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-800">
-                                            Share something with {clan.name}
-                                        </p>
-                                        <p className="mt-0 5 text-xs text-slate-400">
-                                            Start a conversation with the clan
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
                             <ClanFeed />
                         </main>
 

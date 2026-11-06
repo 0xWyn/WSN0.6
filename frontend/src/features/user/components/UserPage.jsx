@@ -20,7 +20,7 @@ export default function UserPage({ readOnly = false }) {
 
     useEffect(() => {
         fetchUserPosts(1, id);
-    }, [id]);
+    }, [id, fetchUserPosts]);
 
     useEffect(() => {
         return () => {

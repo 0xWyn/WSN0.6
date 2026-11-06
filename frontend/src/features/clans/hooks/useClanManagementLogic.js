@@ -46,16 +46,9 @@ export const useClanManagementLogic = (membershipId) => {
     const handleKick = async () => {
         try {
             console.log("Kicking");
-            const {
-                data: { msg, membership },
-            } = await kickMember(clanId, membershipId);
+            const { data } = await kickMember(membershipId);
 
-            console.log(msg);
-            setMembers((prev) => {
-                const map = { ...prev };
-                delete map[membershipId];
-                return map;
-            });
+            console.log(data);
         } catch (error) {
             console.log(error);
             console.log(error.response.data);

@@ -6,9 +6,7 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
-
         text: String,
-
         media: [
             {
                 type: {
@@ -19,19 +17,20 @@ const postSchema = new mongoose.Schema(
                 url: { type: String, required: true },
             },
         ],
-
-        likes: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
-
+        likeCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        replyCount: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
         clan: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Clan",
         },
-
         metadata: {
             type: mongoose.SchemaTypes.Mixed,
             default: {},

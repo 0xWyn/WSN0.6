@@ -9,6 +9,10 @@ export const ClanManagementProvider = ({ children }) => {
     const [leaders, setLeaders] = useState([]);
     const [hasMore, setHasMore] = useState(false);
 
+    const [pendingOwnershipTransfer, setPendingOwnershipTransfer] =
+        useState(null);
+    const [clanTransferRequest, setClanTransferRequest] = useState(null);
+
     return (
         <ClanManagementContext.Provider
             value={{
@@ -20,6 +24,10 @@ export const ClanManagementProvider = ({ children }) => {
                 setHasMore,
                 leaders,
                 setLeaders,
+                pendingOwnershipTransfer,
+                setPendingOwnershipTransfer,
+                clanTransferRequest,
+                setClanTransferRequest,
             }}
         >
             {children}

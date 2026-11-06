@@ -31,7 +31,7 @@ export default function ClanDomain({ onEdit, abort }) {
                     <h3 className="text-slate-700 text-sm font-medium">
                         Domain
                     </h3>
-                    <p className="mt-1 text-xs tracking-wide leading-5 text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500">
                         Helps people discover what your clan is about.
                     </p>
                 </div>

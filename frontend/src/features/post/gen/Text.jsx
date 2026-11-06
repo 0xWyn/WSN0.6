@@ -1,7 +1,7 @@
-export default function Text({ text, size = "md" }) {
+export default function Text({ text }) {
     return (
-        <div>
-            <p className={`text-${size} leading-8 text-slate-700`}>{text}</p>
-        </div>
+        <p className={`text-[12px] tracking-wide leading-6 text-slate-700`}>
+            {text}
+        </p>
     );
 }

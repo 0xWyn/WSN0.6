@@ -22,14 +22,7 @@ export const fetchReplies = async (req, res) => {
             parentComment: commentId,
         })
             .populate("author", "username avatar")
-            .populate({
-                path: "replyTo",
-                select: "text author",
-                populate: {
-                    path: "author",
-                    select: "username name avatar",
-                },
-            });
+            .populate("mention", "username avatar");
         res.status(200).json(replies);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -39,6 +32,7 @@ export const fetchReplies = async (req, res) => {
 export const createComment = async (req, res) => {
     try {
         const { text, parentPost, parentComment, replyTo } = req.body;
+
         const comment = await Comment.create({
             text,
             author: req.user._id,
@@ -47,25 +41,21 @@ export const createComment = async (req, res) => {
             replyTo,
         });
 
-        const parentCommentUpdate = parentComment
-            ? await Comment.findByIdAndUpdate(
-                  parentComment,
-                  {
-                      $addToSet: { replies: comment._id },
-                  },
-                  { returnDocument: "after" }
-              )
-            : null;
+        const parentCommentUpdate = await Comment.findByIdAndUpdate(
+            parentComment,
+            {
+                $inc: { replyCount: 1 },
+            },
+            { returnDocument: "after" }
+        );
 
-        const replyToUpdate = replyTo
-            ? await Comment.findByIdAndUpdate(
-                  replyTo,
-                  {
-                      $addToSet: { replies: comment._id },
-                  },
-                  { returnDocument: "after" }
-              )
-            : null;
+        const replyToUpdate = await Comment.findByIdAndUpdate(
+            replyTo,
+            {
+                $inc: { replyCount: 1 },
+            },
+            { returnDocument: "after" }
+        );
 
         const postUpdate = await Post.findByIdAndUpdate(
             parentPost,
@@ -89,16 +79,13 @@ export const createComment = async (req, res) => {
 
         io.emit("new_comment", comment);
 
-        if (parentComment) {
-            await parentCommentUpdate.populate("author", "username avatar");
-
+        parentCommentUpdate &&
+            (await parentCommentUpdate.populate("author", "username avatar")) &&
             io.emit("updated_comment", parentCommentUpdate);
-        }
 
-        if (replyTo) {
-            await replyToUpdate.populate("author", "username avatar");
+        replyToUpdate &&
+            (await replyToUpdate.populate("author", "username avatar")) &&
             io.emit("updated_comment", replyToUpdate);
-        }
 
         await postUpdate.populate("author", "username avatar");
 

@@ -12,8 +12,8 @@ import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getGlobalPosts);
-router.get("/clan/:clanId", getClanPosts);
+router.get("/", protect, getGlobalPosts);
+router.get("/clan/:clanId", protect, getClanPosts);
 router.post("/", protect, createPost);
 router.delete("/:postId", protect, deletePost);
 router.patch("/:postId/like", protect, toggleLike);

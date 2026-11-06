@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useEntityActions } from "../../global/useEntityActions";
 import {
-    acceptRequest,
+    acceptJoinRequest,
+    acceptOwnershipTransferRequest,
     getClanLeaders,
     getClanRequests,
     getMembers,
+    getTransferRequest,
     rejectRequest,
+    rejvokeOwnershipTransferRequest,
     toggleClanDelete,
 } from "../api/clanApis";
 import { useClanManagement } from "../context/ClanManagementProvider";
@@ -13,14 +16,21 @@ import { upsertMembers } from "../helpers/upsertMembers";
 
 export const useClanSettings = (clanId) => {
     const { mergeUsers } = useEntityActions();
-    const { setMembers, setHasMore, setRequests, setLeaders } =
-        useClanManagement();
+    const {
+        setMembers,
+        setHasMore,
+        setRequests,
+        setLeaders,
+        setPendingOwnershipTransfer,
+        setClanTransferRequest,
+    } = useClanManagement();
 
     const [loadingClanSettings, setLoadingClanSettings] = useState({
         fetchMembers: true,
         fetchLeaders: false,
         fetchRequests: true,
         handleRequests: true,
+        fetchPendingTransfer: true,
     });
 
     const fetchClanMembers = async (page) => {
@@ -83,6 +93,11 @@ export const useClanSettings = (clanId) => {
         }
     };
 
+    const checkReviewRequest = async () => {
+        try {
+        } catch (error) {}
+    };
+
     const handleAcceptRequest = async (reqId) => {
         try {
             setLoadingClanSettings((prev) => ({
@@ -90,8 +105,8 @@ export const useClanSettings = (clanId) => {
                 handleRequest: true,
             }));
 
-            const { data } = await acceptRequest(clanId, reqId);
-            console.log(data.msg);
+            const { data } = await acceptJoinRequest(reqId);
+            console.log(data);
             setRequests((prev) => prev.filter((r) => r._id !== reqId));
         } catch (error) {
             console.log(error?.response?.data);
@@ -113,7 +128,6 @@ export const useClanSettings = (clanId) => {
             const { data } = await rejectRequest(clanId, reqId);
 
             console.log(data.msg);
-            setRequests((prev) => prev.filter((r) => r._id !== reqId));
         } catch (error) {
             console.error(error?.response?.data);
         } finally {
@@ -133,6 +147,75 @@ export const useClanSettings = (clanId) => {
         }
     };
 
+    const fetchPendingTransfer = async (userId) => {
+        try {
+            const res = await getTransferRequest(clanId);
+            if (res.status === 204) return;
+
+            const { data } = res;
+
+            if (data.targetUser._id === userId) {
+                console.log("Is targetUser");
+                setClanTransferRequest(data);
+            } else if (data.clan.founder === userId) {
+                console.log("Is acting user");
+                setPendingOwnershipTransfer(data);
+            } else {
+                console.log("No valid credentials");
+
+                return;
+            }
+        } catch (error) {
+            console.error(error);
+            console.log(error?.response?.data);
+        } finally {
+            setLoadingClanSettings((prev) => ({
+                ...prev,
+                fetchPendingTransfer: false,
+            }));
+        }
+    };
+
+    const handleAcceptOwnershipTransfer = async (reqId) => {
+        try {
+            setLoadingClanSettings((prev) => ({
+                ...prev,
+                fetchPendingTransfer: true,
+            }));
+            const { data } = await acceptOwnershipTransferRequest(reqId);
+            console.log(data);
+
+            setClanTransferRequest(null);
+        } catch (error) {
+            console.log(error.response.data);
+        } finally {
+            setLoadingClanSettings((prev) => ({
+                ...prev,
+                fetchPendingTransfer: true,
+            }));
+        }
+    };
+
+    const handleRejvokeOwnershipTransfer = async (reqId) => {
+        try {
+            setLoadingClanSettings((prev) => ({
+                ...prev,
+                fetchPendingTransfer: true,
+            }));
+            const { data } = await rejvokeOwnershipTransferRequest(reqId);
+            console.log(data);
+
+            setClanTransferRequest(null);
+        } catch (error) {
+            console.log(error.response.data);
+        } finally {
+            setLoadingClanSettings((prev) => ({
+                ...prev,
+                fetchPendingTransfer: true,
+            }));
+        }
+    };
+
     return {
         fetchClanMembers,
         fetchClanRequests,
@@ -141,5 +224,8 @@ export const useClanSettings = (clanId) => {
         handleAcceptRequest,
         handleRejectRequest,
         handleClanDeletion,
+        fetchPendingTransfer,
+        handleAcceptOwnershipTransfer,
+        handleRejvokeOwnershipTransfer,
     };
 };

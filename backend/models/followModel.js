@@ -2,8 +2,11 @@ import mongoose from "mongoose";
 
 const followSchema = new mongoose.Schema(
     {
-        following: { type: mongoose.Schema.Types.ObjectId, required: true },
-        followers: {
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        follower: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
@@ -17,14 +20,14 @@ const followSchema = new mongoose.Schema(
 
 followSchema.index(
     {
+        user: 1,
         follower: 1,
-        following: 1,
     },
     { unique: true }
 );
 
 followSchema.index({
-    following: 1,
+    follower: 1,
     createdAt: -1,
 });
 

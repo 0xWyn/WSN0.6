@@ -44,7 +44,7 @@ export const useComments = (postId) => {
         loadComments();
     }, [postId]);
 
-    const fetchReplying = (id) => {
+    const fetchMention = (id) => {
         return entities?.users[entities?.comments?.[id]?.author];
     };
 
@@ -127,6 +127,6 @@ export const useComments = (postId) => {
         loadingComments,
         loadReplies,
         getCommentCount,
-        fetchReplying,
+        fetchMention,
     };
 };

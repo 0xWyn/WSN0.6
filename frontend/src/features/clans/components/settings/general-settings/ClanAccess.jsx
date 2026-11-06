@@ -50,7 +50,7 @@ export default function ClanAccess({ onEdit, abort }) {
                         Who can join
                     </h3>
 
-                    <p className="mt-1 text-xs tracking-wide leading-5 text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500">
                         Choose how new members enter your clan.
                     </p>
                 </div>

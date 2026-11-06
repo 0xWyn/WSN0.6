@@ -39,15 +39,15 @@ export const useAuthLogic = (
         } catch (error) {
             console.error(error);
         } finally {
-            setEntities((prev) => ({
-                ...prev,
+            setEntities({
                 users: {},
                 chats: {},
                 messages: {},
                 comments: {},
                 posts: {},
                 clans: {},
-            }));
+                notifications: {},
+            });
             setCurrentUser(null);
             setMyClanIds([]);
             navigate("/login");

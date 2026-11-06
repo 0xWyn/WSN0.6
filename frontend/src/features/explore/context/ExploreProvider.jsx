@@ -19,9 +19,10 @@ export const ExploreProvider = ({ children }) => {
     useEffect(() => {
         const fetchClansByCategory = async () => {
             try {
+                console.log("Running useExplore");
+
                 setLoadingExplore(true);
                 const { data } = await getExploreSections();
-
                 setEntities((prev) => upsertClans(data, prev));
             } catch (error) {
                 console.error(error);

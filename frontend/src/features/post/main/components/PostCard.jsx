@@ -41,8 +41,6 @@ export default function PostCard({ post }) {
         setShowMenu((prev) => !prev);
     };
 
-    const { handleDeletePost } = usePostActions();
-
     return (
         <article className="group relative w-full overflow-hidden rounded-[24px] bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100">
             <div className="p-6">
@@ -75,11 +73,7 @@ export default function PostCard({ post }) {
 
                 {/* Content */}
                 <div className="mt-4">
-                    {text && (
-                        <div className="text-[12px] tracking-wide leading-6 text-slate-700">
-                            {text}
-                        </div>
-                    )}
+                    {text && <Text text={text} />}
                     {media?.length > 0 && (
                         <div className="mt-4 overflow-hidden rounded-[28px] border border-white/50">
                             <Media media={media} />
@@ -90,7 +84,7 @@ export default function PostCard({ post }) {
                 {/* Engagement */}
                 <div className="mt-4 border-t border-slate-100 pt-2">
                     <EngagementBar
-                        object={post}
+                        entity={post}
                         type="post"
                         onCommentClick={handleOpenPost}
                     />

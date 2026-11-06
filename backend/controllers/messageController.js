@@ -1,6 +1,7 @@
 import Chat from "../models/chatModel.js";
 import Message from "../models/messageModel.js";
-import { io, isUserViewingChat } from "../server.js";
+import { io } from "../server.js";
+import { isUserViewingChat } from "../socket/socketState.js";
 
 export const createMessage = async (req, res) => {
     try {

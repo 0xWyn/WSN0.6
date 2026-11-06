@@ -1,10 +1,13 @@
 import PostContainer from "../../feed/components/PostContainer";
 import { useFeed } from "../../feed/context/FeedProvider";
+import { useFeedRoom } from "../../feed/socket/useFeedRoom";
 import { useFeedSocket } from "../../feed/socket/useFeedSocket";
 
 export default function UserFeed({ userId }) {
     const { queries } = useFeed();
-    useFeedSocket(userId);
+
+    useFeedRoom("user", userId);
+    useFeedSocket();
 
     const posts = queries.postsByUser?.[userId] ?? [];
 

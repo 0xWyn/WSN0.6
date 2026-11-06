@@ -5,11 +5,13 @@ import { useFeedSocket } from "../socket/useFeedSocket";
 import PostContainer from "./PostContainer";
 import PostSkeleton from "./PostSkeleton";
 import { useEffect, useRef } from "react";
+import { useFeedRoom } from "../socket/useFeedRoom";
 
 export default function ClanFeed() {
     const { id } = useParams();
+    useFeedRoom("clan", id);
 
-    useFeedSocket(id);
+    useFeedSocket();
 
     const { fetchClanPosts } = useFeedPosts();
     const { feedLoad, queries } = useFeed();
@@ -20,7 +22,7 @@ export default function ClanFeed() {
         if (!id) return;
 
         fetchClanPosts("1", id);
-    }, [id]);
+    }, [id, fetchClanPosts]);
 
     if (feedLoad.clan)
         return (

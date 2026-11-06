@@ -17,17 +17,28 @@ export default function Members() {
 
         fetchedFor.current = id;
         fetchClanMembers(1);
-        fe;
     }, [id]);
 
     const { members, hasMore } = useClanManagement();
     if (loadingClanSettings.fetchMembers) return <div>Loading...</div>;
 
+    const founder = Object.values(members).find(
+        (membership) => membership.role === "founder"
+    );
+
     return (
         <div className="flex flex-col gap-2 overflow-y-auto h-full">
-            {Object.values(members).map((membership) => (
-                <MemberCard key={membership._id} member={membership} />
-            ))}
+            <div className="mb-2">
+                <MemberCard member={founder} />
+
+                <div className="border-b border-slate-100 mt-2 mx-2" />
+                {/* <div className="border-b border-slate-400 mt-1" /> */}
+            </div>
+            {Object.values(members)
+                .filter((membership) => membership._id !== founder._id)
+                .map((membership) => (
+                    <MemberCard key={membership._id} member={membership} />
+                ))}
         </div>
     );
 }
