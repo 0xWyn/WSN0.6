@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { useSearchLogic } from "../hooks/useSearchLogic";
 import { MagnifyingGlass } from "../../../components/icons/magnifying-glass";
+import { useExplore } from "../context/ExploreProvider";
 
 export default function SearchBar({ location = "clan-directory" }) {
-    const [term, setTerm] = useState("");
-    const { handleClanDirectorySearch } = useSearchLogic();
+    const { handleClanDirectorySearch, handleSearchExplore } = useSearchLogic();
+    const { searchTerm, setSearchTerm } = useExplore();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!term.trim()) {
+        if (!searchTerm.trim()) {
             return alert("Search field must not be empty");
         }
 
         if (location === "clan-directory") {
-            await handleClanDirectorySearch(term);
+            handleClanDirectorySearch(searchTerm);
+        }
+
+        if (location === "explore") {
+            handleSearchExplore(searchTerm);
         }
     };
     return (
@@ -26,8 +31,8 @@ export default function SearchBar({ location = "clan-directory" }) {
             <input
                 placeholder="Search clans..."
                 className="flex-1 bg-transparent px-2 py-3 outline-none text-slate-900"
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
             />
         </form>
     );

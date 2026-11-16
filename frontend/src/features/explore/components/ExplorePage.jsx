@@ -11,9 +11,11 @@ import SearchBar from "./SearchBar.jsx";
 import { useClan } from "../../clans/context/ClanProvider.jsx";
 import { useEntities } from "../../global/EntityProvider.jsx";
 import { updateClanDomain } from "../../clans/helpers/updateClanEntities.js";
+import { useEffect } from "react";
 
 export default function ExplorePage() {
     const [selectedDomain, setSelectedDomain] = useState("all");
+
     const { results, loadingExplore } = useExplore();
 
     const { entities } = useEntities();
@@ -60,7 +62,7 @@ export default function ExplorePage() {
                             </p>
 
                             <div className="w-full px-20 max-w-[480px]">
-                                <SearchBar />
+                                <SearchBar location="explore" />
                             </div>
                         </div>
 
@@ -108,12 +110,6 @@ export default function ExplorePage() {
                                     clanIds={clansByDomain?.[domain.name] ?? []}
                                 />
                             ))
-                        )}
-
-                        {results && (
-                            <div className="space-y-6 absolute z-20 w-full h-full bg-[#f8fafc]/10 backdrop-blur-lg top-0 rounded-xl shadow-[0_10px_40px_rgba(10, 10, 10, 0.5)] p-8">
-                                <ResultsContainer />
-                            </div>
                         )}
                     </div>
                 </div>

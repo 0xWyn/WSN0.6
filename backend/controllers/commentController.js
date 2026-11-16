@@ -80,12 +80,17 @@ export const createComment = async (req, res) => {
         io.emit("new_comment", comment);
 
         parentCommentUpdate &&
-            (await parentCommentUpdate.populate("author", "username avatar")) &&
-            io.emit("updated_comment", parentCommentUpdate);
+            io
+                .to(postUpdate.clan.toString())
+                .emit("updated_comment", {
+                    _id: parentComment._id,
+                    replyCount: parentComment.replyCount,
+                });
 
         replyToUpdate &&
-            (await replyToUpdate.populate("author", "username avatar")) &&
-            io.emit("updated_comment", replyToUpdate);
+            io
+                .to(postUpdate.clan.toString())
+                .emit("updated_comment", replyToUpdate);
 
         await postUpdate.populate("author", "username avatar");
 

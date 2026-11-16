@@ -3,6 +3,7 @@ import Post from "../models/postModel.js";
 import { io } from "../server.js";
 import { deleteCloudinaryAsset } from "../utils/deleteCloudinaryAsset.js";
 import Follow from "../models/followModel.js";
+import { userNotificationService } from "../helpers/notificationService.js";
 
 export const getUsers = async (req, res) => {
     try {
@@ -57,6 +58,76 @@ export const getPostsByUserId = async (req, res) => {
 
 export const addFollow = async (req, res) => {
     try {
+        const { _id: userId, username, avatar } = req.user;
+        const { targetId } = req.params;
+
+        if (userId.toString() === targetId)
+            return res
+                .status(400)
+                .json({ error: "You cannot follow yourself." });
+
+        const targetUser = await User.findById(targetId);
+
+        if (!targetUser)
+            return res.status(404).json({ error: "User not found" });
+
+        const filter = {
+            user: targetId,
+            follower: userId,
+        };
+
+        const session = await mongoose.startSession();
+
+        let alreadyFollowing = false;
+        try {
+            await session.withTransaction(async () => {
+                const existingFollow =
+                    await Follow.findOne(filter).session(session);
+
+                if (existingFollow) {
+                    alreadyFollowing = true;
+                    return;
+                }
+
+                await Follow.create([filter], { session });
+
+                await User.updateOne(
+                    { _id: userId },
+                    { $inc: { followingCount: 1 } },
+                    { session }
+                );
+
+                await User.updateOne(
+                    { _id: targetId },
+                    { $inc: { followerCount: 1 } },
+                    { session }
+                );
+            });
+        } finally {
+            await session.endSession();
+        }
+
+        if (alreadyFollowing) {
+            return res
+                .status(200)
+                .json({ msg: "You already follow this user." });
+        }
+
+        const notification = await userNotificationService(
+            "follow",
+            userId,
+            targetId,
+            {
+                username,
+                avatar: avatar?.url,
+            }
+        );
+
+        io.to(targetId).emit("notification", notification);
+
+        return res.status(201).json({
+            msg: `You are now following @${targetUser.username}.`,
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -64,7 +135,70 @@ export const addFollow = async (req, res) => {
 
 export const removeFollow = async (req, res) => {
     try {
-    } catch (error) {}
+        const { _id: userId } = req.user;
+        const { targetId } = req.params;
+
+        if (userId.toString() === targetId)
+            return res.status(400).json({ error: "Invalid request." });
+
+        const targetUser = await User.findById(targetId);
+
+        if (!targetUser)
+            return res.status(404).json({ error: "Users not found" });
+
+        const filter = {
+            user: targetId,
+            follower: userId,
+        };
+
+        const session = await mongoose.startSession();
+
+        let following = true;
+        try {
+            await session.withTransaction(async () => {
+                const existingFollow =
+                    await Follow.findOne(filter).session(session);
+
+                if (!existingFollow) {
+                    following = false;
+                    return;
+                }
+
+                const deletedFollow = await Follow.findOneAndDelete(filter, {
+                    session,
+                });
+
+                if (!deletedFollow) {
+                    throw new Error("Could not remove follow.");
+                }
+
+                await User.updateOne(
+                    { _id: userId },
+                    { $inc: { followingCount: -1 } },
+                    { session }
+                );
+
+                await User.updateOne(
+                    { _id: targetId },
+                    { $inc: { followerCount: -1 } },
+                    { session }
+                );
+            });
+        } finally {
+            await session.endSession();
+        }
+
+        if (!following)
+            return res
+                .status(400)
+                .json({ error: "You are not following this user" });
+
+        return res.status(200).json({
+            msg: `You are no longer following @${targetUser.username}.`,
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 export const editProfile = async (req, res) => {

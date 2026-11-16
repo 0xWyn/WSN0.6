@@ -3,17 +3,18 @@ import { INTEREST_DOMAINS } from "../../../config/interestDomains";
 import { upsertClans } from "../../clans/helpers/updateClanEntities";
 import { useSetEntities } from "../../global/EntityProvider";
 import { getExploreSections } from "../apis/exploreApis";
+import { useNavigate } from "react-router-dom";
 
 const ExploreContext = createContext(null);
 
 export const ExploreProvider = ({ children }) => {
+    const navigate = useNavigate();
+
     const [results, setResults] = useState(null);
     const [searching, setSearching] = useState(false);
     const [loadingExplore, setLoadingExplore] = useState(false);
-
-    const [clansByDomain, setClansByDomain] = useState(
-        Object.fromEntries(INTEREST_DOMAINS.map(({ name }) => [name, []]))
-    );
+    const [searchTerm, setSearchTerm] = useState("");
+    const [activeSection, setActiveSection] = useState("posts");
     const { setEntities } = useSetEntities();
 
     useEffect(() => {
@@ -34,6 +35,10 @@ export const ExploreProvider = ({ children }) => {
         fetchClansByCategory();
     }, []);
 
+    useEffect(() => {
+        searching && navigate("search");
+    }, [searching]);
+
     return (
         <ExploreContext.Provider
             value={{
@@ -41,9 +46,11 @@ export const ExploreProvider = ({ children }) => {
                 setResults,
                 searching,
                 setSearching,
-                clansByDomain,
-                setClansByDomain,
                 loadingExplore,
+                searchTerm,
+                setSearchTerm,
+                activeSection,
+                setActiveSection,
             }}
         >
             {children}

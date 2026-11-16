@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function LocNav({ current, redirect = true }) {
     const navigate = useNavigate();
     return (
-        <div className="relative h-14 flex flex-1 min-w-0 shrink-0 items-center gap-3 overflow-hidden border border-white/10 !bg-white/20 px-4">
+        <div className="relative h-14 flex flex-1 min-w-0 shrink-0 items-center gap-3 overflow-hidden border border-white/10 px-4">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.9))]" />
             {redirect && (
                 <button

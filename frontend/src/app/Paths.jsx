@@ -59,6 +59,9 @@ const NotificationPage = lazy(
     () => import("../features/notification/components/NotificationPage.jsx")
 );
 import FullscreenLoader from "../components/ui/FullscreenLoader.jsx";
+const SearchPage = lazy(
+    () => import("../features/explore/components/SearchPage.jsx")
+);
 
 export default function Paths() {
     return (
@@ -120,6 +123,7 @@ export default function Paths() {
                         />
                         <Route path="user/:id" element={<UserPage />} />
                         <Route path="explore" element={<Explore />} />
+                        <Route path="search" element={<SearchPage />} />
                     </Route>
                 </Route>
             </Routes>

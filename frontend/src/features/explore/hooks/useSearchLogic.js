@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getClans } from "../apis/searchApis";
+import { getClans, searchExplore } from "../apis/searchApis";
 import { useExplore } from "../context/ExploreProvider";
 
 export const useSearchLogic = () => {
@@ -18,5 +18,18 @@ export const useSearchLogic = () => {
         }
     };
 
-    return { handleClanDirectorySearch };
+    const handleSearchExplore = async (query) => {
+        try {
+            setResults(null);
+            setSearching(true);
+            const { data } = await searchExplore(query);
+            setResults(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    return { handleClanDirectorySearch, handleSearchExplore };
 };
