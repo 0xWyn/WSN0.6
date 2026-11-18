@@ -29,7 +29,7 @@ export const postNotificationService = async (
         metadata,
     });
 
-export const userNotificationService = async (
+export const followNotificationService = async (
     event,
     actorId,
     receiver,
@@ -38,7 +38,7 @@ export const userNotificationService = async (
     Notification.create({
         event,
         entity: actorId,
-        entityModel: "User",
+        entityModel: "Follow",
         receiver,
         metadata,
     });

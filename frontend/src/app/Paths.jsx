@@ -62,6 +62,18 @@ import FullscreenLoader from "../components/ui/FullscreenLoader.jsx";
 const SearchPage = lazy(
     () => import("../features/explore/components/SearchPage.jsx")
 );
+const UserNetwork = lazy(
+    () => import("../features/user/components/UserNetwork.jsx")
+);
+const FollowerPage = lazy(
+    () => import("../features/user/components/FollowerPage.jsx")
+);
+const FollowingPage = lazy(
+    () => import("../features/user/components/FollowingPage.jsx")
+);
+const FalsePage = lazy(
+    () => import("../features/user/components/FalsePage.jsx")
+);
 
 export default function Paths() {
     return (
@@ -121,7 +133,19 @@ export default function Paths() {
                             path="notifications"
                             element={<NotificationPage />}
                         />
-                        <Route path="user/:id" element={<UserPage />} />
+                        <Route path="user/:id">
+                            <Route index element={<UserPage />} />
+                            <Route path="network" element={<UserNetwork />}>
+                                <Route
+                                    path="following"
+                                    element={<FollowingPage />}
+                                />
+                                <Route
+                                    path="followers"
+                                    element={<FollowerPage />}
+                                />
+                            </Route>
+                        </Route>
                         <Route path="explore" element={<Explore />} />
                         <Route path="search" element={<SearchPage />} />
                     </Route>

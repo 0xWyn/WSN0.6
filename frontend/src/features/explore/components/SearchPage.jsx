@@ -20,8 +20,11 @@ export default function SearchPage() {
 
     const categories = ["top", "clans", "posts", "users", "comments"];
 
+    useEffect(() => {
+        console.log(activeSection);
+    }, [activeSection]);
     return (
-        <div className="bg-[#f8fafc] min-h-screen w-full">
+        <div className="bg-[#f8fafc] min-h-screen w-full flex flex-col">
             {/* Decorative background */}
             <div className="pointer-events-none fixed z-0 inset-0 overflow-hidden">
                 <div className="absolute left-80 lg:left-1/4 top-0 size-[26rem] lg:size-[40rem] rounded-full bg-amber-200/15 blur-3xl" />
@@ -48,7 +51,7 @@ export default function SearchPage() {
                                 <>
                                     <button
                                         key={index}
-                                        className={`${activeSection === cat ? "text-slate-950 font-bold border rounded-full py-0.5 px-2" : " text-slate-500 !font-medium"} transition-all duration-200 uppercase text-sm`}
+                                        className={`${activeSection === cat ? "text-slate-950 font-bold border rounded-full" : " text-slate-500 !font-medium hover:text-slate-700"} transition-all duration-200 uppercase text-sm py-0.5 px-2`}
                                         onClick={() => setActiveSection(cat)}
                                     >
                                         {cat}
@@ -64,10 +67,11 @@ export default function SearchPage() {
                 <p className="text-slate-600">Showing results for</p>
                 <p className="text-blue-600 font-medium">"{searchTerm}"</p>
             </div>
+
             {/* Main */}
-            <div className="px-4 py-6 z-10 flex flex-col gap-2">
+            <div className="px-4 py-2 z-10 flex flex-col gap-2 min-h-0 flex-1">
                 {/* Content */}
-                <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 p-6">
+                <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 p-6 flex-1 min-h-0">
                     {searching && <SearchSkeleton />}
                     {results && <ResultsContainer />}
                 </div>

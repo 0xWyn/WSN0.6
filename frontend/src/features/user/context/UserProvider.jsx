@@ -1,14 +1,29 @@
 import { createContext, useContext, useState } from "react";
-import { useUserSocket } from "../web/useUserSocket";
 
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
     const [isEditing, setIsEditing] = useState(false);
+    const [loadingUser, setLoadingUser] = useState({
+        followers: true,
+        following: true,
+    });
+    const [connections, setConnections] = useState({
+        followers: [],
+        following: [],
+    });
 
-    useUserSocket();
     return (
-        <UserContext.Provider value={{ isEditing, setIsEditing }}>
+        <UserContext.Provider
+            value={{
+                isEditing,
+                setIsEditing,
+                loadingUser,
+                setLoadingUser,
+                connections,
+                setConnections,
+            }}
+        >
             {children}
         </UserContext.Provider>
     );

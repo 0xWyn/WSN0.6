@@ -5,6 +5,7 @@ const notificationSchema = new mongoose.Schema(
             type: String,
             enum: [
                 "follow",
+                "unfollow",
 
                 "post_like",
                 "post_comment",

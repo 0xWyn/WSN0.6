@@ -8,10 +8,22 @@ export const getUser = (userId) => {
     return API.get(`users/${userId}`);
 };
 
-export const toggleFollow = (userId) => {
-    return API.patch(`users/${userId}/follow`);
+export const addFollow = (userId) => {
+    return API.put(`users/${userId}/follow`);
+};
+
+export const removeFollow = (userId) => {
+    return API.delete(`users/${userId}/follow`);
 };
 
 export const patchProfile = (data) => {
     return API.patch(`users/profile`, data);
+};
+
+export const fetchFollowing = (userId) => {
+    return API.get(`users/${userId}/following`);
+};
+
+export const fetchFollowers = (userId) => {
+    return API.get(`users/${userId}/followers`);
 };

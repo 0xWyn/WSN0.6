@@ -10,7 +10,6 @@ export const useProfile = (userId) => {
 
     const user = entities.users?.[userId];
 
-    console.log(user);
     useEffect(() => {
         if (!userId) return;
 

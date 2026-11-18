@@ -14,7 +14,7 @@ export const ExploreProvider = ({ children }) => {
     const [searching, setSearching] = useState(false);
     const [loadingExplore, setLoadingExplore] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [activeSection, setActiveSection] = useState("posts");
+    const [activeSection, setActiveSection] = useState("top");
     const { setEntities } = useSetEntities();
 
     useEffect(() => {

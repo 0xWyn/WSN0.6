@@ -12,7 +12,7 @@ export default function UserEntity({ entity: user }) {
 
     return (
         <div
-            className={`relative w-full flex justify-between rounded-2xl border border-white/70 shadow-[0_5px_10px_rgba(20,10,17,0.04)] bg-white/40 backdrop-blur-md p-2 transition-all duration-300 hover:bg-white/55 hover:shadow-[0_6px_20px_rgba(20,10,17,0.07)]`}
+            className={`relative w-full flex flex-col justify-between rounded-2xl border border-white/70 shadow-[0_5px_10px_rgba(20,10,17,0.04)] bg-white/40 backdrop-blur-md p-4 transition-all duration-300 hover:bg-white/55 hover:shadow-[0_6px_20px_rgba(20,10,17,0.07)]`}
         >
             {/* User */}
             <div className="flex items-center gap-3 w-full">
@@ -39,9 +39,9 @@ export default function UserEntity({ entity: user }) {
 
                 <button
                     onClick={viewAccount}
-                    className="min-w-0 flex-1 text-left rounded-xl py-1 transition-colors"
+                    className="min-w-0 flex-1 text-left rounded-xl py-1 transition-colors w-full"
                 >
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center justify-between gap-2 min-w-0">
                         <span className="truncate text-sm font-medium text-slate-800">
                             {user.name}
                         </span>
@@ -52,13 +52,19 @@ export default function UserEntity({ entity: user }) {
                             </span>
                         )}
                     </div>
-                    <div className="mt-0.5 flex items-center gap-2">
+                    <div className="mt-0.5 flex flex-col gap-2">
                         <span className="truncate text-xs text-slate-500">
                             @{user.username}
                         </span>
                     </div>
                 </button>
             </div>
+
+            {user.bio && (
+                <p className="font-normal text-sm mt-2 text-slate-700">
+                    {user.bio}
+                </p>
+            )}
 
             {/* Menu */}
             {/* {!isCurrentUser && (

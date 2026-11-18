@@ -14,7 +14,8 @@ export default function UserPage({ readOnly = false }) {
     const { loading, user } = useProfile(id);
     const { isEditing, setIsEditing } = useUser();
 
-    useUserSocket();
+    console.log(useUser);
+    useUserSocket(id);
 
     const { fetchUserPosts } = useFeedPosts();
 
@@ -26,7 +27,7 @@ export default function UserPage({ readOnly = false }) {
         return () => {
             setIsEditing(false);
         };
-    }, []);
+    }, [setIsEditing]);
 
     if (loading || !user) {
         return (

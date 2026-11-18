@@ -13,7 +13,7 @@ export default function ClanEntity({ entity: clan }) {
                 setActiveClan(clan);
                 handleOpenClan();
             }}
-            className="group relative overflow-hidden rounded-3xl border border-white/60 bg-white/35 backdrop-blur-2xl p-5 cursor-pointer shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white/50"
+            className="group relative overflow-hidden rounded-3xl border border-white/60 bg-white/65 backdrop-blur-2xl p-5 cursor-pointer shadow-sm transition-all duration-300 hover:bg-white/80 hover:-translate-y-0.5 hover:shadow-[0px_2px_8px_rgba(15,23,100,0.09)]"
         >
             {/* Background accents */}
             <div className="pointer-events-none absolute inset-0">
@@ -37,9 +37,14 @@ export default function ClanEntity({ entity: clan }) {
                     )}
 
                     <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-lg font-semibold text-slate-900">
-                            {clan.name}
+                        <h3 className="truncate text-base font-semibold text-slate-900">
+                            {clan?.name}
                         </h3>
+
+                        <p className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 truncate">
+                            {clan?.description ||
+                                "A place for members to connect, share ideas, and participate in discussions."}
+                        </p>
                     </div>
 
                     <span
@@ -50,21 +55,6 @@ export default function ClanEntity({ entity: clan }) {
                         }`}
                     >
                         {clan.access || "Public"}
-                    </span>
-                </div>
-
-                {/* Description */}
-                <p className="line-clamp-2 text-sm leading-6 text-slate-600">
-                    {clan.description ||
-                        "A place for members to connect, share ideas, and participate in discussions."}
-                </p>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between border-t border-slate-200/50 pt-3">
-                    <span className="text-xs text-slate-500">Community</span>
-
-                    <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
-                        View clan →
                     </span>
                 </div>
             </div>

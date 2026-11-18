@@ -4,6 +4,8 @@ import {
     editProfile,
     getPostsByUserId,
     getUserById,
+    getUserFollowers,
+    getUserFollowing,
     getUsers,
     removeFollow,
 } from "../controllers/userController.js";
@@ -15,6 +17,9 @@ router.get("/:targetId", protect, getUserById);
 router.get("/:userId/posts", getPostsByUserId);
 router.put("/:targetId/follow", protect, addFollow);
 router.delete("/:targetId/follow", protect, removeFollow);
+
+router.get("/:userId/followers", protect, getUserFollowers);
+router.get("/:userId/following", protect, getUserFollowing);
 
 router.patch("/profile", protect, editProfile);
 

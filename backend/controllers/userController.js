@@ -1,9 +1,10 @@
-import User from "../models/userModel.js";
+import mongoose from "mongoose";
+import { followNotificationService } from "../helpers/notificationService.js";
+import Follow from "../models/followModel.js";
 import Post from "../models/postModel.js";
+import User from "../models/userModel.js";
 import { io } from "../server.js";
 import { deleteCloudinaryAsset } from "../utils/deleteCloudinaryAsset.js";
-import Follow from "../models/followModel.js";
-import { userNotificationService } from "../helpers/notificationService.js";
 
 export const getUsers = async (req, res) => {
     try {
@@ -76,9 +77,10 @@ export const addFollow = async (req, res) => {
             follower: userId,
         };
 
-        const session = await mongoose.startSession();
+        const session = await mongoose.connection.startSession();
 
         let alreadyFollowing = false;
+
         try {
             await session.withTransaction(async () => {
                 const existingFollow =
@@ -113,7 +115,9 @@ export const addFollow = async (req, res) => {
                 .json({ msg: "You already follow this user." });
         }
 
-        const notification = await userNotificationService(
+        console.log("Past this point");
+
+        const notification = await followNotificationService(
             "follow",
             userId,
             targetId,
@@ -123,10 +127,24 @@ export const addFollow = async (req, res) => {
             }
         );
 
+        const updatedTarget = await User.findById(targetId);
+        const updatedAuth = await User.findById(userId);
+
         io.to(targetId).emit("notification", notification);
+
+        io.to(`profile:${targetId}`).emit("updated_user", {
+            _id: updatedTarget._id,
+            followerCount: updatedTarget.followerCount,
+        });
+
+        io.to(`profile:${userId}`).emit("updated_user", {
+            _id: updatedAuth._id,
+            followingCount: updatedAuth.followingCount,
+        });
 
         return res.status(201).json({
             msg: `You are now following @${targetUser.username}.`,
+            userUpdate: { _id: targetUser._id, isFollowing: true },
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -184,6 +202,8 @@ export const removeFollow = async (req, res) => {
                     { session }
                 );
             });
+        } catch (error) {
+            console.error(error);
         } finally {
             await session.endSession();
         }
@@ -193,8 +213,21 @@ export const removeFollow = async (req, res) => {
                 .status(400)
                 .json({ error: "You are not following this user" });
 
-        return res.status(200).json({
+        const updatedTarget = await User.findById(targetId);
+        const updatedAuth = await User.findById(userId);
+
+        io.to(`profile:${targetId}`).emit("updated_user", {
+            _id: updatedTarget._id,
+            followerCount: updatedTarget.followerCount,
+        });
+        io.to(`profile:${userId}`).emit("updated_user", {
+            _id: updatedAuth._id,
+            followingCount: updatedAuth.followingCount,
+        });
+
+        return res.status(201).json({
             msg: `You are no longer following @${targetUser.username}.`,
+            userUpdate: { _id: targetUser._id, isFollowing: false },
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -263,5 +296,69 @@ export const editProfile = async (req, res) => {
                 cleanupError
             );
         }
+    }
+};
+
+export const getUserFollowers = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { _id: authId } = req.user;
+
+        const targetUser = await User.findById(userId);
+
+        if (!targetUser) {
+            return res.status(404).json({ error: "Target user not found" });
+        }
+
+        if (targetUser.isPrivate) {
+            if (
+                !Boolean(
+                    await Follow.findOne({ user: userId, follower: authId })
+                )
+            )
+                return res
+                    .status(403)
+                    .json({ error: "This account is private" });
+        }
+
+        const followers = await Follow.find({ user: userId }).populate(
+            "follower",
+            "name username avatar bio"
+        );
+
+        return res.status(200).json(followers);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+export const getUserFollowing = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { _id: authId } = req.user;
+        const targetUser = await User.findById(userId);
+
+        if (!targetUser) {
+            return res.status(404).json({ error: "Target user not found" });
+        }
+
+        if (targetUser.isPrivate) {
+            if (
+                !Boolean(
+                    await Follow.findOne({ user: userId, follower: authId })
+                )
+            )
+                return res
+                    .status(403)
+                    .json({ error: "This account is private" });
+        }
+
+        const following = await Follow.find({ follower: userId });
+
+        return res.status(200).json(following);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message });
     }
 };

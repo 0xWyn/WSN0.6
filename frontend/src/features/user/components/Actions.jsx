@@ -21,11 +21,12 @@ const ActionButton = ({ text, onClick, variant = "primary" }) => {
 };
 
 export default function Actions({ user }) {
+    // Fetch user and update following
     const navigate = useNavigate();
     const auth = useCurrentUser();
     const isOwnProfile = user._id.toString() === auth._id;
     const { setIsEditing } = useUser();
-    const { followUser } = useUserActions(user._id);
+    const { followUser, unfollowUser } = useUserActions(user._id);
 
     const editProfile = () => {
         setIsEditing(true);
@@ -33,6 +34,14 @@ export default function Actions({ user }) {
 
     const messageUser = () => {
         navigate(`/chats/user/${user._id}`);
+    };
+
+    const handleFollow = () => {
+        if (!user.isFollowing) {
+            return followUser();
+        } else {
+            return unfollowUser();
+        }
     };
 
     return (
@@ -48,7 +57,7 @@ export default function Actions({ user }) {
                     <ActionButton
                         text={`${user.isFollowing ? "Following" : "Follow"}`}
                         variant={`${user.isFollowing ? "primary_alt" : "primary"}`}
-                        onClick={followUser}
+                        onClick={handleFollow}
                     />
                     <ActionButton
                         text="Message"

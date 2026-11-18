@@ -114,6 +114,16 @@ export const registerSocketHandlers = (io, socket) => {
         activeChats.delete(userId);
     });
 
+    socket.on("profile_opened", (userId) => {
+        socket.join(`profile:${userId}`);
+        console.log(`Socket joined profile: ${userId}`);
+    });
+
+    socket.on("profile_closed", (userId) => {
+        socket.leave(`profile:${userId}`);
+        console.log(`Socket left profile: ${userId}`);
+    });
+
     socket.on("disconnect", () => {
         const userSockets = onlineUsers.get(userId);
 

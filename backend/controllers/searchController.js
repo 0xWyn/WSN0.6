@@ -184,10 +184,16 @@ export const searchDB = async (req, res) => {
             },
         ]);
 
+        await Post.populate(posts, {
+            path: "author",
+            select: "name username avatar",
+        });
+
         const clans = await Clan.find({
             $or: [
                 { name: { $regex: query, $options: "i" } },
                 { description: { $regex: query, $options: "i" } },
+                { tags: { $regex: query, $options: "i" } },
             ],
         }).limit(10);
 
@@ -200,7 +206,7 @@ export const searchDB = async (req, res) => {
                     })),
                 },
             ],
-        });
+        }).populate("author", "name username avatar");
 
         const results = { clans, posts, users, comments };
 

@@ -7,13 +7,13 @@ export default function CommentEntity({ entity: comment }) {
     const navigate = useNavigate();
 
     const handleCommentClick = () => {
-        navigate(`posts/${parentPost}`);
+        navigate(`/posts/${parentPost}`);
     };
 
     return (
         <div
             onClick={handleCommentClick}
-            className="w-full h-full  rounded-3xl p-4 flex flex-col gap-2 shadow-[0_4px_20px_rgba(140,140,140,0.1)]"
+            className="w-full h-full bg-white/40 border-white/70 backdrop-blur-md rounded-3xl p-4 flex flex-col gap-2 shadow-[0_4px_20px_rgba(140,140,140,0.1)]"
         >
             <div className="flex items-start gap-3 w-full">
                 {/* Avatar */}

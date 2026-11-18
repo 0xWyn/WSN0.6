@@ -18,13 +18,13 @@ export default function PostEntity({ entity: post }) {
     return (
         <article
             onClick={handleOpenPost}
-            className="group relative w-full overflow-hidden rounded-[24px] bg-white/75 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:shadow-[0_8px_30px_rgba(60,62,90,0.1)] hover:bg-white hover:border-slate-100"
+            className="group relative w-full overflow-hidden rounded-[24px] bg-white/85 backdrop-blur-xl shadow-[0_5px_20px_rgba(15,23,42,0.06)] transition duration-200 hover:bg-white/80 hover:shadow-[0px_2px_8px_rgba(15,23,100,0.09)] cursor-pointer"
         >
-            <div className="p-6">
+            <div className="py-6 px-7">
                 {/* Header */}
                 <header className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
-                        <Avatar size={10} user={author} />
+                        <Avatar size={12} user={author} />
                         <div className="min-w-0">
                             <Author post={post} />
                         </div>
@@ -35,7 +35,7 @@ export default function PostEntity({ entity: post }) {
                 <div className="mt-4">
                     {text && <Text text={text} />}
                     {media?.length > 0 && (
-                        <div className="mt-4 overflow-hidden rounded-[28px] border border-white/50">
+                        <div className="mt-4 overflow-hidden rounded-[12px] border border-white/50 max-h-100 flex items-center justify-center">
                             <Media media={media} />
                         </div>
                     )}

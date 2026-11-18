@@ -2,6 +2,7 @@ import Actions from "./Actions";
 import Cover from "./CoverImage";
 import Identity from "./Identity";
 import ProfilePicture from "./ProfilePicture";
+import { Link } from "react-router-dom";
 
 export default function ProfileView({ user }) {
     const {
@@ -31,11 +32,15 @@ export default function ProfileView({ user }) {
                         <div className="min-w-0 pb-1">
                             <Identity user={user} />
                             <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
-                                <span>{followerCount} followers</span>
+                                <Link to={`network/followers`} className="">
+                                    {followerCount} followers
+                                </Link>
 
                                 <span className="text-slate-300">•</span>
 
-                                <span>{followingCount} following</span>
+                                <Link to={`network/following`} className="">
+                                    {followingCount} following
+                                </Link>
                             </div>
                         </div>
                     </div>
