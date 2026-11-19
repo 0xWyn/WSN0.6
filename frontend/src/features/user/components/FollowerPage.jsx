@@ -10,9 +10,7 @@ export default function FollowerPage() {
     const { fetchUserFollowers } = useUserActions(id);
 
     useEffect(() => {
-        if (!id) return;
-
-        fetchUserFollowers(id);
+        fetchUserFollowers();
     }, [id]);
 
     const { loadingUser, connections } = useUser();
@@ -21,14 +19,21 @@ export default function FollowerPage() {
 
     const followers = connections?.followers || [];
 
-    console.log(followers);
     return (
         <div className="flex flex-col min-h-0 flex-1">
             {Object.values(followers).length > 0 ? (
                 <ContactContainer entities={followers} />
             ) : (
-                <div className="flex items-center justify-center">
-                    No followers.
+                <div className="w-full flex justify-center px-6 mt-6">
+                    <div className="rounded-[24px] border border-dashed border-slate-200 bg-white/30 backdrop-blur-xl px-6 py-10 text-center w-full">
+                        <div className="mx-auto flex size-12 items-center justify-center rounded-2xl text-lg">
+                            ✦
+                        </div>
+
+                        <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-slate-500">
+                            No followers.
+                        </p>
+                    </div>
                 </div>
             )}
         </div>

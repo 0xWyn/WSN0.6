@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const UserContext = createContext(null);
 
@@ -22,6 +22,8 @@ export const UserProvider = ({ children }) => {
                 setLoadingUser,
                 connections,
                 setConnections,
+                resetConnections: () =>
+                    setConnections({ followers: [], following: [] }),
             }}
         >
             {children}

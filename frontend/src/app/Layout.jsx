@@ -9,7 +9,7 @@ export default function Layout() {
     return (
         <div className="flex w-screen items-stretch gap-2 bg-white overflow-x-scroll">
             <SlickNav />
-            <div className="relative flex-1 min-w-0 w-full h-screen overflow-y-auto">
+            <div className="relative flex-1 min-w-[320px] w-full h-screen overflow-y-auto">
                 <Outlet />
             </div>
             {showClanModal && <ClanCreationModal />}

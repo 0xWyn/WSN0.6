@@ -12,7 +12,7 @@ import { useUser } from "../context/UserProvider";
 export default function UserPage({ readOnly = false }) {
     const { id } = useParams();
     const { loading, user } = useProfile(id);
-    const { isEditing, setIsEditing } = useUser();
+    const { isEditing, setIsEditing, resetConnections } = useUser();
 
     console.log(useUser);
     useUserSocket(id);
@@ -21,6 +21,8 @@ export default function UserPage({ readOnly = false }) {
 
     useEffect(() => {
         fetchUserPosts(1, id);
+
+        return () => resetConnections();
     }, [id, fetchUserPosts]);
 
     useEffect(() => {

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { uploadIfFile } from "../../../helpers/uploadIfFile";
+import { mergeFollowers, mergeFollowing } from "../../feed/utils/mergeEntities";
+import { useEntityActions } from "../../global/useEntityActions";
 import {
     addFollow,
     fetchFollowers,
@@ -7,10 +9,8 @@ import {
     patchProfile,
     removeFollow,
 } from "../apis/userApis";
-import { useUpdateUser } from "./useUpdateUser";
-import { useEntityActions } from "../../global/useEntityActions";
 import { useUser } from "../context/UserProvider";
-import { mergeEntities } from "../../feed/utils/mergeEntities";
+import { useUpdateUser } from "./useUpdateUser";
 
 export const useUserActions = (userId) => {
     const { updateUser } = useUpdateUser();
@@ -69,13 +69,11 @@ export const useUserActions = (userId) => {
 
     const fetchUserFollowers = async () => {
         try {
-            console.log("Fetching followers");
             const { data } = await fetchFollowers(userId);
 
-            console.log(data);
             setConnections((prev) => ({
                 ...prev,
-                followers: mergeEntities(prev.followers, data),
+                followers: mergeFollowers(prev.followers, data),
             }));
         } catch (error) {
             console.error(error);
@@ -87,11 +85,9 @@ export const useUserActions = (userId) => {
     const fetchUserFollowing = async () => {
         try {
             const { data } = await fetchFollowing(userId);
-
-            console.log(data);
             setConnections((prev) => ({
                 ...prev,
-                following: [...(prev.following || []), ...data],
+                following: mergeFollowing(prev.following, data),
             }));
         } catch (error) {
             console.error(error);

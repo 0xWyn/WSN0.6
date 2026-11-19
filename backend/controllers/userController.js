@@ -354,7 +354,10 @@ export const getUserFollowing = async (req, res) => {
                     .json({ error: "This account is private" });
         }
 
-        const following = await Follow.find({ follower: userId });
+        const following = await Follow.find({ follower: userId }).populate(
+            "user",
+            "name username avatar"
+        );
 
         return res.status(200).json(following);
     } catch (error) {
