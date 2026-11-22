@@ -10,6 +10,7 @@ import PostCard from "./PostCard";
 import PostFocus from "./PostFocus";
 import { useFeed } from "../../../feed/context/FeedProvider";
 import FullscreenLoader from "../../../../components/ui/FullscreenLoader";
+import { useFeedRoom } from "../../../feed/socket/useFeedRoom";
 
 export default function PostPage() {
     const { id } = useParams();
@@ -17,6 +18,8 @@ export default function PostPage() {
     const { fetchSinglePost } = useFeedPosts();
     const { hydratePost } = useHydratePost();
     const { feedLoad } = useFeed();
+
+    useFeedRoom("post", id);
     useFeedSocket();
 
     useEffect(() => {

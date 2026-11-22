@@ -8,7 +8,7 @@ export const getGlobalPosts = async (req, res) => {
     try {
         const userId = req.user._id;
         const posts = await Post.find({})
-            .populate("author", "username avatar")
+            .populate("author", "name username avatar")
             .lean();
         const updated = await Promise.all(
             posts.map((post) => {
@@ -33,7 +33,7 @@ export const getClanPosts = async (req, res) => {
         const userId = req.user._id;
         const { clanId } = req.params;
         const posts = await Post.find({ clan: clanId })
-            .populate("author", "username avatar")
+            .populate("author", "name username avatar")
             .populate("clan", "name")
             .sort({ createdAt: -1 })
             .lean();
@@ -79,7 +79,7 @@ export const createPost = async (req, res) => {
     }
 };
 
-export const toggleLike = async (req, res) => {
+export const likePost = async (req, res) => {
     try {
         const userId = req.user._id;
         const { postId } = req.params;
@@ -99,33 +99,17 @@ export const toggleLike = async (req, res) => {
 
         const existingLike = await Like.findOne(filter);
 
-        let isLiked;
+        if (existingLike)
+            return res.status(409).json({
+                msg: "Like already exists",
+            });
 
-        if (existingLike) {
-            const deletedLike = await Like.findOneAndDelete(filter);
-
-            if (!deletedLike)
-                return res.status(400).json({ msg: "Please try again" });
-            isLiked = false;
-        } else {
-            try {
-                await Like.create(filter);
-                isLiked = true;
-            } catch (error) {
-                if (error.code === 11000) {
-                    return res.status(409).json({
-                        msg: "Like already exists",
-                    });
-                }
-
-                throw error;
-            }
-        }
+        await Like.createOne(filter);
 
         const updatedPost = await Post.findByIdAndUpdate(
             postId,
             {
-                $inc: { likeCount: existingLike ? -1 : 1 },
+                $inc: { likeCount: 1 },
             },
             { returnDocument: "after" }
         );
@@ -137,7 +121,9 @@ export const toggleLike = async (req, res) => {
                 likeCount: updatedPost.likeCount,
             });
 
-        if (!userId.equals(post.author._id)) {
+        const authIsAuthor = userId.equals(post.author._id);
+
+        if (!authIsAuthor) {
             const notification = await postNotificationService(
                 "post_like",
                 postId,
@@ -151,13 +137,71 @@ export const toggleLike = async (req, res) => {
         }
 
         return res.status(200).json({
-            msg: isLiked ? "Like added" : "Like removed",
+            msg: "Like added successfully",
             post: {
                 _id: postId,
                 likeCount: updatedPost.likeCount,
-                isLiked,
+                isLiked: true,
             },
         });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Something went wrong" });
+    }
+};
+
+export const deletePostLike = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { postId } = req.params;
+
+        const post = await Post.findById(postId).populate(
+            "author",
+            "username name avatar"
+        );
+
+        if (!post) return res.status(404).json({ msg: "Post not found" });
+
+        const filter = {
+            user: userId,
+            entity: postId,
+            entityModel: "Post",
+        };
+
+        const existingLike = await Like.findOne(filter);
+
+        if (existingLike) {
+            const deletedLike = await Like.findOneAndDelete(filter);
+
+            if (!deletedLike)
+                return res.status(400).json({ msg: "Please try again" });
+
+            const updatedPost = await Post.findByIdAndUpdate(
+                postId,
+                {
+                    $inc: { likeCount: existingLike ? -1 : 1 },
+                },
+                { returnDocument: "after" }
+            );
+
+            io.to(`feed:clan:${post.clan.toString()}`)
+                .to(`feed:user:${post.author._id.toString()}`)
+                .emit("updated_post", {
+                    _id: postId,
+                    likeCount: updatedPost.likeCount,
+                });
+
+            return res.status(200).json({
+                msg: "Like removed",
+                post: {
+                    _id: postId,
+                    likeCount: updatedPost.likeCount,
+                    isLiked,
+                },
+            });
+        } else {
+            return res.status(409).json({ msg: "You do not like this post." });
+        }
     } catch (error) {
         console.error(error);
         return res.status(500).json({ msg: "Something went wrong" });
@@ -169,7 +213,7 @@ export const getPostById = async (req, res) => {
         const { _id: userId } = req.user;
         const { postId } = req.params;
         const post = await Post.findById(postId)
-            .populate("author", "username avatar")
+            .populate("author", "name username avatar")
             .lean();
         if (!post) return res.status(404).json({ msg: "Post not found" });
 

@@ -15,7 +15,7 @@ export default function NotificationCard({ notification }) {
         >
             {/* Icon */}
             <span
-                className={`${graphic[event]?.bg_color} p-1 rounded-md size-6 flex items-center`}
+                className={`${graphic[event]?.bg_color} p-1 rounded-full size-6 flex items-center`}
             >
                 {graphic[event]?.icon}
             </span>

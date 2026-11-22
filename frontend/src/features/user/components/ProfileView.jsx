@@ -31,7 +31,7 @@ export default function ProfileView({ user }) {
 
                         <div className="min-w-0 pb-1">
                             <Identity user={user} />
-                            <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
+                            <div className="mt-3 flex items-center gap-3 text-sm text-slate-500">
                                 <Link to={`network/followers`} className="">
                                     {followerCount} followers
                                 </Link>

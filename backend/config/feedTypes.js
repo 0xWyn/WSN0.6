@@ -1,1 +1,1 @@
-export const feedTypes = ["clan", "user", "public"];
+export const feedTypes = ["clan", "user", "public", "post"];

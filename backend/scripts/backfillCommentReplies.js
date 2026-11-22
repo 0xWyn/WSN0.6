@@ -11,27 +11,12 @@ async function run() {
 
     console.log("Connected to MONGODB");
 
-    const comments = await Comment.find({});
+    const deletedComments = await Comment.deleteMany({});
 
-    for (const comment of comments) {
-        const post = await Post.findByIdAndUpdate(comment.parentPost, {
-            $addToSet: { replies: comment._id },
-        });
+    const updatedPosts = await Post.updateMany({}, { $set: { replyCount: 0 } });
 
-        if (comment.parentComment) {
-            const parentComment = await Comment.findByIdAndUpdate(
-                comment.parentComment,
-                {
-                    $addToSet: { replies: comment._id },
-                }
-            );
-
-            await parentComment.save();
-        }
-
-        await comment.save();
-        await post.save();
-    }
+    console.log(deletedComments);
+    console.log(updatedPosts);
 
     console.log("Done");
 

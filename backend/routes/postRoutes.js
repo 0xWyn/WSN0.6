@@ -3,10 +3,11 @@ import { fetchComments } from "../controllers/commentController.js";
 import {
     createPost,
     deletePost,
+    deletePostLike,
     getClanPosts,
     getGlobalPosts,
     getPostById,
-    toggleLike,
+    likePost,
 } from "../controllers/postController.js";
 import { protect } from "../middleware/auth.js";
 
@@ -16,7 +17,9 @@ router.get("/", protect, getGlobalPosts);
 router.get("/clan/:clanId", protect, getClanPosts);
 router.post("/", protect, createPost);
 router.delete("/:postId", protect, deletePost);
-router.patch("/:postId/like", protect, toggleLike);
+
+router.put("/:postId/like", protect, likePost);
+router.delete("/:postId/like", protect, deletePostLike);
 router.get("/:postId", protect, getPostById);
 router.get("/:postId/comments", protect, fetchComments);
 export default router;

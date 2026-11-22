@@ -49,7 +49,6 @@ export const useFeedPosts = () => {
             try {
                 setFeedLoad((prev) => ({ ...prev, single: true }));
                 const { data } = await fetchPost(postId);
-                console.log(data);
                 setEntities((prev) => normalisePosts([data], prev));
             } catch (error) {
                 console.error(error.response);

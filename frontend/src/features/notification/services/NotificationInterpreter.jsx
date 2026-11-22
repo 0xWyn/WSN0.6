@@ -1,25 +1,29 @@
 import { clanCodes } from "../../../config/clanCodes";
 
 const events = {
-    follow: () => ({
-        msg: `${username} followed you!`,
+    follow: ({ username = "" }) => ({
+        msg: (
+            <>
+                <strong>@{username}</strong> followed you!
+            </>
+        ),
     }),
     post_like: ({ username = "" }) => ({
-        msg: `Your post was liked by ${username}`,
+        msg: `Your post was liked by @${username}`,
     }),
-    post_comment: ({ username = "", text = "" }) => ({
-        msg: `${username} commented:\n${text}`,
+    post_comment: ({ username = "", comment = "" }) => ({
+        msg: `@${username} commented:\n${comment}`,
     }),
     comment_like: ({ username = "" }) => ({
-        msg: `Your comment was liked by ${username}`,
+        msg: `Your comment was liked by @${username}`,
     }),
-    comment_reply: ({ username = "", text = "" }) => ({
-        msg: `${username} replied:\n${text}`,
+    comment_reply: ({ username = "", comment = "" }) => ({
+        msg: `@${username} replied:\n${comment}`,
     }),
     join_request: ({ name = "", userName = "", username = "" }) => ({
         msg: (
             <>
-                <strong>{userName ?? username}</strong> wants to join{" "}
+                <strong>@{userName ?? username}</strong> wants to join{" "}
                 <strong>{name}</strong>.
             </>
         ),
@@ -27,7 +31,7 @@ const events = {
     new_clan_member: ({ name = "", userName = "" }) => ({
         msg: (
             <>
-                <strong>{userName}</strong> has joined <strong>{name}</strong>
+                <strong>@{userName}</strong> has joined <strong>{name}</strong>
             </>
         ),
     }),

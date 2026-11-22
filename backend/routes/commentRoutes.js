@@ -1,12 +1,11 @@
 import express from "express";
-import { protect } from "../middleware/auth.js";
 import {
     createComment,
     deleteComment,
     fetchReplies,
     toggleCommentLike,
 } from "../controllers/commentController.js";
-import { toggleLike } from "../controllers/postController.js";
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 

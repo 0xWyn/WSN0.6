@@ -1,3 +1,4 @@
+import { commentNotificationService } from "../helpers/notificationService.js";
 import Comment from "../models/commentModel.js";
 import Post from "../models/postModel.js";
 import { io } from "../server.js";
@@ -31,11 +32,12 @@ export const fetchReplies = async (req, res) => {
 
 export const createComment = async (req, res) => {
     try {
+        const { _id: userId, username, avatar } = req.user;
         const { text, parentPost, parentComment, replyTo } = req.body;
 
         const comment = await Comment.create({
             text,
-            author: req.user._id,
+            author: userId,
             parentPost,
             parentComment,
             replyTo,
@@ -57,7 +59,7 @@ export const createComment = async (req, res) => {
             { returnDocument: "after" }
         );
 
-        const postUpdate = await Post.findByIdAndUpdate(
+        const parentPostUpdate = await Post.findByIdAndUpdate(
             parentPost,
             {
                 $addToSet: { replies: comment._id },
@@ -77,24 +79,87 @@ export const createComment = async (req, res) => {
             },
         ]);
 
-        io.emit("new_comment", comment);
+        // Emit new and updated comments to feed:post (commentUpdate, parentPostUpdate)
+        // Emit to clan and user feed (parentPostUpdate)
+        // Emit notification to users (parentPost author, parentComment author)
 
-        parentCommentUpdate &&
-            io
-                .to(postUpdate.clan.toString())
-                .emit("updated_comment", {
-                    _id: parentComment._id,
-                    replyCount: parentComment.replyCount,
-                });
+        await parentPostUpdate.populate("author", "username avatar");
+
+        io.to(`feed:post:${parentPost.toString()}`).emit(
+            "new_comment",
+            comment
+        );
+
+        const authIsPostAuthor = userId.equals(parentPostUpdate.author);
+        const authReplyingSelf =
+            userId.equals(parentCommentUpdate.author) ||
+            userId.equals(replyToUpdate.author);
+
+        io.to(`feed:post:${parentPost}`)
+            .to(`feed:user:${parentPostUpdate.author.toString()}`)
+            .to(`feed:clan:${parentPostUpdate.clan.toString()}`)
+            .emit("updated_post", {
+                _id: parentPost,
+                replyCount: parentPostUpdate.replyCount,
+            });
+
+        parentComment &&
+            io.to(`feed:post:${parentPost}`).emit("updated_comment", {
+                _id: parentComment,
+                replyCount: parentCommentUpdate.replyCount,
+            });
 
         replyToUpdate &&
-            io
-                .to(postUpdate.clan.toString())
-                .emit("updated_comment", replyToUpdate);
+            io.to(`feed:post:${parentPost}`).emit("updated_comment", {
+                _id: replyTo,
+                replyCount: replyToUpdate.replyCount,
+            });
 
-        await postUpdate.populate("author", "username avatar");
+        if (!(authIsPostAuthor || authReplyingSelf)) {
+            const postAuthorNotification = await commentNotificationService(
+                "post_comment",
+                comment._id,
+                parentPostUpdate.author._id,
+                {
+                    username,
+                    avatar: avatar.url,
+                    comment: text,
+                }
+            );
 
-        io.emit("updated_post", postUpdate);
+            const parentCommentNotification = parentComment
+                ? await commentNotificationService(
+                      "comment_reply",
+                      userId,
+                      parentCommentUpdate.author,
+                      { username, avatar: avatar.url, comment: text }
+                  )
+                : null;
+
+            const replyToNotification = replyTo
+                ? await commentNotificationService(
+                      "comment_reply",
+                      userId,
+                      replyToUpdate.author,
+                      { username, avatar: avatar.url, comment: text }
+                  )
+                : null;
+
+            io.to(parentPostUpdate.author._id.toString()).emit(
+                "notification",
+                postAuthorNotification
+            );
+
+            parentCommentNotification &&
+                io
+                    .to(parentCommentUpdate.author.toString())
+                    .emit("notification", parentCommentNotification);
+
+            replyToNotification &&
+                io
+                    .to(replyToUpdate.author.toString())
+                    .emit("notification", replyToNotification);
+        }
 
         res.status(201).json({ msg: "Comment created" });
     } catch (error) {

@@ -3,6 +3,8 @@ import Clan from "../models/clanModel.js";
 import ClanMember from "../models/clanMemberModel.js";
 import User from "../models/userModel.js";
 import Follow from "../models/followModel.js";
+import Post from "../models/postModel.js";
+import BlockBan from "../models/blockBanModel.js";
 
 export const canAccessFeed = async (userId, type, id) => {
     if (type === "public") {
@@ -46,6 +48,29 @@ export const canAccessFeed = async (userId, type, id) => {
                 follower: userId,
             })
         );
+    }
+
+    if (type === "post") {
+        const post = await Post.findById(id).select("author");
+
+        if (post.author.equals(userId)) return true;
+
+        const author = await User.findById(post.author).select("isPrivate");
+
+        const existingBlock = await BlockBan.findOne({
+            entity: author._id,
+            entityType: "User",
+            user: userId,
+        });
+
+        if (author.isPrivate) {
+            return Boolean(
+                (await Follow.find({ user: author._id, follower: userId })) &&
+                !existingBlock
+            );
+        }
+
+        return Boolean(existingBlock);
     }
 
     return false;

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Text from "../../gen/Text.jsx";
 import Media from "../../gen/Media.jsx";
 import PostMenu from "./PostMenu.jsx";
+import { formatDate } from "../../../../utils/formatDate.js";
 
 export default function PostFocus({ post }) {
     const [showMenu, setShowMenu] = useState(false);
@@ -33,14 +34,14 @@ export default function PostFocus({ post }) {
     }, []);
 
     return (
-        <section className="backdrop-blur-xl w-full rounded-t-[28px] py-7 px-7 sm:px-8 shrink-0 ">
+        <section className="backdrop-blur-xl w-full rounded-t-[28px] py-6 px-6 shrink-0">
             <header className="space-y-4">
                 {/* header */}
                 <div className="flex justify-between w-full">
                     {/* identity */}
                     <div className="flex gap-2 items-start">
-                        <Avatar size={14} user={author} />
-                        <Author post={post} />
+                        <Avatar size={12} user={author} />
+                        <Author post={post} format={"focus"} />
                     </div>
                     {/* Button */}
 
@@ -67,7 +68,7 @@ export default function PostFocus({ post }) {
             </header>
 
             {/* Content */}
-            <div className="mt-4">
+            <div className="mt-2">
                 {text && <Text text={text} />}
                 {media?.length > 0 && (
                     <div className="mt-4 overflow-hidden rounded-[28px] border border-white/50">
@@ -77,13 +78,18 @@ export default function PostFocus({ post }) {
             </div>
 
             {/* Engagement */}
-            <div className="border-t border-slate-100/70 pt-4 mt-5">
+            <div className="border-t border-slate-100/70 pt-4 mt-5 flex justify-between items-center">
+                {/* Meta */}
                 <EngagementBar
                     entity={post}
                     type="post"
                     onCommentClick={() => {}}
                     disableComment
                 />
+
+                <p className="text-xs text-slate-400 truncate ml-4 mb-2">
+                    {formatDate(post?.createdAt)}
+                </p>
             </div>
         </section>
     );

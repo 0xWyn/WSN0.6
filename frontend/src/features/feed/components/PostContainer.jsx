@@ -13,7 +13,7 @@ export default function PostContainer({ posts }) {
     ));
 
     return (
-        <section className="flex w-full flex-col gap-5 h-full min-h-0">
+        <section className="flex w-full flex-col gap-2 h-full min-h-0">
             {mappedPosts}
         </section>
     );

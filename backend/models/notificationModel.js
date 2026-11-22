@@ -5,7 +5,6 @@ const notificationSchema = new mongoose.Schema(
             type: String,
             enum: [
                 "follow",
-                "unfollow",
 
                 "post_like",
                 "post_comment",
@@ -21,8 +20,6 @@ const notificationSchema = new mongoose.Schema(
                 "clan_kick",
                 "clan_ban",
                 "clan_deletion",
-                "clan_deletion_scheduled",
-                "clan_deletion_cancelled",
                 "clan_activation",
                 "clan_deactivation",
                 "clan_ownership_transfer",

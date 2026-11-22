@@ -67,6 +67,7 @@ export const registerSocketHandlers = (io, socket) => {
             const room = `feed:${type}:${id}`;
 
             await socket.join(room);
+            console.log("Socked joined:", room);
 
             callback?.({ ok: trye });
         } catch (error) {

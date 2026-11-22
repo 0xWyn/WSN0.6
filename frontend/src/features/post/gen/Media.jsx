@@ -21,7 +21,7 @@ export default function Media({ media }) {
                 <img
                     src={src}
                     alt=""
-                    className="w-full h-full absolute inset-0 blur-2xl object-cover scale-110 opacity-30 rounded-[24px] border border-gray-300"
+                    className="w-full h-full absolute inset-0 blur-2xl object-cover scale-110 opacity-30 border border-gray-300"
                 />
             );
         } else if (type === "video") {
@@ -31,7 +31,7 @@ export default function Media({ media }) {
                     autoPlay
                     muted
                     loop
-                    className="w-full h-full absolute inset-0 blur-xl scale-110 opacity-80 rounded-[24px]"
+                    className="w-full h-full absolute inset-0 blur-xl scale-110 opacity-80"
                 />
             );
         }
@@ -44,14 +44,14 @@ export default function Media({ media }) {
                     <img
                         src={src}
                         alt="Post media"
-                        className="max-h-[34rem] w-full rounded-md shrink-0 z-10 object-contain"
+                        className="max-h-[34rem] w-full shrink-0 z-10 object-contain"
                     />
                     {blurredBackground(src, type)}
                 </div>
             );
         } else if (type === "video") {
             return (
-                <div className="relative h-100 flex w-full justify-center rounded-[28px] my-1 pointer-events-auto overflow-hidden">
+                <div className="relative h-100 flex w-full justify-center my-1 pointer-events-auto overflow-hidden">
                     <video
                         src={src}
                         controls
@@ -63,7 +63,7 @@ export default function Media({ media }) {
         }
     };
     return (
-        <div className="relative overflow-hidden max-h-[32rem] min-h-[16rem] w-full rounded-[28px] border border-white/50 backdrop-blur-[10rem]">
+        <div className="relative overflow-hidden max-h-[32rem] min-h-[16rem] w-full border border-white/50 backdrop-blur-[10rem]">
             {arrangedMedia.length > 0 && (
                 <RenderObject
                     src={arrangedMedia[current].url}
