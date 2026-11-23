@@ -16,26 +16,21 @@ export default function CreateComment({
 
     const mention = replyTo ? fetchMention(replyTo) : null;
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!text.trim()) {
             return;
         }
+        const data = {
+            text,
+            parentPost: postId,
+            parentComment,
+            replyTo,
+        };
 
-        try {
-            const data = {
-                text,
-                parentPost: postId,
-                parentComment,
-                replyTo,
-            };
-
-            await sendComment(data);
-            setText("");
-        } catch (error) {
-            console.error(error);
-        }
+        sendComment(data);
+        setText("");
     };
 
     return (

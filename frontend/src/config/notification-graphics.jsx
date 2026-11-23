@@ -5,19 +5,21 @@ import UserStar from "../components/icons/user-star";
 import HeartIconII from "../components/icons/heartII";
 import HeartIcon from "../components/icons/heart";
 import HeartLucide from "../components/icons/heart-lucide";
+import { MessageSquareHeart } from "../components/icons/message-square-heart";
+import { MessageSquareText } from "../components/icons/message-square-text";
 
 export const NotificationGraphics = {
     post_like: {
         icon: <HeartLucide />,
         bg_color: "bg-rose-200",
     },
-    comment: {
-        icon: <UserStar />,
-        bg_color: "bg-green-500",
+    post_comment: {
+        icon: <MessageSquareText />,
+        bg_color: "bg-blue-200",
     },
-    reply: {
-        icon: <UserStar />,
-        bg_color: "bg-green-500",
+    comment_reply: {
+        icon: <MessageSquareText />,
+        bg_color: "bg-blue-200",
     },
     follow: {
         icon: <UserStar />,

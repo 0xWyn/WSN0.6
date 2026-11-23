@@ -6,12 +6,14 @@ export default function NotificationCard({ notification }) {
     const { msg, avatar, event, source } =
         NotificationInterpreter(notification);
 
+    console.log(event);
+
     const navigate = useNavigate();
 
     return (
         <div
             onClick={() => navigate(source)}
-            className={`group relative rounded-3xl border backdrop-blur-2xl px-3 py-2 cursor-pointer shadow-[0px_2px_8px_rgba(15,23,100,0.05)] transition-all duration-300 hover:shadow-[0px_2px_8px_rgba(15,23,100,0.09)] flex gap-2 items-center ${notification.readAt ? "bg-slate-950/7 hover:bg-slate-50/20 border-none" : "bg-white/60 hover:bg-white/80 border-white"}`}
+            className={`group relative rounded-3xl border backdrop-blur-2xl px-3 py-2 cursor-pointer shadow-[0px_2px_8px_rgba(15,23,100,0.05)] transition-all duration-300 hover:shadow-[0px_5px_8px_rgba(15,23,100,0.06)] flex gap-2 items-center ${notification.readAt ? "bg-slate-950/7 hover:bg-slate-50/20 border-none" : "bg-white/60 hover:bg-white/80 border-white"}`}
         >
             {/* Icon */}
             <span

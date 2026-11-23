@@ -12,6 +12,7 @@ export default function PostFocus({ post }) {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
+    console.log(post);
     const { text, author, media } = post;
 
     const handleMenuClick = (e) => {

@@ -1,7 +1,9 @@
+import mongoose from "mongoose";
 import { commentNotificationService } from "../helpers/notificationService.js";
 import Comment from "../models/commentModel.js";
 import Post from "../models/postModel.js";
 import { io } from "../server.js";
+import { shouldNotify } from "../helpers/shouldNotify.js";
 
 export const fetchComments = async (req, res) => {
     try {
@@ -35,130 +37,171 @@ export const createComment = async (req, res) => {
         const { _id: userId, username, avatar } = req.user;
         const { text, parentPost, parentComment, replyTo } = req.body;
 
-        const comment = await Comment.create({
-            text,
-            author: userId,
-            parentPost,
-            parentComment,
-            replyTo,
-        });
+        // LEGEND
+        // parentPostUpdate => ppu
+        // parentCommentUpdate => pcu
+        // replyToUpdate => rtu
 
-        const parentCommentUpdate = await Comment.findByIdAndUpdate(
-            parentComment,
-            {
-                $inc: { replyCount: 1 },
-            },
-            { returnDocument: "after" }
-        );
+        // ppn => notification for parentPost author
+        // pcn => notification for parentComment author
+        // rtn => notification for replyTo author;
 
-        const replyToUpdate = await Comment.findByIdAndUpdate(
-            replyTo,
-            {
-                $inc: { replyCount: 1 },
-            },
-            { returnDocument: "after" }
-        );
+        let comment;
 
-        const parentPostUpdate = await Post.findByIdAndUpdate(
-            parentPost,
-            {
-                $addToSet: { replies: comment._id },
-            },
-            { returnDocument: "after" }
-        );
+        let ppu;
+        let pcu;
+        let rtu;
 
-        await comment.populate([
-            { path: "author", select: "username avatar" },
-            {
-                path: "replyTo",
-                select: "author text",
-                populate: {
-                    path: "author",
-                    select: "username name avatar",
-                },
-            },
-        ]);
+        let ppn;
+        let pcn;
+        let rtn;
 
-        // Emit new and updated comments to feed:post (commentUpdate, parentPostUpdate)
-        // Emit to clan and user feed (parentPostUpdate)
-        // Emit notification to users (parentPost author, parentComment author)
+        const session = await mongoose.connection.startSession();
 
-        await parentPostUpdate.populate("author", "username avatar");
+        try {
+            await session.withTransaction(async () => {
+                // 1. CREATE COMMENT
+                [comment] = await Comment.create(
+                    [
+                        {
+                            text,
+                            author: userId,
+                            parentPost,
+                            parentComment,
+                            replyTo,
+                        },
+                    ],
+                    { session }
+                );
 
-        io.to(`feed:post:${parentPost.toString()}`).emit(
-            "new_comment",
-            comment
-        );
+                // POPULATE COMMENT FOR RETURNING
+                await comment.populate(
+                    [
+                        { path: "author", select: "username name avatar" },
+                        {
+                            path: "replyTo",
+                            select: "author text",
+                            populate: {
+                                path: "author",
+                                select: "username name avatar",
+                            },
+                        },
+                    ],
+                    { session }
+                );
 
-        const authIsPostAuthor = userId.equals(parentPostUpdate.author);
-        const authReplyingSelf =
-            userId.equals(parentCommentUpdate.author) ||
-            userId.equals(replyToUpdate.author);
+                // CREATE METADATA OBJECT
+                const meta = {
+                    username: comment.author?.username,
+                    avatar: comment.author.avatar?.url,
+                    comment: text,
+                    postId: parentPost,
+                };
 
-        io.to(`feed:post:${parentPost}`)
-            .to(`feed:user:${parentPostUpdate.author.toString()}`)
-            .to(`feed:clan:${parentPostUpdate.clan.toString()}`)
+                // INCREMEMENT PARENT POST REPLY COUNT
+                ppu = await Post.findByIdAndUpdate(
+                    parentPost,
+                    {
+                        $unset: { replies: "" },
+                        $inc: { replyCount: 1 },
+                    },
+                    { returnDocument: "after", session }
+                );
+
+                // CREATE PARENT POST NOTIFICATION (PPN)
+                if (shouldNotify(ppu.author, userId)) {
+                    ppn = await commentNotificationService(
+                        "post_comment",
+                        comment._id,
+                        ppu.author,
+                        meta,
+                        { session }
+                    );
+                }
+
+                // INCREMENT PARENT COMMENT OR RETURN NULL
+                if (parentComment) {
+                    pcu = await Comment.findByIdAndUpdate(
+                        parentComment,
+                        {
+                            $inc: { replyCount: 1 },
+                        },
+                        { returnDocument: "after", session }
+                    );
+
+                    if (shouldNotify(pcu.author, userId)) {
+                        pcn = await commentNotificationService(
+                            "comment_reply",
+                            comment._id,
+                            pcu.author,
+                            meta,
+                            { session }
+                        );
+                    }
+                }
+
+                // INCREMENT REPLYTO COMMENT OR RETURN NULL
+                if (replyTo) {
+                    rtu = await Comment.findByIdAndUpdate(
+                        replyTo,
+                        {
+                            $inc: { replyCount: 1 },
+                        },
+                        { returnDocument: "after", session }
+                    );
+
+                    if (shouldNotify(rtu.author, userId)) {
+                        rtn = await commentNotificationService(
+                            "comment_reply",
+                            comment._id,
+                            rtu.author,
+                            meta,
+                            { session }
+                        );
+                    }
+                }
+            });
+        } finally {
+            await session.endSession();
+        }
+
+        // UPDATE PARENT POST AND RELEVANT COMMENTS IN FEED
+
+        const postRoom = io.to(`feed:post:${parentPost}`);
+        //  .1 Emit comment
+        postRoom.emit("new_comment", comment);
+
+        // .2 Emit PPU
+        postRoom
+            .to(`feed:user:${ppu.author.toString()}`)
+            .to(`feed:clan:${ppu.clan.toString()}`)
             .emit("updated_post", {
                 _id: parentPost,
-                replyCount: parentPostUpdate.replyCount,
+                replyCount: ppu.replyCount,
             });
 
-        parentComment &&
-            io.to(`feed:post:${parentPost}`).emit("updated_comment", {
-                _id: parentComment,
-                replyCount: parentCommentUpdate.replyCount,
+        if (ppn) {
+            io.to(ppu.author.toString()).emit("notification", ppn);
+        }
+
+        // .3 Emit PCU
+        if (pcu) {
+            postRoom.emit("updated_comment", {
+                _id: pcu._id,
+                replyCount: pcu.replyCount,
             });
 
-        replyToUpdate &&
-            io.to(`feed:post:${parentPost}`).emit("updated_comment", {
-                _id: replyTo,
-                replyCount: replyToUpdate.replyCount,
+            if (pcn) io.to(pcu.author.toString()).emit("notification", pcn);
+        }
+
+        // .4 Emit RTU
+        if (rtu) {
+            postRoom.emit("updated_comment", {
+                _id: rtu._id,
+                replyCount: rtu.replyCount,
             });
 
-        if (!(authIsPostAuthor || authReplyingSelf)) {
-            const postAuthorNotification = await commentNotificationService(
-                "post_comment",
-                comment._id,
-                parentPostUpdate.author._id,
-                {
-                    username,
-                    avatar: avatar.url,
-                    comment: text,
-                }
-            );
-
-            const parentCommentNotification = parentComment
-                ? await commentNotificationService(
-                      "comment_reply",
-                      userId,
-                      parentCommentUpdate.author,
-                      { username, avatar: avatar.url, comment: text }
-                  )
-                : null;
-
-            const replyToNotification = replyTo
-                ? await commentNotificationService(
-                      "comment_reply",
-                      userId,
-                      replyToUpdate.author,
-                      { username, avatar: avatar.url, comment: text }
-                  )
-                : null;
-
-            io.to(parentPostUpdate.author._id.toString()).emit(
-                "notification",
-                postAuthorNotification
-            );
-
-            parentCommentNotification &&
-                io
-                    .to(parentCommentUpdate.author.toString())
-                    .emit("notification", parentCommentNotification);
-
-            replyToNotification &&
-                io
-                    .to(replyToUpdate.author.toString())
-                    .emit("notification", replyToNotification);
+            if (rtn) io.to(rtu.author.toString()).emit("notification", rtn);
         }
 
         res.status(201).json({ msg: "Comment created" });

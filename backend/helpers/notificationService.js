@@ -47,12 +47,21 @@ export const commentNotificationService = async (
     event,
     commentId,
     receiver,
-    metadata
-) =>
-    Notification.create({
-        event,
-        entity: commentId,
-        entityModel: "Comment",
-        receiver,
-        metadata,
-    });
+    metadata,
+    { session }
+) => {
+    const notification = Notification.create(
+        [
+            {
+                event,
+                entity: commentId,
+                entityModel: "Comment",
+                receiver,
+                metadata,
+            },
+        ],
+        { session }
+    );
+
+    return notification;
+};

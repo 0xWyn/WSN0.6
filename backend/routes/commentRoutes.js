@@ -6,10 +6,11 @@ import {
     toggleCommentLike,
 } from "../controllers/commentController.js";
 import { protect } from "../middleware/auth.js";
+import { checkAccess } from "../middleware/checkAccess.js";
 
 const router = express.Router();
 
-router.post("/", protect, createComment);
+router.post("/", protect, checkAccess, createComment);
 router.get("/:commentId/replies", protect, fetchReplies);
 router.patch("/:commentId/like", protect, toggleCommentLike);
 router.delete("/:commentId", protect, deleteComment);
