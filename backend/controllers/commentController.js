@@ -4,6 +4,7 @@ import Comment from "../models/commentModel.js";
 import Post from "../models/postModel.js";
 import { io } from "../server.js";
 import { shouldNotify } from "../helpers/shouldNotify.js";
+import Like from "../models/likeModel.js";
 
 export const fetchComments = async (req, res) => {
     try {
@@ -208,6 +209,145 @@ export const createComment = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error });
         console.error(error);
+    }
+};
+
+export const likeComment = async (req, res) => {
+    try {
+        const { _id: userId, username, avatar } = req.user;
+        const { commentId } = req.params;
+
+        const session = await mongoose.startSession();
+
+        let updatedComment;
+        let likeNotification;
+        try {
+            await session.withTransaction(async () => {
+                const like = await Like.create(
+                    [
+                        {
+                            entity: commentId,
+                            entityType: "Comment",
+                            user: userId,
+                        },
+                    ],
+                    { session }
+                );
+
+                updatedComment = await Comment.findByIdAndUpdate(
+                    commentId,
+                    {
+                        $inc: { likeCount: 1 },
+                    },
+                    { returnDocument: "after", session }
+                );
+
+                if (like && updatedComment) {
+                    likeNotification = await commentNotificationService(
+                        "comment_like",
+                        commentId,
+                        updatedComment.author,
+                        {
+                            username,
+                            avatar: avatar.url,
+                            postId: updatedComment.parentPost,
+                        },
+                        { session }
+                    );
+                }
+            });
+        } catch (error) {
+            if (error.code === 11000) {
+                return res
+                    .status(409)
+                    .json({ error: "You already like this comment." });
+            }
+            throw error;
+        } finally {
+            await session.endSession();
+        }
+
+        if (likeNotification) {
+            io.to(updatedComment.author.toString()).emit(
+                "notification",
+                likeNotification
+            );
+        }
+
+        if (updatedComment)
+            io.to(`feed:post:${updatedComment.parentPost.toString()}`)
+                .to(`feed:user:${updatedComment.author.toString()}`)
+                .emit("updated_comment", updatedComment);
+
+        return res.status(200).json({
+            msg: "Comment liked.",
+            updatedComment: {
+                _id: commentId,
+                likeCount: updatedComment.likeCount,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({ error: error.response });
+    }
+};
+
+export const unlikeComment = async (req, res) => {
+    try {
+        const { _id: userId, username, avatar } = req.user;
+        const { commentId } = req.params;
+
+        const session = await mongoose.startSession();
+
+        let updatedComment;
+        try {
+            await session.withTransaction(async () => {
+                const existingLike = await Like.exists(
+                    [
+                        {
+                            entity: commentId,
+                            entityType: "Comment",
+                            user: userId,
+                        },
+                    ],
+                    { session }
+                );
+
+                if (!existingLike) {
+                    return res.status(404).json({ error: "Like not found." });
+                }
+
+                updatedComment = await Comment.findByIdAndUpdate(
+                    commentId,
+                    {
+                        $inc: { likeCount: -1 },
+                    },
+                    { returnDocument: "after", session }
+                );
+
+                await Like.findByIdAndDelete(userId, { session });
+            });
+        } finally {
+            await session.endSession();
+        }
+
+        if (updatedComment)
+            io.to(`feed:post:${updatedComment.parentPost.toString()}`)
+                .to(`feed:user:${updatedComment.author.toString()}`)
+                .emit("updated_comment", updatedComment);
+
+        return res.status(200).json({
+            msg: "Comment unliked.",
+            updatedComment: {
+                _id: commentId,
+                likeCount: updatedComment.likeCount,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({ error: error.response });
     }
 };
 

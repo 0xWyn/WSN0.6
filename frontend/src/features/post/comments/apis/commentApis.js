@@ -15,3 +15,9 @@ export const getReplies = (id) => {
 export const deleteComment = (commentId) => {
     return API.delete(`comments/${commentId}`);
 };
+
+export const putCommentLike = (commentId) =>
+    API.put(`comments/${commentId}/like`);
+
+export const deleteCommentLike = (commentId) =>
+    API.delete(`comments/${commentId}/like`);

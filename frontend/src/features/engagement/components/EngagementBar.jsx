@@ -1,7 +1,5 @@
-import { useState } from "react";
 import ChatBubble from "../../../components/icons/chatbubble";
 import HeartIcon from "../../../components/icons/heartII";
-import { useCurrentUser } from "../../auth/hooks/useCurrentUser";
 import { useEngagement } from "../hooks/useEngagement";
 
 export default function EngagementBar({
@@ -11,14 +9,14 @@ export default function EngagementBar({
     disableComment = false,
 }) {
     if (!entity) return;
-    const { likeCount, replyCount, isLiked } = entity;
-    const { like } = useEngagement(entity._id, type);
+    const { likeCount, replyCount, isLiked, _id } = entity;
+    const { like, unlike } = useEngagement(type, _id);
 
     const buttons = [
         {
             title: "likes",
             icon: <HeartIcon isLiked={isLiked} />,
-            onClick: like,
+            onClick: isLiked ? unlike : like,
             value: likeCount,
             disabled: false,
         },

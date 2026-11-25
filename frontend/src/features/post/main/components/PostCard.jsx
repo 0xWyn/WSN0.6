@@ -50,7 +50,14 @@ export default function PostCard({ post }) {
                         <Author post={post} />
                         {/* Content */}
                         <div className="mt-4">
-                            {text && <Text text={text} />}
+                            {text && (
+                                <span
+                                    className="cursor-pointer"
+                                    onClick={handleOpenPost}
+                                >
+                                    <Text text={text} />
+                                </span>
+                            )}
                             {media?.length > 0 && (
                                 <div className="mt-1 overflow-hidden rounded-[14px] border border-white/50">
                                     <Media media={media} />

@@ -1,23 +1,74 @@
-import { normalisePosts } from "../../feed/utils/normaliseEntities";
+import { mergePosts } from "../../feed/utils/mergeEntities";
 import { useSetEntities } from "../../global/EntityProvider";
-import { togglePostLike, toggleCommentLike } from "../apis/engagementApis";
+import {
+    deleteCommentLike,
+    putCommentLike,
+} from "../../post/comments/apis/commentApis";
+import { addPostLike, removePostLike } from "../../post/main/apis/postApis";
 
-export const useEngagement = (valueId, type) => {
+export const useEngagement = (type, id) => {
     const { setEntities } = useSetEntities();
-    const like = async () => {
+
+    const likePost = async () => {
         try {
-            const {
-                data: { msg, post },
-            } =
-                type === "post"
-                    ? await togglePostLike(valueId)
-                    : await toggleCommentLike(valueId);
-            console.log(post);
-            setEntities((prev) => normalisePosts([post], prev));
+            const { msg, post } = await addPostLike(id);
+
+            console.log(msg);
+            setEntities((prev) => ({
+                ...prev,
+                posts: mergePosts(prev.posts, [post]),
+            }));
         } catch (error) {
-            console.error(error.response);
+            console.error(error);
         }
     };
 
-    return { like };
+    const unlikePost = async () => {
+        try {
+            const { msg, post } = await removePostLike(id);
+
+            console.log(msg);
+            setEntities((prev) => ({
+                ...prev,
+                posts: mergePosts(prev.posts, [post]),
+            }));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const likeComment = async () => {
+        try {
+            const { msg, updatedComment } = await putCommentLike(id);
+
+            console.log(msg);
+            setEntities((prev) => ({
+                ...prev,
+                comments: mergePosts(prev.comments, [updatedComment]),
+            }));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const unlikeComment = async () => {
+        try {
+            const { msg, updatedComment } = await deleteCommentLike(id);
+
+            console.log(msg);
+            setEntities((prev) => ({
+                ...prev,
+                comments: mergePosts(prev.comments, [updatedComment]),
+            }));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const actions = {
+        Post: { like: likePost, unlike: unlikePost },
+        Comment: { like: likeComment, unlike: unlikeComment },
+    };
+
+    return actions[type] ?? {};
 };

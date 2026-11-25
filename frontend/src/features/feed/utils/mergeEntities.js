@@ -18,3 +18,13 @@ export const mergeFollowing = (previous, update) => {
 
     return next;
 };
+
+export const mergePosts = (previous, update) => {
+    const next = { ...previous };
+
+    update.forEach((update) => {
+        next[update._id] = { ...next[update._id], ...update };
+    });
+
+    return next;
+};
